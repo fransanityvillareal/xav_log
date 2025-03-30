@@ -31,7 +31,6 @@ class IntroductionSeller extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Container (Full Screen)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -41,13 +40,12 @@ class IntroductionSeller extends StatelessWidget {
             ),
           ),
 
-          // Background decorative elements
           Positioned(
             left: -screenWidth * 0.05,
             bottom: screenHeight * 0.18,
             child: Container(
-              width: screenWidth * 0.1, // Adjusted for screen width
-              height: screenWidth * 0.1, // Adjusted for screen width
+              width: screenWidth * 0.1, 
+              height: screenWidth * 0.1, 
               decoration: const ShapeDecoration(
                 color: Color(0xFFFFD037),
                 shape: OvalBorder(),
@@ -58,8 +56,8 @@ class IntroductionSeller extends StatelessWidget {
             left: screenWidth * 0.12,
             top: screenHeight * 0.35,
             child: Container(
-              width: screenWidth * 0.28, // Adjusted for screen width
-              height: screenWidth * 0.28, // Adjusted for screen width
+              width: screenWidth * 0.28, 
+              height: screenWidth * 0.28, 
               decoration: const ShapeDecoration(
                 color: Color(0xFFFFD037),
                 shape: OvalBorder(),
@@ -70,8 +68,8 @@ class IntroductionSeller extends StatelessWidget {
             left: screenWidth * 0.05,
             top: screenHeight * 0.65,
             child: Container(
-              width: screenWidth * 0.32, // Adjusted for screen width
-              height: screenWidth * 0.3, // Adjusted for screen width
+              width: screenWidth * 0.32, 
+              height: screenWidth * 0.3, 
               decoration: const ShapeDecoration(
                 color: Color(0xFFE14B5A),
                 shape: OvalBorder(),
@@ -79,19 +77,18 @@ class IntroductionSeller extends StatelessWidget {
             ),
           ),
 
-          // "Skip" Button (Only One)
           Align(
             alignment: Alignment.topRight,
             child: Padding(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height *
-                    0.06, // Adjusted top spacing
+                    0.06, 
                 right: MediaQuery.of(context).size.width *
-                    0.07, // Adjusted right spacing
+                    0.07, 
               ),
               child: GestureDetector(
                 onTap: () {
-                  // Handle skip button action
+                
                 },
                 child: const Text(
                   'Skip',
@@ -106,7 +103,6 @@ class IntroductionSeller extends StatelessWidget {
             ),
           ),
 
-          // Title: "Sell"
           Positioned(
             left: screenWidth * 0.1,
             top: screenHeight * 0.08,
@@ -122,7 +118,6 @@ class IntroductionSeller extends StatelessWidget {
             ),
           ),
 
-          // Description Text
           Positioned(
             left: screenWidth * 0.08,
             top: screenHeight * 0.16,
@@ -144,7 +139,7 @@ class IntroductionSeller extends StatelessWidget {
             right: MediaQuery.of(context).size.width * 0.05,
             child: SizedBox(
               width: MediaQuery.of(context).size.width *
-                  0.85, // Adjusted for screen width
+                  0.85, 
               height: 54,
               child: ElevatedButton(
                 onPressed: () {

@@ -26,11 +26,19 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:xavlog_market_place/screens/welcome/intro_screen.dart';
-// import 'package:xavlog_market_place/screens/cart/cart_provider.dart'; 
+import 'package:xavlog_market_place/screens/cart/cart_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -41,10 +49,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'xavLOG Marketplace',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 32, 47),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white, 
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black, 
+          elevation: 0,
+        ),
       ),
-      home: IntroScreen(), // Show Welcome Screen first
+      home: IntroScreen(),
     );
   }
 }

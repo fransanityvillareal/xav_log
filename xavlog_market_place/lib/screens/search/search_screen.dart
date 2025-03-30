@@ -9,7 +9,7 @@ class ProductSearchDelegate extends SearchDelegate<String> {
       IconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
-          query = ""; // Clear search query
+          query = ""; 
         },
       ),
     ];
@@ -20,7 +20,7 @@ class ProductSearchDelegate extends SearchDelegate<String> {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, ""); // Close search bar
+        close(context, ""); 
       },
     );
   }
@@ -37,7 +37,7 @@ class ProductSearchDelegate extends SearchDelegate<String> {
       itemCount: results.length,
       itemBuilder: (context, index) {
         return ListTile(
-          leading: Image.asset(results[index].image, width: 50, height: 50), // Show product image
+          leading: Image.asset(results[index].image, width: 50, height: 50), 
           title: Text(results[index].title),
           subtitle: Text("\$${results[index].price} - ${results[index].condition}"),
           onTap: () {

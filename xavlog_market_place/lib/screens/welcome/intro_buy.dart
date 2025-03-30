@@ -27,9 +27,8 @@ class IntroductionBuyer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        // Changed to Stack for full screen layout
+      
         children: [
-          // Background Container (Full Screen)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -55,19 +54,18 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Skip Button (Top Right)
           Align(
             alignment: Alignment.topRight,
             child: Padding(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height *
-                    0.06, // Adjusted top spacing
+                    0.06, 
                 right: MediaQuery.of(context).size.width *
                     0.07, // Adjusted right spacing
               ),
               child: GestureDetector(
                 onTap: () {
-                  // Handle skip button action
+                  
                 },
                 child: const Text(
                   'Skip',
@@ -82,7 +80,7 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Main Image (Center Left)
+          // Main Image
           Positioned(
             left: -MediaQuery.of(context).size.width *
                 0.17, // Adjusted for screen width
@@ -104,14 +102,14 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Next Button (Bottom Center)
+          // Next Button 
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             left: MediaQuery.of(context).size.width * 0.05,
             right: MediaQuery.of(context).size.width * 0.05,
             child: SizedBox(
               width: MediaQuery.of(context).size.width *
-                  0.85, // Adjusted for screen width
+                  0.85, 
               height: 54,
               child: ElevatedButton(
                 onPressed: () {
@@ -144,11 +142,8 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Main Title (Top Left)
 
-          // Description Text (Below Title)
-
-          // Blue Dot (Left Center)
+          // Blue Dot 
           Positioned(
             left: MediaQuery.of(context).size.width *
                 0.08, // Adjusted for screen width
@@ -164,12 +159,12 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Red Dot (Bottom Left)
+          // Red Dot 
           Positioned(
             left: -MediaQuery.of(context).size.width *
-                0.05, // Adjusted for screen width
+                0.05, 
             top: MediaQuery.of(context).size.height *
-                0.6, // Adjusted for screen height
+                0.6, 
             child: Container(
               width: 94,
               height: 87,
@@ -180,7 +175,7 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Yellow Circle (Top Right)
+          // Yellow Circle 
           Positioned(
             right: MediaQuery.of(context).size.width * 0.05,
             top: MediaQuery.of(context).size.height * 0.50,
@@ -195,9 +190,9 @@ class IntroductionBuyer extends StatelessWidget {
           ),
           Positioned(
             left: MediaQuery.of(context).size.width *
-                0.1, // Adjusted for screen width
+                0.1, 
             top: MediaQuery.of(context).size.height *
-                0.08, // Adjusted for screen height
+                0.08, 
             child: SizedBox(
               width: 70.22,
               child: Text(
@@ -215,12 +210,12 @@ class IntroductionBuyer extends StatelessWidget {
           ),
           Positioned(
             left: MediaQuery.of(context).size.width *
-                0.08, // Adjusted for screen width
+                0.08, 
             top: MediaQuery.of(context).size.height *
-                0.16, // Adjusted for screen height
+                0.16, 
             child: SizedBox(
               width: MediaQuery.of(context).size.width *
-                  0.8, // Adjusted for screen width
+                  0.8, 
               child: Text(
                 'Find great deals on pre-loved items from fellow ADNU students! Browse listings, connect with sellers, and get what you need at affordable prices—quick, easy, and hassle-free! 🛍️',
                 style: TextStyle(

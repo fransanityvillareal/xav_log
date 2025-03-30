@@ -25,7 +25,6 @@ class BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    // Filter products based on the selected category
     List<Product> filteredProducts = products.where((product) {
       return product.category == categories[selectedIndex];
     }).toList();

@@ -13,7 +13,7 @@ class Product {
     required this.description,
     required this.condition,
     required this.color,
-    required this.category, // Added category field
+    required this.category, 
   });
 }
 
@@ -27,7 +27,7 @@ List<Product> products = [
       description: "Almost new, no damage.",
       image: "assets/images/item_1.png",
       color: const Color(0xFFB0BEC5),
-      category: "Books"), // Category added
+      category: "Books"), 
 
   Product(
       id: 2,
@@ -37,7 +37,7 @@ List<Product> products = [
       description: "A comprehensive guide to C++ programming.",
       image: "assets/images/item_2.png",
       color: const Color(0xFFA1887F),
-      category: "Books"), // Category added
+      category: "Books"),
 
   Product(
       id: 3,
@@ -47,7 +47,7 @@ List<Product> products = [
       description: "Noticeable wear but fully functional.",
       image: "assets/images/item_3.png",
       color: const Color(0xFF8D6E63),
-      category: "Books"), // Category added
+      category: "Books"), 
 
   Product(
       id: 4,
@@ -57,7 +57,7 @@ List<Product> products = [
       description: "Official size and weight basketball.",
       image: "assets/images/item_4.png",
       color: const Color(0xFF757575),
-      category: "PE Equipment"), // PE Equipment category
+      category: "PE Equipment"), 
 
   Product(
       id: 5,
@@ -67,7 +67,7 @@ List<Product> products = [
       description: "Worn only a few times, great condition.",
       image: "assets/images/item_5.png",
       color: const Color(0xFF546E7A),
-      category: "PE Equipment"), // PE Equipment category
+      category: "PE Equipment"), 
 
   Product(
     id: 6,
@@ -77,6 +77,6 @@ List<Product> products = [
     description: "Not functional, for parts or repair only.",
     image: "assets/images/item_6.png",
     color: const Color(0xFF37474F),
-    category: "Books", // Books category
+    category: "Books", 
   ),
 ];

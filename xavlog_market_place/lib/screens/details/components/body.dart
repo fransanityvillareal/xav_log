@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_market_place/constants.dart';
 import 'package:xavlog_market_place/models/product.dart';
+import 'package:xavlog_market_place/screens/cart/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
   final Product product;
@@ -16,7 +18,6 @@ class Body extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               child: Stack(
                 children: <Widget>[
-                  // White background container
                   Container(
                     margin: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.3),
@@ -30,32 +31,33 @@ class Body extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        // Category & Title
-                        Text(product.category, style: const TextStyle(color: Colors.white)),
+                        Text(product.category,
+                            style: const TextStyle(color: Colors.white)),
                         Text(
                           product.title,
-                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
                         const SizedBox(height: kDefaultPaddin / 2),
 
-                        // **Row Layout: Text on the Left, Image on the Right**
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Text Content (Left)
                             Expanded(
                               flex: 2,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // **Price Section**
                                   const Text(
                                     "Price",
                                     style: TextStyle(
@@ -74,7 +76,6 @@ class Body extends StatelessWidget {
                                   ),
                                   const SizedBox(height: kDefaultPaddin),
 
-                                  // **Condition Section**
                                   const Text(
                                     "Condition",
                                     style: TextStyle(
@@ -93,8 +94,7 @@ class Body extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
-                            // Image (Right)
+
                             Expanded(
                               flex: 2,
                               child: Image.asset(
@@ -108,7 +108,6 @@ class Body extends StatelessWidget {
 
                         const SizedBox(height: kDefaultPaddin),
 
-                        // **Description Section**
                         const Text(
                           "Description",
                           style: TextStyle(
@@ -125,7 +124,6 @@ class Body extends StatelessWidget {
 
                         const SizedBox(height: kDefaultPaddin),
 
-                        // **Buttons (Chat & Buy)**
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -136,30 +134,58 @@ class Body extends StatelessWidget {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                                 child: const Text("Chat Now",
-                                    style: TextStyle(fontSize: 16, color: Colors.white)),
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white)),
                               ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // TODO: Implement buy functionality
+                                  Provider.of<CartProvider>(context,
+                                          listen: false)
+                                      .addToCart(product);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "${product.title} added to cart!",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Colors.black87,
+                                      behavior: SnackBarBehavior
+                                          .floating, 
+                                      margin: const EdgeInsets.all(
+                                          16), 
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            12),
+                                      ),
+                                    ),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 231, 169, 36),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text("Buy Now",
-                                    style: TextStyle(fontSize: 16, color: Colors.white)),
+                                child: const Text("Add to Cart",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white)),
                               ),
                             ),
                           ],

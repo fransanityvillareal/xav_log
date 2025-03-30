@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xavlog_market_place/screens/welcome/intro_buy.dart';
 import 'package:xavlog_market_place/screens/welcome/intro_seller.dart';
 
-
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
 
@@ -19,7 +18,6 @@ class IntroScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Background Circles (these will be behind the SVG)
             // Red Circle Center Left
             Positioned(
               left: MediaQuery.of(context).size.width * 0.14,
@@ -102,7 +100,6 @@ class IntroScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // Description Text
             Positioned(
               top: MediaQuery.of(context).size.height * 0.75,
               left: 0,
@@ -122,7 +119,6 @@ class IntroScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // Get Started Button with Hover Effect
             Positioned(
               bottom: MediaQuery.of(context).size.height * 0.08,
               left: MediaQuery.of(context).size.width * 0.05,
@@ -132,8 +128,7 @@ class IntroScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            IntroductionBuyer()), // Navigate to HomeScreen
+                        builder: (context) => IntroductionBuyer()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -157,46 +152,40 @@ class IntroScreen extends StatelessWidget {
               ),
             ),
             // Skip Text
-            // Skip Button (Top Right)
             Align(
-  alignment: Alignment.topRight,
-  child: Padding(
-    padding: EdgeInsets.only(
-      top: MediaQuery.of(context).size.height * 0.06, // Adjusted top spacing
-      right: MediaQuery.of(context).size.width * 0.07, // Adjusted right spacing
-    ),
-    child: GestureDetector(
-      onTap: () {
-        // Navigate to the next screen when "Skip" is pressed
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const IntroductionSeller(),
-          ),
-        );
-      },
-      child: const Text(
-        'Skip',
-        style: TextStyle(
-          color: Color(0xFF848487),
-          fontSize: 16,
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-    ),
-  ),
-),
-
-            // Center SVG Background (placed LAST to be on top)
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.06,
+                  right: MediaQuery.of(context).size.width * 0.07,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const IntroductionSeller(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(
+                      color: Color(0xFF848487),
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Center(
               child: SvgPicture.asset(
-                'assets/icons/girl_laptop.svg', // Replace with your SVG path
-                width: MediaQuery.of(context).size.width *
-                    0.6, // Adjust width as needed
-                height: MediaQuery.of(context).size.width *
-                    0.6, // Adjust height as needed
-                fit: BoxFit.contain, // Adjust fit as needed
+                'assets/icons/girl_laptop.svg',
+                width: MediaQuery.of(context).size.width * 0.6,
+                height: MediaQuery.of(context).size.width * 0.6,
+                fit: BoxFit.contain,
               ),
             ),
           ],

@@ -7,7 +7,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,  // Keeps text aligned to the left
+      crossAxisAlignment: CrossAxisAlignment.start,  
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
@@ -19,7 +19,7 @@ class Body extends StatelessWidget {
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
-        SizedBox(height: 10), // Spacing between title and categories
+        SizedBox(height: 10),
         Category(),
       ],
     );
@@ -42,9 +42,9 @@ class CategoryState extends State<Category> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,  // Prevents horizontal overflow
+        scrollDirection: Axis.horizontal, 
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,  // Aligns text properly
+          crossAxisAlignment: CrossAxisAlignment.start,  
           children: List.generate(categories.length, (index) => buildCategory(index)),
         ),
       ),
