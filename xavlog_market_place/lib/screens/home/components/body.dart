@@ -20,7 +20,8 @@ class BodyState extends State<Body> {
     'PE Equipment',
     'Shirt',
     'Tech',
-    'Accessories'
+    'Accessories',
+    'Others'
   ];
 
   @override

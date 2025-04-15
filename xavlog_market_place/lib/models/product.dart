@@ -79,4 +79,14 @@ List<Product> products = [
     color: const Color(0xFF37474F),
     category: "Books", 
   ),
+  Product(
+    id: 6,
+    title: "Cats",
+    price: 2304,
+    condition: "Sold for Repair",
+    description: "Not functional, for parts or repair only.",
+    image: "assets/images/item_6.png",
+    color: const Color(0xFF37474F),
+    category: "Others", 
+  ),
 ];
