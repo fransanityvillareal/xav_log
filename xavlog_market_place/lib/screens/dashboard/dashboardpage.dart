@@ -3,7 +3,6 @@ import 'package:xavlog_market_place/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:xavlog_market_place/screens/cart/cart_provider.dart';
 import 'dart:async';
-import 'package:xavlog_market_place/screens/home/components/body.dart';
 
 void main() {
   runApp(
