@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:xavlog_market_place/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:xavlog_market_place/screens/cart/cart_provider.dart';
+import 'dart:async';
+import 'package:xavlog_market_place/screens/home/components/body.dart';
 
 void main() {
   runApp(
@@ -15,6 +17,106 @@ void main() {
       ),
     ),
   );
+}
+
+class AutoScrollHeader extends StatefulWidget {
+  @override
+  _AutoScrollHeaderState createState() => _AutoScrollHeaderState();
+}
+
+class _AutoScrollHeaderState extends State<AutoScrollHeader> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  final List<String> messages = [
+    'Welcome to Xavalog. The Ateneo Marketplace at your fingertips.',
+    'Flexible transactions. Online or cash, you choose.',
+    'Pick up items safely at Ateneo de Naga, hassle-free.',
+  ];
+  final List<String> greetings = [
+    'Hello there!',
+    'Easy!',
+    'Secure!',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (_currentPage < messages.length - 1) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+
+      _pageController.animateToPage(
+        _currentPage,
+        duration: Duration(milliseconds: 900),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 130,
+      margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 6),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF1E3C72), Color(0xFF2A5298)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  greetings[index],
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  messages[index],
+                  style: TextStyle(
+                    color: Colors.white.withAlpha((0.9 * 255).toInt()),
+                    fontSize: 14.5,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class HomeWidget extends StatefulWidget {
@@ -46,15 +148,24 @@ class _HomeWidgetState extends State<HomeWidget> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            _buildHeader(),
+                            // _buildHeader(),
+
+                            AutoScrollHeader(),
                             _buildSectionTitle('Categories'),
                             _buildMainCategoryButtons(),
                             _buildSecondaryCategoryButtons(),
                             _buildSectionTitle('Place'),
-                            _buildFeaturedContent(),
-                            _buildFeaturedContent(),
-
-                            // _buildOrderItemsList(),
+                            _buildFeaturedContent(
+                                'assets/images/place.jpg',
+                                'Ateneo De Naga',
+                                Text(
+                                    'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.')),
+                            _buildSectionTitle('Transactions'),
+                            _buildFeaturedContent(
+                                'assets/images/transactions.jpg',
+                                'Flexible Transactions',
+                                Text(
+                                    'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.')),
                           ]
                               .map((widget) => Padding(
                                     padding: EdgeInsets.only(bottom: 24),
@@ -92,25 +203,6 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  Widget _buildDeliveryOption(String text) {
-    return GestureDetector(
-      onTap: () => setState(() => selected = text),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected == text ? Colors.blue : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: selected == text ? Colors.white : Colors.black,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildMainCategoryButtons() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -125,7 +217,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 1,)),
               );
             },
           )),
@@ -134,57 +226,9 @@ class _HomeWidgetState extends State<HomeWidget> {
             child: _buildCategoryButton('Books', 'assets/images/book.png', () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 0 )),
               );
             }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF1E3C72),
-            Color(0xFF2A5298)
-          ], // modern blue gradient
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Hi there! 👋',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-          SizedBox(height: 6),
-          Text(
-            'Welcome to Xavalog – the Ateneo Marketplace at your fingertips.',
-            style: TextStyle(
-              color: Colors.white.withAlpha((0.9 * 255).toInt()),
-              fontSize: 15.5,
-            ),
           ),
         ],
       ),
@@ -197,7 +241,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white, //color here
+          color: Colors.white, //dito
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(
@@ -229,10 +273,38 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
+  Widget _buildSmallCategoryButton(
+      String text, String assetPath, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 65,
+            height: 65,
+            decoration: BoxDecoration(
+              color: Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Image.asset(assetPath, fit: BoxFit.contain),
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSecondaryCategoryButtons() {
     return Padding(
-      padding:
-          EdgeInsets.fromLTRB(20, 0, 20, 0), // Match header & main category
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
@@ -251,14 +323,37 @@ class _HomeWidgetState extends State<HomeWidget> {
           child: Row(
             children: [
               SizedBox(width: 20),
-              _buildSmallCategoryButton('Shirt', 'assets/images/shirts.png'),
+              _buildSmallCategoryButton('Shirt', 'assets/images/shirts.png',
+                  () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 2),
+                  ),
+                );
+              }),
               SizedBox(width: 20),
-              _buildSmallCategoryButton('Tech', 'assets/images/tech.png'),
+              _buildSmallCategoryButton('Tech', 'assets/images/tech.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 3)),
+                );
+              }),
               SizedBox(width: 20),
               _buildSmallCategoryButton(
-                  'Accessories', 'assets/images/accessories.png'),
+                  'Accessories', 'assets/images/accessories.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 4)),
+                );
+              }),
               SizedBox(width: 20),
-              _buildSmallCategoryButton('Others', 'assets/images/more.png'),
+              _buildSmallCategoryButton('Others', 'assets/images/more.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 5)),
+                );
+              }),
               SizedBox(width: 20),
             ],
           ),
@@ -267,35 +362,8 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  Widget _buildSmallCategoryButton(String text, String assetPath) {
-    return Column(
-      children: [
-        Container(
-          width: 65,
-          height: 65,
-          decoration: BoxDecoration(
-            color: Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Image.asset(
-              assetPath,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-        SizedBox(height: 8),
-        Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFeaturedContent() {
+  Widget _buildFeaturedContent(
+      String assetPath, String title, Text description) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -304,7 +372,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             alignment: AlignmentDirectional(1, -1),
             children: [
               Image.asset(
-                'assets/images/place.jpg',
+                assetPath,
                 width: double.infinity,
                 height: 155,
                 fit: BoxFit.cover,
@@ -322,28 +390,17 @@ class _HomeWidgetState extends State<HomeWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Ateneo De Naga University', style: TextStyle(fontSize: 17)),
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 17),
+                ),
                 SizedBox(height: 8),
                 Row(
                   children: [
-                    Text('Pick-up and Meet'),
+                    Flexible(
+                      child: description,
+                    ),
                     SizedBox(width: 8),
-                    Container(
-                        width: 3,
-                        height: 3,
-                        decoration: BoxDecoration(
-                            color: Colors.black, shape: BoxShape.circle)),
-                    SizedBox(width: 8),
-                    SizedBox(width: 8),
-                    Text('Easy Transaction'),
-                    SizedBox(width: 8),
-                    Container(
-                        width: 3,
-                        height: 3,
-                        decoration: BoxDecoration(
-                            color: Colors.black, shape: BoxShape.circle)),
-                    SizedBox(width: 8),
-                    Text('Trusted Seller'),
                   ],
                 ),
               ],
@@ -353,44 +410,6 @@ class _HomeWidgetState extends State<HomeWidget> {
       ),
     );
   }
-
-  // Widget _buildOrderItemsList() {
-  //   return ListView(
-  //     shrinkWrap: true,
-  //     physics: NeverScrollableScrollPhysics(),
-  //     children: [
-  //       _buildOrderItem(),
-  //       _buildOrderItem(),
-  //     ]
-  //         .map((widget) => Padding(
-  //               padding: EdgeInsets.symmetric(horizontal: 16),
-  //               child: widget,
-  //             ))
-  //         .toList(),
-  //   );
-  // }
-
-  // Widget _buildOrderItem() {
-  //   return Container(
-  //     margin: EdgeInsets.only(bottom: 24),
-  //     child: Column(
-  //       children: [
-  //         Container(
-  //           height: 100,
-  //           decoration: BoxDecoration(
-  //             color: Colors.grey[300],
-  //             image: DecorationImage(
-  //               image: AssetImage('assets/images/item_5.png'),
-  //               fit: BoxFit.cover,
-  //             ),
-  //           ),
-  //         ),
-  //         SizedBox(height: 12),
-  //         Text('Order Item'),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildBottomNavBar() {
     return Container(
@@ -411,3 +430,50 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 }
+ // Widget _buildHeader() {
+  //   return Container(
+  //     width: double.infinity,
+  //     margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
+  //     padding: EdgeInsets.all(20),
+  //     decoration: BoxDecoration(
+  //       gradient: LinearGradient(
+  //         colors: [
+  //           Color(0xFF1E3C72),
+  //           Color(0xFF2A5298)
+  //         ], // modern blue gradient
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       ),
+  //       borderRadius: BorderRadius.circular(16),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black12,
+  //           blurRadius: 8,
+  //           offset: Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           'Hi there! 👋',
+  //           style: TextStyle(
+  //             color: Colors.white,
+  //             fontSize: 24,
+  //             fontWeight: FontWeight.bold,
+  //             letterSpacing: 0.5,
+  //           ),
+  //         ),
+  //         SizedBox(height: 6),
+  //         Text(
+  //           'Welcome to Xavalog – the Ateneo Marketplace at your fingertips.',
+  //           style: TextStyle(
+  //             color: Colors.white.withAlpha((0.9 * 255).toInt()),
+  //             fontSize: 15.5,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }

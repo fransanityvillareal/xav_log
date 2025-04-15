@@ -3,17 +3,26 @@ import 'package:xavlog_market_place/constants.dart';
 import 'package:xavlog_market_place/models/product.dart';
 import 'package:xavlog_market_place/screens/details/details_screen.dart';
 
+
 const double kDefaultPadding = 16.0;
 
 class Body extends StatefulWidget {
-  const Body({super.key});
+  final int initialIndex;
+
+  const Body({super.key, this.initialIndex = 0});
 
   @override
   BodyState createState() => BodyState();
 }
 
 class BodyState extends State<Body> {
-  int selectedIndex = 0;
+  late int selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.initialIndex;
+  }
 
   final List<String> categories = [
     'Books',
@@ -23,6 +32,7 @@ class BodyState extends State<Body> {
     'Accessories',
     'Others'
   ];
+  
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +139,7 @@ class ItemCard extends StatelessWidget {
   }
 }
 
-class Category extends StatelessWidget {
+class Category extends StatefulWidget {
   final List<String> categories;
   final int selectedIndex;
   final Function(int) onCategorySelected;
@@ -142,13 +152,54 @@ class Category extends StatelessWidget {
   });
 
   @override
+  State<Category> createState() => _CategoryState();
+}
+
+class _CategoryState extends State<Category> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void didUpdateWidget(covariant Category oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If selected index changed, scroll to it
+    if (widget.selectedIndex != oldWidget.selectedIndex) {
+      _scrollToSelected();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Delay scroll until after layout is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelected();
+    });
+  }
+
+  void _scrollToSelected() {
+    // Estimate item width + padding: 80 is safe
+    double targetOffset = widget.selectedIndex * 80.0;
+
+    _scrollController.animateTo(
+      targetOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        controller: _scrollController,
         child: Row(
-          children: List.generate(categories.length, (index) => buildCategory(index)),
+          children: List.generate(
+            widget.categories.length,
+            (index) => buildCategory(index),
+          ),
         ),
       ),
     );
@@ -158,21 +209,25 @@ class Category extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
       child: GestureDetector(
-        onTap: () => onCategorySelected(index),
+        onTap: () => widget.onCategorySelected(index),
         child: Column(
           children: [
             Text(
-              categories[index],
+              widget.categories[index],
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: selectedIndex == index ? const Color.fromARGB(255, 0, 0, 0) : Color(0xFF6F6F79),
+                color: widget.selectedIndex == index
+                    ? const Color.fromARGB(255, 0, 0, 0)
+                    : const Color(0xFF6F6F79),
               ),
             ),
             Container(
               margin: const EdgeInsets.only(top: kDefaultPadding / 4),
               height: 2,
               width: 30,
-              color: selectedIndex == index ? kNavActiveColor : Colors.transparent,
+              color: widget.selectedIndex == index
+                  ? kNavActiveColor
+                  : Colors.transparent,
             ),
           ],
         ),

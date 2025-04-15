@@ -6,7 +6,9 @@ import 'package:xavlog_market_place/screens/cart/cart_screen.dart';
 import 'package:xavlog_market_place/screens/search/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int initialCategoryIndex;
+
+  const HomeScreen({super.key, this.initialCategoryIndex = 0});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -17,17 +19,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, 
-      body: Body(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: SvgPicture.asset("assets/icons/back.svg"),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        actions: <Widget>[
+        actions: [
           IconButton(
             icon: SvgPicture.asset(
               "assets/icons/search.svg",
@@ -43,15 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
               colorFilter: const ColorFilter.mode(kTextColor, BlendMode.srcIn),
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()));
             },
           ),
           const SizedBox(width: kDefaultPaddin / 2),
         ],
       ),
+      body: Body(initialIndex: widget.initialCategoryIndex),
     );
   }
 }
