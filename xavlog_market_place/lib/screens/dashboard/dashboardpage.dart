@@ -18,6 +18,7 @@ void main() {
   );
 }
 
+// ignore: use_key_in_widget_constructors
 class AutoScrollHeader extends StatefulWidget {
   @override
   _AutoScrollHeaderState createState() => _AutoScrollHeaderState();
