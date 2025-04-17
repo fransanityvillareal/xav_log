@@ -11,90 +11,177 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key, required this.onTap});
 
-// login method
   void login(BuildContext context) async {
     final authenticationService = AuthenticationService();
 
-    //try login
     try {
       await authenticationService.signInWithEmailAndPassword(
         _emailController.text,
         _passwordController.text,
       );
     } catch (e) {
-      // Handle error
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(e.toString()),
+          title: const Text("Login Failed"),
+          content: Text(e.toString()),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("OK"),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
             ),
           ],
         ),
       );
     }
   }
+  // void login(BuildContext context) async {
+  //   final authenticationService = AuthenticationService();
+
+  //   final email = _emailController.text.trim();
+  //   if (!email.endsWith('@gbox.adnu.edu.ph')) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: const Text("Invalid Email"),
+  //         content: const Text(
+  //             "Please use your GBox email (e.g. user@gbox.adnu.edu.ph)."),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: const Text("OK"),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     await authenticationService.signInWithEmailAndPassword(
+  //       email,
+  //       _passwordController.text,
+  //     );
+  //   } catch (e) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: const Text("Login Failed"),
+  //         content: Text(e.toString()),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: const Text("OK"),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    const Color ateneoBlue = Color(0xFF003A70);
+    const Color goldAccent = Color(0xFFFFD700);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: const Color(0xFFE6ECF3),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.message,
-              size: 65,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 50),
-            Text(
-              "Oh Welcome back!, you've been missed",
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary, fontSize: 20),
-            ),
-            const SizedBox(height: 25),
-            TextfieldLogin(
-              hintText: "Email",
-              obsecuretext: false,
-              controller: _emailController,
-            ),
-            const SizedBox(height: 10),
-            TextfieldLogin(
-              hintText: "Password",
-              obsecuretext: true,
-              controller: _passwordController,
-            ),
-            const SizedBox(height: 25),
-            LoginButton(
-              text: "Login",
-              onTap: () => login(context),
-            ),
-            const SizedBox(height: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Not a member? ",
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                GestureDetector(
-                  onTap: onTap,
-                  child: Text("Register now",
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 460),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.forum_rounded, size: 70, color: ateneoBlue),
+                  const SizedBox(height: 28),
+                  Center(
+                    child: Text(
+                      "Welcome to Xavlog Market Place Chat",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary)),
-                )
-              ],
-            )
-          ],
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: ateneoBlue,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 1),
+                    child: Text(
+                      "Sign in with your GBox account to continue.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  TextfieldLogin(
+                    hintText: "GBox Email",
+                    obsecuretext: false,
+                    controller: _emailController,
+                    prefixIcon:
+                        Icon(Icons.email, color: const Color(0xFFBDBDBD)),
+                  ),
+                  const SizedBox(height: 16),
+                  TextfieldLogin(
+                    hintText: "Password",
+                    obsecuretext: true,
+                    controller: _passwordController,
+                    prefixIcon:
+                        Icon(Icons.lock, color: const Color(0xFFBDBDBD)),
+                  ),
+                  const SizedBox(height: 32),
+                  LoginButton(
+                    text: "Log In",
+                    onTap: () => login(context),
+                    buttonColor: ateneoBlue,
+                    textColor: Colors.white,
+                    paddingVertical: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have a GBox account?",
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(width: 6),
+                      GestureDetector(
+                        onTap: onTap,
+                        child: Text(
+                          "Register now",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: goldAccent,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
