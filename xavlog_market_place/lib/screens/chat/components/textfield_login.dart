@@ -24,7 +24,6 @@ class _TextfieldLoginState extends State<TextfieldLogin> {
   static const Color _lightFieldBg = Color(0xFFF3F6FA);
   static const Color _ateneoBlue = Color(0xFF003A70);
   static const Color _grayBorder = Color(0xFFD0D5DD);
-  static const Color _grayIcon = Color(0xFFBDBDBD);
 
   @override
   void initState() {
