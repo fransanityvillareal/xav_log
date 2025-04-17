@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/login_authentication/login_or%20register.dart';
+import 'package:xavlog_market_place/services/login_authentication/login_or%20register.dart';
 import 'package:xavlog_market_place/screens/chat/chat_home_page.dart';
 
 class AuthenticationGate extends StatelessWidget {
@@ -15,7 +15,7 @@ class AuthenticationGate extends StatelessWidget {
           //user is login
 
           if (snapshot.hasData) {
-            return const ChatHomePage();
+            return  ChatHomePage();
           }
 
           //user is not login

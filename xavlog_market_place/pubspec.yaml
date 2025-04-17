@@ -38,6 +38,8 @@ dependencies:
   flutter_svg: ^2.0.17
   firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
+  cloud_firestore: ^5.4.2 # <-- Add this line
+
 
 
 dev_dependencies:
