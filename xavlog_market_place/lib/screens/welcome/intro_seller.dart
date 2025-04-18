@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xavlog_market_place/screens/dashboard/dashboardpage.dart';
 import 'package:xavlog_market_place/screens/home/home_screen.dart';
 
 void main() {
@@ -147,7 +148,7 @@ class IntroductionSeller extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                           HomeScreen(), 
+                            HomeWidget(), 
                     ),
                   );
                 },

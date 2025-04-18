@@ -8,10 +8,13 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+        width: screenWidth,
+        height: screenHeight,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(40),
@@ -20,11 +23,11 @@ class IntroScreen extends StatelessWidget {
           children: [
             // Red Circle Center Left
             Positioned(
-              left: MediaQuery.of(context).size.width * 0.14,
-              top: MediaQuery.of(context).size.height * 0.36,
+              left: screenWidth * 0.14,
+              top: screenHeight * 0.36,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.48,
-                height: MediaQuery.of(context).size.width * 0.48,
+                width: screenWidth * 0.48,
+                height: screenWidth * 0.48,
                 decoration: BoxDecoration(
                   color: const Color(0xFFE14B5A),
                   shape: BoxShape.circle,
@@ -33,11 +36,11 @@ class IntroScreen extends StatelessWidget {
             ),
             // Yellow Circle Top Right
             Positioned(
-              left: MediaQuery.of(context).size.width * 0.77,
-              top: MediaQuery.of(context).size.height * 0.13,
+              left: screenWidth * 0.77,
+              top: screenHeight * 0.13,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.47,
-                height: MediaQuery.of(context).size.width * 0.47,
+                width: screenWidth * 0.47,
+                height: screenWidth * 0.47,
                 decoration: BoxDecoration(
                   color: const Color(0xFFF9D048),
                   shape: BoxShape.circle,
@@ -46,11 +49,11 @@ class IntroScreen extends StatelessWidget {
             ),
             // Blue Circle Bottom Right
             Positioned(
-              left: -MediaQuery.of(context).size.width * 0.15,
-              top: MediaQuery.of(context).size.height * 0.17,
+              left: -screenWidth * 0.15,
+              top: screenHeight * 0.17,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.24,
-                height: MediaQuery.of(context).size.width * 0.24,
+                width: screenWidth * 0.24,
+                height: screenWidth * 0.24,
                 decoration: BoxDecoration(
                   color: const Color(0xFF5C5BFD),
                   shape: BoxShape.circle,
@@ -59,11 +62,11 @@ class IntroScreen extends StatelessWidget {
             ),
             // Blue Circle Bottom Left
             Positioned(
-              left: MediaQuery.of(context).size.width * 0.81,
-              top: MediaQuery.of(context).size.height * 0.5,
+              left: screenWidth * 0.81,
+              top: screenHeight * 0.5,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.06,
-                height: MediaQuery.of(context).size.width * 0.06,
+                width: screenWidth * 0.06,
+                height: screenWidth * 0.06,
                 decoration: BoxDecoration(
                   color: const Color(0xFF2CB4EC),
                   shape: BoxShape.circle,
@@ -72,11 +75,11 @@ class IntroScreen extends StatelessWidget {
             ),
             // Yellow Circle Top Left
             Positioned(
-              left: MediaQuery.of(context).size.width * 0.16,
-              top: MediaQuery.of(context).size.height * 0.22,
+              left: screenWidth * 0.16,
+              top: screenHeight * 0.22,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.06,
-                height: MediaQuery.of(context).size.width * 0.06,
+                width: screenWidth * 0.06,
+                height: screenWidth * 0.06,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFD037),
                   shape: BoxShape.circle,
@@ -85,7 +88,7 @@ class IntroScreen extends StatelessWidget {
             ),
             // Welcome Text
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.6,
+              top: screenHeight * 0.6,
               left: 0,
               right: 0,
               child: Text(
@@ -101,7 +104,7 @@ class IntroScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.75,
+              top: screenHeight * 0.75,
               left: 0,
               right: 0,
               child: Padding(
@@ -120,33 +123,37 @@ class IntroScreen extends StatelessWidget {
               ),
             ),
             Positioned(
-              bottom: MediaQuery.of(context).size.height * 0.08,
-              left: MediaQuery.of(context).size.width * 0.05,
-              right: MediaQuery.of(context).size.width * 0.05,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => IntroductionBuyer()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF071D99),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              bottom: screenHeight * 0.08,
+              left: screenWidth * 0.05,
+              right: screenWidth * 0.05,
+              child: SizedBox(
+                width: screenWidth * 0.85, // Adjusting width of button
+                height: 54, // Set height for the button
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => IntroductionBuyer()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF071D99),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    elevation: 4,
+                    shadowColor: Colors.black.withAlpha((0.2 * 255).toInt()),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  elevation: 4,
-                  shadowColor: Colors.black.withAlpha((0.2 * 255).toInt()),
-                ),
-                child: const Text(
-                  'Get Started',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
+                  child: const Text(
+                    'Get Started',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -156,8 +163,8 @@ class IntroScreen extends StatelessWidget {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.06,
-                  right: MediaQuery.of(context).size.width * 0.07,
+                  top: screenHeight * 0.06,
+                  right: screenWidth * 0.07,
                 ),
                 child: GestureDetector(
                   onTap: () {
@@ -183,8 +190,8 @@ class IntroScreen extends StatelessWidget {
             Center(
               child: SvgPicture.asset(
                 'assets/icons/girl_laptop.svg',
-                width: MediaQuery.of(context).size.width * 0.6,
-                height: MediaQuery.of(context).size.width * 0.6,
+                width: screenWidth * 0.6, // Making image responsive
+                height: screenWidth * 0.6,
                 fit: BoxFit.contain,
               ),
             ),

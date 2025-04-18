@@ -18,7 +18,6 @@ void main() {
   );
 }
 
-// ignore: use_key_in_widget_constructors
 class AutoScrollHeader extends StatefulWidget {
   @override
   _AutoScrollHeaderState createState() => _AutoScrollHeaderState();
@@ -204,74 +203,83 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Widget _buildMainCategoryButtons() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment
-            .spaceBetween, // Ensures even spacing between buttons
-        children: [
-          Expanded(
-              child: _buildCategoryButton(
+  return Padding(
+    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures even spacing between buttons
+      children: [
+        Expanded(
+          child: _buildCategoryButton(
             'PE Equipment',
             'assets/images/sport.png',
             () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 1,)),
+                MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 1)),
               );
             },
-          )),
-          SizedBox(width: 12), // Adds spacing between buttons
-          Expanded(
-            child: _buildCategoryButton('Books', 'assets/images/book.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 0 )),
-              );
-            }),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        SizedBox(width: 12), // Adds spacing between buttons
+        Expanded(
+          child: _buildCategoryButton('Books', 'assets/images/book.png', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 0)),
+            );
+          }),
+        ),
+      ],
+    ),
+  );
+}
 
-  Widget _buildCategoryButton(
-      String text, String assetPath, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white, //dito
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Image.asset(
-                    assetPath,
-                    width: 50,
-                    height: 45,
-                    fit: BoxFit.cover,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(text, style: TextStyle(fontSize: 17)),
-                ],
-              ),
-            ],
+Widget _buildCategoryButton(
+    String text, String assetPath, VoidCallback onTap) {
+  return InkWell(
+    onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.white, // Background color of the button
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
+        ], // Add shadow here
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Image.asset(
+                  assetPath,
+                  width: 50,
+                  height: 45,
+                  fit: BoxFit.cover,
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(text, style: TextStyle(fontSize: 17)),
+              ],
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildSmallCategoryButton(
       String text, String assetPath, VoidCallback onTap) {
