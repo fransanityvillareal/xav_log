@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:xavlog_market_place/firebase_options.dart';
 import 'package:xavlog_market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_market_place/screens/welcome/intro_screen.dart';
-import 'package:xavlog_market_place/main_chat.dart'; // Import chat app
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
