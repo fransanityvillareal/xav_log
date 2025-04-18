@@ -35,12 +35,12 @@ class ChatHomePage extends StatelessWidget {
             const Text(
               "Contacts",
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
                 color: Color(0xFF003A70),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Expanded(child: _buildUserList(context)),
           ],
         ),
@@ -67,19 +67,25 @@ class ChatHomePage extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final user = snapshot.data![index];
-            if (user['email'] == currentUserEmail)
+            if (user['email'] == currentUserEmail) {
               return const SizedBox.shrink();
+            }
+
+            final photoUrl = user['photoURL'];
+            final email = user['email'];
+            final initials = email.isNotEmpty ? email[0].toUpperCase() : "?";
 
             return GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                        receiverEmail: user['email'],
-                        receiverID: user['uid'],
-                      ),
-                    ));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                      receiverEmail: user['email'],
+                      receiverID: user['uid'],
+                    ),
+                  ),
+                );
               },
               child: Container(
                 padding:
@@ -89,28 +95,41 @@ class ChatHomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      backgroundColor: Color(0xFFCAD6E2),
-                      radius: 22,
-                      child: Icon(Icons.person, color: Colors.white),
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundImage: photoUrl != null && photoUrl != ""
+                          ? NetworkImage(photoUrl)
+                          : null,
+                      backgroundColor: const Color(0xFFCAD6E2),
+                      child: photoUrl == null || photoUrl == ""
+                          ? Text(
+                              initials,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Text(
-                        user['email'],
+                        email,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Color(0xFF1C1C1C),
                           fontWeight: FontWeight.w500,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const Icon(Icons.arrow_forward_ios,

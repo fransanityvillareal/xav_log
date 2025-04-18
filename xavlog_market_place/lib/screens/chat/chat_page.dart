@@ -5,32 +5,52 @@ import 'package:xavlog_market_place/services/login_authentication/authentication
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
 
-  ChatPage({
+  const ChatPage({
     super.key,
     required this.receiverEmail,
     required this.receiverID,
   });
 
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final ChatService _chatService = ChatService();
   final AuthenticationService _authenticationService = AuthenticationService();
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(receiverID, _messageController.text);
+      await _chatService.sendMessage(
+          widget.receiverID, _messageController.text);
       _messageController.clear();
+      _scrollToBottom();
     }
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(receiverEmail),
+        title: Text(widget.receiverEmail),
         backgroundColor: const Color(0xFF003A70), // Ateneo Blue
       ),
       body: Column(
@@ -45,13 +65,18 @@ class ChatPage extends StatelessWidget {
   Widget _buildMessageList() {
     String senderID = _authenticationService.getCurrentUser!.uid;
     return StreamBuilder(
-      stream: _chatService.getMessages(receiverID, senderID),
+      stream: _chatService.getMessages(widget.receiverID, senderID),
       builder: (context, snapshot) {
         if (snapshot.hasError) return const Text("Error loading messages.");
-        if (snapshot.connectionState == ConnectionState.waiting)
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
+        }
+
+        // Auto-scroll to bottom after messages build
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
         return ListView(
+          controller: _scrollController,
           padding: const EdgeInsets.all(10),
           children:
               snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
@@ -65,47 +90,55 @@ class ChatPage extends StatelessWidget {
     bool isCurrentUser =
         data['senderID'] == _authenticationService.getCurrentUser!.uid;
 
-    var alignment =
+    final alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
-    var bubbleColor = isCurrentUser
-        ? const Color(0xFF003A70)
-        : const Color(0xFFFFD700); 
-    var textColor = isCurrentUser ? Colors.white : Colors.black;
+    final bubbleColor =
+        isCurrentUser ? const Color(0xFF003A70) : const Color(0xFFFFD700);
+    final textColor = isCurrentUser ? Colors.white : Colors.black87;
+    final textAlign = isCurrentUser ? TextAlign.right : TextAlign.left;
 
-    var timeString =
+    final timeString =
         DateFormat('hh:mm a').format((data['timestamp'] as Timestamp).toDate());
 
     return Align(
       alignment: alignment,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: Column(
           crossAxisAlignment:
               isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Container(
-              constraints: const BoxConstraints(maxWidth: 250),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              constraints: const BoxConstraints(maxWidth: 260),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: bubbleColor,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: isCurrentUser
+                      ? const Radius.circular(16)
+                      : const Radius.circular(4),
+                  bottomRight: isCurrentUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(16),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: isCurrentUser
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start, 
-                children: [
-                  Text(
-                    data["message"],
-                    style: TextStyle(color: textColor),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    timeString,
-                    style: TextStyle(
-                        fontSize: 10, color: textColor.withAlpha(179)),
-                  ),
-                ],
+              child: Text(
+                data["message"],
+                style: TextStyle(color: textColor, fontSize: 15),
+                textAlign: textAlign,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                timeString,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey.shade600,
+                ),
               ),
             ),
           ],

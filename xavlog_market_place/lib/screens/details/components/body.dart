@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_market_place/constants.dart';
+import 'package:xavlog_market_place/main_chat.dart';
 import 'package:xavlog_market_place/models/product.dart';
 import 'package:xavlog_market_place/screens/cart/cart_provider.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,6 @@ class Body extends StatelessWidget {
                               ),
                         ),
                         const SizedBox(height: kDefaultPaddin / 2),
-
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -75,7 +75,6 @@ class Body extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: kDefaultPaddin),
-
                                   const Text(
                                     "Condition",
                                     style: TextStyle(
@@ -94,7 +93,6 @@ class Body extends StatelessWidget {
                                 ],
                               ),
                             ),
-
                             Expanded(
                               flex: 2,
                               child: Image.asset(
@@ -105,9 +103,7 @@ class Body extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: kDefaultPaddin),
-
                         const Text(
                           "Description",
                           style: TextStyle(
@@ -121,16 +117,20 @@ class Body extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 14, color: Colors.black54),
                         ),
-
                         const SizedBox(height: kDefaultPaddin),
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // TODO: Implement chat functionality
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyAppChat(), // Navigate to the chat app
+                                    ),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
@@ -140,9 +140,11 @@ class Body extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text("Chat Now",
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white)),
+                                child: const Text(
+                                  "Chat Now",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -163,13 +165,10 @@ class Body extends StatelessWidget {
                                       ),
                                       duration: const Duration(seconds: 2),
                                       backgroundColor: Colors.black87,
-                                      behavior: SnackBarBehavior
-                                          .floating, 
-                                      margin: const EdgeInsets.all(
-                                          16), 
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.all(16),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            12),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                   );
@@ -183,13 +182,15 @@ class Body extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text("Add to Cart",
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white)),
+                                child: const Text(
+                                  "Add to Cart",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
                               ),
                             ),
                           ],
-                        ),
+                        )
                       ],
                     ),
                   ),
