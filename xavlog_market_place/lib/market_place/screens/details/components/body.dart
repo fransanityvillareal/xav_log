@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_market_place/constants.dart';
-import 'package:xavlog_market_place/market_place/screens/chat/main_chat.dart';
+import 'package:xavlog_market_place/main_chat.dart';
 import 'package:xavlog_market_place/market_place/models/product.dart';
 import 'package:xavlog_market_place/market_place/screens/cart/cart_provider.dart';
 import 'package:provider/provider.dart';
