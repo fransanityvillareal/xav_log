@@ -50,7 +50,6 @@ class _SigninPageState extends State<SigninPage> {
     final fontSize = width * 0.03; // Font size scales with screen width
 
     // Get the height of the keyboard if it's visible
-    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
       body: SingleChildScrollView(
