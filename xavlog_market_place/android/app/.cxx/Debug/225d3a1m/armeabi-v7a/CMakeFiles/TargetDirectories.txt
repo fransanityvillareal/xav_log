@@ -1,2 +1,0 @@
-/home/johnfrancis/Desktop/xav_log/xavlog_market_place/android/app/.cxx/Debug/225d3a1m/armeabi-v7a/CMakeFiles/edit_cache.dir
-/home/johnfrancis/Desktop/xav_log/xavlog_market_place/android/app/.cxx/Debug/225d3a1m/armeabi-v7a/CMakeFiles/rebuild_cache.dir

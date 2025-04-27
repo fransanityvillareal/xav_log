@@ -1,0 +1,1 @@
+/home/johnfrancis/Desktop/xav_log/xavlog_core/build/app/intermediates/cxx/Debug/225d3a1m/obj/arm64-v8a

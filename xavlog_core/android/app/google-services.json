@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "511714298489",
+    "project_id": "xavlogchat",
+    "storage_bucket": "xavlogchat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511714298489:android:911fe62eff54df9bc6e2a8",
+        "android_client_info": {
+          "package_name": "com.example.xavlog_core"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhRhu09Mc1K_R-i-uBriPr_JPIq-cGnzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
