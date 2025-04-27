@@ -116,7 +116,7 @@ class XavLog extends StatelessWidget {
           labelLarge: TextStyle(fontFamily: 'Jost'),
         ),
       ),
-      home: const SigninPage(), // Start with Chat Sign-in
+      home: const SigninPage(), 
     );
   }
 }

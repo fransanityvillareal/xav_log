@@ -20,6 +20,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'profile.dart';
 import '../event_finder/eventfinderpage_reg.dart';
@@ -1447,6 +1448,7 @@ class _HomepageState extends State<Homepage> {
 
       case 'Grades Tracker':
       // return const GradesTrackerPage(); // Uncomment and implement this when ready
+      return const InitialPage(); // Redirect to GradesTrackerPage
       case 'Social Collaboration':
       // return const SocialCollaborationPage(); // Uncomment and implement this when ready
       case 'Schedule Manager':
