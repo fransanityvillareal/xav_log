@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/screens/buy/buy_page.dart';
-import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_screen.dart';
 import 'package:xavlog_core/features/market_place/screens/details/components/body.dart'
     as details_body;
