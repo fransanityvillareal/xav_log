@@ -1,15 +1,15 @@
 /// Home Page Dashboard
-/// 
+///
 /// Purpose: Main dashboard displaying student information, analytics, calendar,
 /// navigation options, and upcoming activities.
-/// 
+///
 /// Flow:
 /// 1. User logs in and is directed to this dashboard
 /// 2. User can view their profile information and analytics
 /// 3. User can navigate to different features of the app
 /// 4. User can manage their calendar and upcoming activities
 /// 5. User can access notifications and settings
-/// 
+///
 /// Backend Implementation Needed:
 /// - User profile data retrieval from database
 /// - Analytics data calculation and retrieval
@@ -20,6 +20,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'profile.dart';
 import '../event_finder/eventfinderpage_reg.dart';
 import '../login/login_page.dart';
@@ -60,7 +61,8 @@ class _HomepageState extends State<Homepage> {
     DashboardItem(
       title: 'Attendance Tracker',
       icon: Icons.track_changes,
-      type: 'page', // DYNAMIC: Could be 'page', 'link', or 'external' based on navigation behavior
+      type:
+          'page', // DYNAMIC: Could be 'page', 'link', or 'external' based on navigation behavior
     ),
     DashboardItem(title: 'Calendar', icon: Icons.calendar_today, type: 'page'),
     DashboardItem(title: 'Event Finder', icon: Icons.event, type: 'page'),
@@ -85,20 +87,24 @@ class _HomepageState extends State<Homepage> {
     Activity(
       title: 'Midterm Examination',
       description: 'Comprehensive exam covering chapters 1-5',
-      date: DateTime.now().add(const Duration(days: 2)), // DYNAMIC: Calculate from current date
+      date: DateTime.now()
+          .add(const Duration(days: 2)), // DYNAMIC: Calculate from current date
       category: 'Academic', // Used for filtering and categorization
     ),
     Activity(
       title: 'Project Deadline',
       description: 'Final submission of mobile development project',
-      date: DateTime.now().add(const Duration(days: 5)), // DYNAMIC: Calculate from current date
+      date: DateTime.now()
+          .add(const Duration(days: 5)), // DYNAMIC: Calculate from current date
       category: 'Project',
     ),
     Activity(
       title: 'Organization Meeting',
       description: 'Monthly general assembly',
-      date: DateTime.now().add(const Duration(days: 7)), // DYNAMIC: Calculate from current date
-      category: 'Organization', // BACKEND: Missing date field should be handled gracefully
+      date: DateTime.now()
+          .add(const Duration(days: 7)), // DYNAMIC: Calculate from current date
+      category:
+          'Organization', // BACKEND: Missing date field should be handled gracefully
     ),
     /////////////////////// Add more activities as needed through add button on upcoming activities //////////////////////////
   ];
@@ -187,13 +193,12 @@ class _HomepageState extends State<Homepage> {
                 DropdownButtonFormField<String>(
                   value: _selectedCategory,
                   decoration: const InputDecoration(labelText: 'Category'),
-                  items:
-                      _activityCategories.map((String category) {
-                        return DropdownMenuItem(
-                          value: category,
-                          child: Text(category),
-                        );
-                      }).toList(),
+                  items: _activityCategories.map((String category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedCategory = newValue!;
@@ -353,218 +358,216 @@ class _HomepageState extends State<Homepage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            height: screenSize.height * 0.8,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Student Analytics',
-                        style: TextStyle(
-                          fontFamily: 'Jost',
-                          fontSize: fontSize * 1.4,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF071D99),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
+      builder: (context) => Container(
+        height: screenSize.height * 0.8,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Student Analytics',
+                    style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: fontSize * 1.4,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF071D99),
+                    ),
                   ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(16.0),
-                    children: [
-                      // Attendance analytics card
-                      Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Attendance Overview',
-                                style: TextStyle(
-                                  fontFamily: 'Jost',
-                                  fontSize: fontSize * 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF071D99),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  _buildPieChartItem(
-                                    'Present',
-                                    0.85,
-                                    const Color(0xFF071D99),
-                                  ),
-                                  _buildPieChartItem(
-                                    'Absent',
-                                    0.08,
-                                    Colors.red,
-                                  ),
-                                  _buildPieChartItem(
-                                    'Late',
-                                    0.07,
-                                    const Color(0xFFD7A61F),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              const Text('Attendance Distribution'),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Performance Analytics
-                      Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Subject Performance',
-                                style: TextStyle(
-                                  fontFamily: 'Jost',
-                                  fontSize: fontSize * 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF071D99),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              SizedBox(height: 200, child: _buildBarChart()),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Progress Analytics
-                      Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Semester Progress',
-                                style: TextStyle(
-                                  fontFamily: 'Jost',
-                                  fontSize: fontSize * 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF071D99),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Completed',
-                                          style: TextStyle(
-                                            fontFamily: 'Jost',
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          '60%',
-                                          style: TextStyle(
-                                            fontFamily: 'Jost',
-                                            fontSize: fontSize * 1.3,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    width: 1,
-                                    color: Colors.grey[300],
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Remaining',
-                                          style: TextStyle(
-                                            fontFamily: 'Jost',
-                                            color: Colors.orange,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          '40%',
-                                          style: TextStyle(
-                                            fontFamily: 'Jost',
-                                            fontSize: fontSize * 1.3,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Export Button
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF071D99),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Analytics report exported'),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  // Attendance analytics card
+                  Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Attendance Overview',
+                            style: TextStyle(
+                              fontFamily: 'Jost',
+                              fontSize: fontSize * 1.2,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF071D99),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.download, color: Colors.white),
-                        label: Text(
-                          'Export Report',
-                          style: TextStyle(
-                            fontFamily: 'Jost',
-                            color: Colors.white,
                           ),
-                        ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildPieChartItem(
+                                'Present',
+                                0.85,
+                                const Color(0xFF071D99),
+                              ),
+                              _buildPieChartItem(
+                                'Absent',
+                                0.08,
+                                Colors.red,
+                              ),
+                              _buildPieChartItem(
+                                'Late',
+                                0.07,
+                                const Color(0xFFD7A61F),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          const Text('Attendance Distribution'),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+
+                  // Performance Analytics
+                  Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Subject Performance',
+                            style: TextStyle(
+                              fontFamily: 'Jost',
+                              fontSize: fontSize * 1.2,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF071D99),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(height: 200, child: _buildBarChart()),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Progress Analytics
+                  Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Semester Progress',
+                            style: TextStyle(
+                              fontFamily: 'Jost',
+                              fontSize: fontSize * 1.2,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF071D99),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Completed',
+                                      style: TextStyle(
+                                        fontFamily: 'Jost',
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '60%',
+                                      style: TextStyle(
+                                        fontFamily: 'Jost',
+                                        fontSize: fontSize * 1.3,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: 50,
+                                width: 1,
+                                color: Colors.grey[300],
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Remaining',
+                                      style: TextStyle(
+                                        fontFamily: 'Jost',
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '40%',
+                                      style: TextStyle(
+                                        fontFamily: 'Jost',
+                                        fontSize: fontSize * 1.3,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Export Button
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF071D99),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Analytics report exported'),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.download, color: Colors.white),
+                    label: Text(
+                      'Export Report',
+                      style: TextStyle(
+                        fontFamily: 'Jost',
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -715,7 +718,6 @@ class _HomepageState extends State<Homepage> {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
@@ -845,7 +847,6 @@ class _HomepageState extends State<Homepage> {
                       child: Icon(Icons.person, size: 40, color: Colors.white),
                     ),
                   ),
-
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
@@ -944,7 +945,13 @@ class _HomepageState extends State<Homepage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) => LoginPage(
+                                  onTap: () {
+                                    // You can put what should happen when the user taps "Log-in"
+                                    // For example, nothing yet because you want them to log in manually first
+                                    // or you could just Navigator.pop(context); etc.
+                                  },
+                                ),
                               ),
                             ); // Redirect to login page
                           },
@@ -981,87 +988,86 @@ class _HomepageState extends State<Homepage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
-                        style: TextStyle(
-                          fontSize: fontSize * 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF071D99),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
+                    style: TextStyle(
+                      fontSize: fontSize * 1.2,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF071D99),
+                    ),
                   ),
-                ),
-                const Divider(height: 1),
-                events.isEmpty
-                    ? Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Text(
-                        'No events for this day',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: fontSize,
-                        ),
-                      ),
-                    )
-                    : Flexible(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          final event = events[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(
-                              leading: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF071D99,
-                                  ).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  _getCategoryIcon(event.category),
-                                  color: const Color(0xFF071D99),
-                                ),
-                              ),
-                              title: Text(
-                                event.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF071D99),
-                                ),
-                              ),
-                              subtitle: Text(event.description),
-                            ),
-                          );
-                        },
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            events.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Text(
+                      'No events for this day',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: fontSize,
                       ),
                     ),
-                SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
-              ],
-            ),
-          ),
+                  )
+                : Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      itemCount: events.length,
+                      itemBuilder: (context, index) {
+                        final event = events[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFF071D99,
+                                ).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                _getCategoryIcon(event.category),
+                                color: const Color(0xFF071D99),
+                              ),
+                            ),
+                            title: Text(
+                              event.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF071D99),
+                              ),
+                            ),
+                            subtitle: Text(event.description),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1203,12 +1209,11 @@ class _HomepageState extends State<Homepage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => ProfilePage(
-                                isOrganization: false,
-                                orgName: _name,
-                                description: _description,
-                              ),
+                          builder: (context) => ProfilePage(
+                            isOrganization: false,
+                            orgName: _name,
+                            description: _description,
+                          ),
                         ),
                       ).then((result) {
                         // Update dashboard with the returned profile data
@@ -1231,14 +1236,17 @@ class _HomepageState extends State<Homepage> {
                           backgroundImage: NetworkImage(_profileImageUrl),
                           onBackgroundImageError: (_, __) {
                             setState(() {
-                              _profileImageUrl = 'https://picsum.photos/200?random=1';
+                              _profileImageUrl =
+                                  'https://picsum.photos/200?random=1';
                             });
                           },
-                          child: _profileImageUrl.isEmpty ? const Icon(
-                            Icons.person,
-                            size: 30,
-                            color: Color(0xFF071D99),
-                          ) : null,
+                          child: _profileImageUrl.isEmpty
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 30,
+                                  color: Color(0xFF071D99),
+                                )
+                              : null,
                         ),
                       ),
                     ),
@@ -1271,58 +1279,56 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                   Builder(
-                    builder:
-                        (context) => Row(
-                          children: [
-                            IconButton(
-                              icon: Stack(
-                                children: [
-                                  const Icon(
-                                    Icons.notifications,
-                                    color: Colors.white,
-                                  ),
-                                  Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFD7A61F),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      constraints: const BoxConstraints(
-                                        minWidth: 14,
-                                        minHeight: 14,
-                                      ),
-                                      child: Text(
-                                        _notifNumber,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                    builder: (context) => Row(
+                      children: [
+                        IconButton(
+                          icon: Stack(
+                            children: [
+                              const Icon(
+                                Icons.notifications,
+                                color: Colors.white,
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const NotificationsPage(),
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD7A61F),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.menu, color: Colors.white),
-                              onPressed: () => _showMainMenu(context),
-                            ),
-                          ],
+                                  constraints: const BoxConstraints(
+                                    minWidth: 14,
+                                    minHeight: 14,
+                                  ),
+                                  child: Text(
+                                    _notifNumber,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NotificationsPage(),
+                              ),
+                            );
+                          },
                         ),
+                        IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () => _showMainMenu(context),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -1437,6 +1443,8 @@ class _HomepageState extends State<Homepage> {
       // return const CalendarPage(); // Uncomment and implement this when ready
       case 'Marketplace':
       // return const MarketplacePage(); // Uncomment and implement this when ready
+      return IntroScreen (); // Redirect to MarketplacePage
+
       case 'Grades Tracker':
       // return const GradesTrackerPage(); // Uncomment and implement this when ready
       case 'Social Collaboration':

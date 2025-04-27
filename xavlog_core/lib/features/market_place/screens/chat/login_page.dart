@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/services/login_authentication/authentication_service.dart';
-import 'package:xavlog_core/market_place/screens/chat/components/login_button.dart';
-import 'package:xavlog_core/market_place/screens/chat/components/textfield_login.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/components/login_button.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/components/textfield_login.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
 
-class LoginPage extends StatelessWidget {
+
+class LoginPageMarketPlace extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   final void Function()? onTap;
 
-  LoginPage({super.key, required this.onTap});
+  LoginPageMarketPlace({super.key, required this.onTap});
 
   void login(BuildContext context) async {
     final authenticationService = AuthenticationService();

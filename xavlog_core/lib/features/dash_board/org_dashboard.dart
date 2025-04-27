@@ -1,14 +1,14 @@
 /// Organization Dashboard
-/// 
+///
 /// Purpose: Main interface for organization accounts to manage members,
 /// events, finances, and communications.
-/// 
+///
 /// Flow:
 /// 1. Organization admin logs in and accesses this dashboard
 /// 2. Admin can view analytics summary and manage organization activities
 /// 3. Admin can manage members, events, and finances
 /// 4. Admin can access communication tools and settings
-/// 
+///
 /// Backend Implementation Needed:
 /// - Organization profile data retrieval and storage
 /// - Member management system with roles and permissions
@@ -32,7 +32,7 @@ class OrgDashboard extends StatefulWidget {
   final String? profileImageUrl;
 
   const OrgDashboard({
-    super.key, 
+    super.key,
     this.orgName,
     this.description,
     this.profileImageUrl,
@@ -46,27 +46,27 @@ class _OrgDashboardState extends State<OrgDashboard> {
   // Organization profile information - BACKEND: Should be loaded from profile API
   late String _orgName;
   late String _description;
-  
+
   // DYNAMIC: Notification count should update in real-time
   final String _notifNumber = '5';
-  
+
   // BACKEND: These counts should be fetched from the database
   int _memberCount = 124;
   int _eventCount = 15;
   int _pendingRequests = 8;
-  
+
   // BACKEND: These should be loaded from organization profile in database
   String _profileImageUrl = 'https://picsum.photos/200?random=1';
   String _orgContact = '+1 234 567 8900';
-  String _orgEmail = 'csc.organization@example.com'; 
+  String _orgEmail = 'csc.organization@example.com';
 
   // Activity form controllers
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   // DYNAMIC: Selected category should persist between sessions
   String _selectedCategory = 'Meeting'; // Default category
-  
+
   // DYNAMIC: Selected date should default to current date
   DateTime _selectedDate = DateTime.now();
 
@@ -92,7 +92,10 @@ class _OrgDashboardState extends State<OrgDashboard> {
       type: 'page',
     ),
     DashboardItem(title: 'Event Management', icon: Icons.event, type: 'page'),
-    DashboardItem(title: 'Finance Tracker', icon: Icons.account_balance_wallet, type: 'page'),
+    DashboardItem(
+        title: 'Finance Tracker',
+        icon: Icons.account_balance_wallet,
+        type: 'page'),
     DashboardItem(title: 'Communication Hub', icon: Icons.forum, type: 'page'),
     DashboardItem(title: 'Resource Library', icon: Icons.folder, type: 'page'),
     DashboardItem(
@@ -111,7 +114,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
   final List<Activity> activities = [
     Activity(
       title: 'General Assembly',
-      description: 'Monthly meeting with all members to discuss updates and initiatives',
+      description:
+          'Monthly meeting with all members to discuss updates and initiatives',
       date: DateTime.now().add(const Duration(days: 2)),
       category: 'Meeting',
     ),
@@ -230,7 +234,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
     if (widget.profileImageUrl != null) {
       _profileImageUrl = widget.profileImageUrl!;
     }
-    
+
     // Load saved data
     _loadSavedData();
   }
@@ -242,7 +246,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
       setState(() {
         _orgName = prefs.getString('orgName') ?? _orgName;
         _description = prefs.getString('orgDescription') ?? _description;
-        _profileImageUrl = prefs.getString('orgProfileImage') ?? _profileImageUrl;
+        _profileImageUrl =
+            prefs.getString('orgProfileImage') ?? _profileImageUrl;
         _orgContact = prefs.getString('orgContact') ?? _orgContact;
         _orgEmail = prefs.getString('orgEmail') ?? _orgEmail;
         _memberCount = prefs.getInt('memberCount') ?? _memberCount;
@@ -286,7 +291,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
     });
     _saveData();
   }
-  
+
   // BACKEND: This should update the profile image in storage and database
   void updateProfileImage(String newImageUrl) {
     setState(() {
@@ -362,13 +367,12 @@ class _OrgDashboardState extends State<OrgDashboard> {
                 DropdownButtonFormField<String>(
                   value: _selectedCategory,
                   decoration: const InputDecoration(labelText: 'Category'),
-                  items:
-                      _activityCategories.map((String category) {
-                        return DropdownMenuItem(
-                          value: category,
-                          child: Text(category),
-                        );
-                      }).toList(),
+                  items: _activityCategories.map((String category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedCategory = newValue!;
@@ -431,11 +435,12 @@ class _OrgDashboardState extends State<OrgDashboard> {
                   _descriptionController.clear();
                   _selectedCategory = 'Meeting';
                   _selectedDate = DateTime.now();
-                  
+
                   // Show confirmation
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Activity created and notification sent to members'),
+                      content: Text(
+                          'Activity created and notification sent to members'),
                       backgroundColor: Color(0xFF071D99),
                     ),
                   );
@@ -540,7 +545,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final fontSize = width * 0.035;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -601,8 +606,10 @@ class _OrgDashboardState extends State<OrgDashboard> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              _buildPieChartItem('CS', 0.6, const Color(0xFF071D99)),
-                              _buildPieChartItem('IT', 0.3, const Color(0xFFD7A61F)),
+                              _buildPieChartItem(
+                                  'CS', 0.6, const Color(0xFF071D99)),
+                              _buildPieChartItem(
+                                  'IT', 0.3, const Color(0xFFD7A61F)),
                               _buildPieChartItem('Other', 0.1, Colors.grey),
                             ],
                           ),
@@ -612,7 +619,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                       ),
                     ),
                   ),
-                  
+
                   // Attendance Analytics
                   Card(
                     elevation: 2,
@@ -640,7 +647,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                       ),
                     ),
                   ),
-                  
+
                   // Financial Analytics
                   Card(
                     elevation: 2,
@@ -734,7 +741,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                       ),
                     ),
                   ),
-                  
+
                   // Export Button
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
@@ -919,7 +926,6 @@ class _OrgDashboardState extends State<OrgDashboard> {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
@@ -1020,7 +1026,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF071D99),
                                 ),
-                                icon: const Icon(Icons.notifications, color: Colors.white),
+                                icon: const Icon(Icons.notifications,
+                                    color: Colors.white),
                                 label: const Text(
                                   'Notify Members',
                                   style: TextStyle(color: Colors.white),
@@ -1028,7 +1035,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                                 onPressed: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Notification sent to all members'),
+                                      content: Text(
+                                          'Notification sent to all members'),
                                     ),
                                   );
                                 },
@@ -1070,7 +1078,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
   }
 
   void _showMainMenu(BuildContext context) {
-    Scaffold.of(context).openEndDrawer(); // Use openEndDrawer to open the drawer from the right
+    Scaffold.of(context)
+        .openEndDrawer(); // Use openEndDrawer to open the drawer from the right
   }
 
   Drawer _buildMainMenuDrawer() {
@@ -1093,7 +1102,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                       GestureDetector(
                         onTap: () async {
                           Navigator.pop(context); // Close drawer first
-                          
+
                           // Navigate to profile page and wait for result
                           Navigator.push(
                             context,
@@ -1108,10 +1117,12 @@ class _OrgDashboardState extends State<OrgDashboard> {
                             ),
                           ).then((result) {
                             // Update dashboard with the returned profile data
-                            if (result != null && result is Map<String, dynamic>) {
+                            if (result != null &&
+                                result is Map<String, dynamic>) {
                               setState(() {
                                 _orgName = result['name'] ?? _orgName;
-                                _description = result['description'] ?? _description;
+                                _description =
+                                    result['description'] ?? _description;
                               });
                               _saveData();
                             }
@@ -1122,7 +1133,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                           backgroundColor: const Color(0xFFD7A61F),
                           backgroundImage: NetworkImage(_profileImageUrl),
                           onBackgroundImageError: (_, __) => setState(() {
-                            _profileImageUrl = 'https://picsum.photos/200?random=1';
+                            _profileImageUrl =
+                                'https://picsum.photos/200?random=1';
                           }),
                         ),
                       ),
@@ -1144,7 +1156,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                             Text(
                               _description,
                               style: const TextStyle(
-                                fontSize: 14, 
+                                fontSize: 14,
                                 fontFamily: 'Jost',
                                 color: Colors.white70,
                               ),
@@ -1162,8 +1174,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                 Icons.person_search,
                 color: Color(0xFF071D99),
               ),
-              title: const Text('Member Applications', 
-                style: TextStyle(fontFamily: 'Jost')),
+              title: const Text('Member Applications',
+                  style: TextStyle(fontFamily: 'Jost')),
               trailing: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
@@ -1185,8 +1197,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
             ),
             ListTile(
               leading: const Icon(Icons.campaign, color: Color(0xFF071D99)),
-              title: const Text('Send Announcement', 
-                style: TextStyle(fontFamily: 'Jost')),
+              title: const Text('Send Announcement',
+                  style: TextStyle(fontFamily: 'Jost')),
               onTap: () {
                 Navigator.pop(context);
                 _showSendAnnouncementDialog();
@@ -1194,16 +1206,16 @@ class _OrgDashboardState extends State<OrgDashboard> {
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Color(0xFF071D99)),
-              title: const Text('Organization Settings', 
-                style: TextStyle(fontFamily: 'Jost')),
+              title: const Text('Organization Settings',
+                  style: TextStyle(fontFamily: 'Jost')),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.help, color: Color(0xFF071D99)),
-              title: const Text('Help & Support', 
-                style: TextStyle(fontFamily: 'Jost')),
+              title: const Text('Help & Support',
+                  style: TextStyle(fontFamily: 'Jost')),
               onTap: () {
                 Navigator.push(
                   context,
@@ -1214,8 +1226,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Color(0xFF071D99)),
-              title: const Text('Logout', 
-                style: TextStyle(fontFamily: 'Jost')),
+              title: const Text('Logout', style: TextStyle(fontFamily: 'Jost')),
               onTap: () {
                 showDialog(
                   context: context,
@@ -1236,7 +1247,13 @@ class _OrgDashboardState extends State<OrgDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
+                                builder: (context) => LoginPage(
+                                  onTap: () {
+                                    // You can put what should happen when the user taps "Log-in"
+                                    // For example, nothing yet because you want them to log in manually first
+                                    // or you could just Navigator.pop(context); etc.
+                                  },
+                                ),
                               ),
                             ); // Redirect to login page
                           },
@@ -1318,7 +1335,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.check_circle, color: Colors.green),
+                            icon: const Icon(Icons.check_circle,
+                                color: Colors.green),
                             onPressed: () {
                               // Approve request
                               setState(() {
@@ -1329,7 +1347,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('${request.name} approved as member'),
+                                  content: Text(
+                                      '${request.name} approved as member'),
                                 ),
                               );
                             },
@@ -1434,7 +1453,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
               backgroundColor: const Color(0xFF071D99),
             ),
             onPressed: () {
-              if (titleController.text.isNotEmpty && 
+              if (titleController.text.isNotEmpty &&
                   messageController.text.isNotEmpty) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -1478,103 +1497,102 @@ class _OrgDashboardState extends State<OrgDashboard> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
-                        style: TextStyle(
-                          fontSize: fontSize * 1.2,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Jost',
-                          color: const Color(0xFF071D99),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
+                    style: TextStyle(
+                      fontSize: fontSize * 1.2,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Jost',
+                      color: const Color(0xFF071D99),
+                    ),
                   ),
-                ),
-                const Divider(height: 1),
-                events.isEmpty
-                    ? Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Text(
-                        'No events for this day',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: fontSize,
-                          fontFamily: 'Jost',
-                        ),
-                      ),
-                    )
-                    : Flexible(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          final event = events[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(
-                              leading: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF071D99,
-                                  ).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  _getCategoryIcon(event.category),
-                                  color: const Color(0xFF071D99),
-                                ),
-                              ),
-                              title: Text(
-                                event.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF071D99),
-                                  fontFamily: 'Jost',
-                                ),
-                              ),
-                              subtitle: Text(
-                                event.description,
-                                style: const TextStyle(fontFamily: 'Jost'),
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.checklist,
-                                  color: Color(0xFF071D99),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  _showAttendanceSheet(event);
-                                },
-                              ),
-                            ),
-                          );
-                        },
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            events.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Text(
+                      'No events for this day',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: fontSize,
+                        fontFamily: 'Jost',
                       ),
                     ),
-                SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
-              ],
-            ),
-          ),
+                  )
+                : Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      itemCount: events.length,
+                      itemBuilder: (context, index) {
+                        final event = events[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFF071D99,
+                                ).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                _getCategoryIcon(event.category),
+                                color: const Color(0xFF071D99),
+                              ),
+                            ),
+                            title: Text(
+                              event.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF071D99),
+                                fontFamily: 'Jost',
+                              ),
+                            ),
+                            subtitle: Text(
+                              event.description,
+                              style: const TextStyle(fontFamily: 'Jost'),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.checklist,
+                                color: Color(0xFF071D99),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _showAttendanceSheet(event);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1648,7 +1666,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF071D99),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16, 
+                        horizontal: 16,
                         vertical: 16,
                       ),
                     ),
@@ -1674,32 +1692,30 @@ class _OrgDashboardState extends State<OrgDashboard> {
                 itemCount: members.length,
                 itemBuilder: (context, index) {
                   final member = members[index];
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      return CheckboxListTile(
-                        secondary: CircleAvatar(
-                          backgroundImage: NetworkImage(member.imageUrl),
+                  return StatefulBuilder(builder: (context, setState) {
+                    return CheckboxListTile(
+                      secondary: CircleAvatar(
+                        backgroundImage: NetworkImage(member.imageUrl),
+                      ),
+                      title: Text(
+                        member.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Jost',
                         ),
-                        title: Text(
-                          member.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Jost',
-                          ),
-                        ),
-                        subtitle: Text(
-                          member.role,
-                          style: const TextStyle(fontFamily: 'Jost'),
-                        ),
-                        value: member.isAttending,
-                        onChanged: (value) {
-                          setState(() {
-                            member.isAttending = value!;
-                          });
-                        },
-                      );
-                    }
-                  );
+                      ),
+                      subtitle: Text(
+                        member.role,
+                        style: const TextStyle(fontFamily: 'Jost'),
+                      ),
+                      value: member.isAttending,
+                      onChanged: (value) {
+                        setState(() {
+                          member.isAttending = value!;
+                        });
+                      },
+                    );
+                  });
                 },
               ),
             ),
@@ -1800,7 +1816,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  ...transactions.map((transaction) => _buildTransactionItem(transaction)),
+                  ...transactions
+                      .map((transaction) => _buildTransactionItem(transaction)),
                   const SizedBox(height: 8),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
@@ -1820,7 +1837,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
     );
   }
 
-  Widget _buildFinanceItem(String title, String value, IconData icon, Color color) {
+  Widget _buildFinanceItem(
+      String title, String value, IconData icon, Color color) {
     return Column(
       children: [
         Icon(icon, color: color),
@@ -1848,13 +1866,15 @@ class _OrgDashboardState extends State<OrgDashboard> {
 
   Widget _buildTransactionItem(Transaction transaction) {
     final isIncome = transaction.type == TransactionType.income;
-    
+
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isIncome ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+          color: isIncome
+              ? Colors.green.withOpacity(0.1)
+              : Colors.red.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -1889,7 +1909,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
     final amountController = TextEditingController();
     String selectedCategory = 'Dues';
     TransactionType selectedType = TransactionType.income;
-    
+
     final categories = [
       'Dues',
       'Events',
@@ -1996,10 +2016,10 @@ class _OrgDashboardState extends State<OrgDashboard> {
               backgroundColor: const Color(0xFF071D99),
             ),
             onPressed: () {
-              if (titleController.text.isNotEmpty && 
+              if (titleController.text.isNotEmpty &&
                   amountController.text.isNotEmpty) {
                 final amount = double.tryParse(amountController.text) ?? 0.0;
-                
+
                 setState(() {
                   transactions.add(
                     Transaction(
@@ -2011,7 +2031,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                     ),
                   );
                 });
-                
+
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -2030,7 +2050,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
       ),
     );
   }
-  
+
   Widget _buildMemberDirectory() {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
@@ -2270,7 +2290,8 @@ class _OrgDashboardState extends State<OrgDashboard> {
                         if (result != null && result is Map<String, dynamic>) {
                           setState(() {
                             _orgName = result['name'] ?? _orgName;
-                            _description = result['description'] ?? _description;
+                            _description =
+                                result['description'] ?? _description;
                           });
                           _saveData();
                         }
@@ -2286,14 +2307,17 @@ class _OrgDashboardState extends State<OrgDashboard> {
                           backgroundImage: NetworkImage(_profileImageUrl),
                           onBackgroundImageError: (_, __) {
                             setState(() {
-                              _profileImageUrl = 'https://picsum.photos/200?random=1';
+                              _profileImageUrl =
+                                  'https://picsum.photos/200?random=1';
                             });
                           },
-                          child: _profileImageUrl.isEmpty ? const Icon(
-                            Icons.person,
-                            size: 30,
-                            color: Color(0xFF071D99),
-                          ) : null,
+                          child: _profileImageUrl.isEmpty
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 30,
+                                  color: Color(0xFF071D99),
+                                )
+                              : null,
                         ),
                       ),
                     ),
@@ -2326,57 +2350,56 @@ class _OrgDashboardState extends State<OrgDashboard> {
                     ),
                   ),
                   Builder(
-                    builder:
-                        (context) => Row(
-                          children: [
-                            IconButton(
-                              icon: Stack(
-                                children: [
-                                  const Icon(
-                                    Icons.notifications,
-                                    color: Colors.white,
-                                  ),
-                                  Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFD7A61F),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      constraints: const BoxConstraints(
-                                        minWidth: 14,
-                                        minHeight: 14,
-                                      ),
-                                      child: Text(
-                                        _notifNumber,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                    builder: (context) => Row(
+                      children: [
+                        IconButton(
+                          icon: Stack(
+                            children: [
+                              const Icon(
+                                Icons.notifications,
+                                color: Colors.white,
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const NotificationsPage(),
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD7A61F),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.menu, color: Colors.white),
-                              onPressed: () => _showMainMenu(context),
-                            ),
-                          ],
+                                  constraints: const BoxConstraints(
+                                    minWidth: 14,
+                                    minHeight: 14,
+                                  ),
+                                  child: Text(
+                                    _notifNumber,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NotificationsPage(),
+                              ),
+                            );
+                          },
                         ),
+                        IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () => _showMainMenu(context),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

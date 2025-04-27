@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/models/product.dart';
-import 'package:xavlog_core/market_place/screens/details/details_screen.dart';
+import 'package:xavlog_core/features/market_place/models/product.dart';
+import 'package:xavlog_core/features/market_place/screens/details/details_screen.dart';
+
 
 class ProductSearchDelegate extends SearchDelegate<String> {
   @override

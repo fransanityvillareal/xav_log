@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
+import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'package:xavlog_core/firebase_options.dart';
-import 'package:xavlog_core/market_place/screens/cart/cart_provider.dart';
-import 'package:xavlog_core/market_place/screens/welcome/intro_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

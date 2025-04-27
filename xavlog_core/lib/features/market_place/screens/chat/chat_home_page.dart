@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/screens/chat/chat_page.dart';
-import 'package:xavlog_core/market_place/screens/chat/components/chat_drawer.dart';
-import 'package:xavlog_core/market_place/services/chat/chat_services.dart';
-import 'package:xavlog_core/market_place/services/login_authentication/authentication_service.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_page.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/components/chat_drawer.dart';
+import 'package:xavlog_core/features/market_place/services/chat/chat_services.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
+
 
 class ChatHomePage extends StatelessWidget {
   ChatHomePage({super.key});

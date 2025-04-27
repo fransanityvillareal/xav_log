@@ -21,7 +21,10 @@ import 'signin_page.dart';
 import '../dash_board/home_page_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final VoidCallback onTap; // Add this line to accept the onTap callback
+
+  const LoginPage({super.key, required this.onTap}); // Add 'required this.onTap'
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -59,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: height * 0.03),
             // Logo at the top of the page
             Image.asset(
-              'images/fulllogo.png',
+              'assets/images/fulllogo.png',
               width: logoSize,
               height: logoSize,
             ),

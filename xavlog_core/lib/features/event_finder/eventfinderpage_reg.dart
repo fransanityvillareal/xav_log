@@ -241,7 +241,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                         SizedBox(
                           width: logoSize,
                           child: Image.asset(
-                            'images/xavloglogo.png',
+                            'assets/images/xavloglogo.png',
                             height: height * 0.08,
                             fit: BoxFit.contain,
                           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-import 'package:xavlog_core/market_place/services/login_authentication/authentication_service.dart';
-import 'package:xavlog_core/market_place/screens/chat/chat_settting.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
 
 class ChatDrawer extends StatelessWidget {
   const ChatDrawer({super.key});

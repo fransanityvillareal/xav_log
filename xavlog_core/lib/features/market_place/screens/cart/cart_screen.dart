@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:xavlog_core/market_place/screens/cart/cart_provider.dart';
+import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});

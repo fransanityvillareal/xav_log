@@ -99,7 +99,7 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                           height: 45, // Fixed height
                           width: 45,  // Fixed width
                           child: Image.asset(
-                            'images/xavloglogo.png',
+                            'assets/images/xavloglogo.png',
                             fit: BoxFit.contain,
                           ),
                         ),

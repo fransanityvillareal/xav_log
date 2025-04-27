@@ -12,35 +12,14 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   final List<DashboardItem> navigationItems = [
     DashboardItem(
-      title: 'Attendance Tracker',
-      icon: Icons.track_changes,
-      type: 'page'
-    ),
+        title: 'Attendance Tracker', icon: Icons.track_changes, type: 'page'),
+    DashboardItem(title: 'Calendar', icon: Icons.calendar_today, type: 'page'),
+    DashboardItem(title: 'Marketplace', icon: Icons.store, type: 'page'),
+    DashboardItem(title: 'Grades Tracker', icon: Icons.grade, type: 'page'),
     DashboardItem(
-      title: 'Calendar',
-      icon: Icons.calendar_today,
-      type: 'page'
-    ),
+        title: 'Social Collaboration', icon: Icons.group, type: 'page'),
     DashboardItem(
-      title: 'Marketplace',
-      icon: Icons.store,
-      type: 'page'
-    ),
-    DashboardItem(
-      title: 'Grades Tracker',
-      icon: Icons.grade,
-      type: 'page'
-    ),
-    DashboardItem(
-      title: 'Social Collaboration',
-      icon: Icons.group,
-      type: 'page'
-    ),
-    DashboardItem(
-      title: 'Schedule Manager',
-      icon: Icons.schedule,
-      type: 'page'
-    ),
+        title: 'Schedule Manager', icon: Icons.schedule, type: 'page'),
   ];
 
   Widget _buildAnalyticsSummary() {
@@ -76,7 +55,8 @@ class _HomepageState extends State<Homepage> {
                     crossAxisCount: 2,
                     childAspectRatio: 1.5,
                     children: [
-                      _buildStatCard('Total Attendance', '85%', Icons.calendar_view_day),
+                      _buildStatCard(
+                          'Total Attendance', '85%', Icons.calendar_view_day),
                       _buildStatCard('Classes', '24/28', Icons.class_),
                       _buildStatCard('Performance', 'Good', Icons.trending_up),
                       _buildStatCard('Status', 'On Track', Icons.check_circle),
@@ -84,7 +64,8 @@ class _HomepageState extends State<Homepage> {
                   ),
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.analytics, color: Color(0xFF071D99)),
+                    leading:
+                        const Icon(Icons.analytics, color: Color(0xFF071D99)),
                     title: const Text('View Full Analytics'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
@@ -125,10 +106,7 @@ class _HomepageState extends State<Homepage> {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 12, 
-              fontFamily: 'Inter',
-              color: Colors.grey
-            ),
+                fontSize: 12, fontFamily: 'Inter', color: Colors.grey),
           ),
         ],
       ),
@@ -161,12 +139,13 @@ class _HomepageState extends State<Homepage> {
                     SizedBox(
                       width: 100,
                       child: Image.asset(
-                        'images/xavloglogo.png',
+                        'assets/images/xavloglogo.png', 
+                        
                         height: 28,
                         fit: BoxFit.contain,
                       ),
                     ),
-                    
+
                     // Right side with notification and profile
                     Row(
                       children: [
@@ -262,7 +241,6 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-
   Widget _buildSearchBar() {
     return Container(
       decoration: BoxDecoration(
@@ -282,20 +260,20 @@ class _HomepageState extends State<Homepage> {
           filled: true,
           fillColor: const Color.fromARGB(255, 255, 255, 255),
           border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Color(0xFF071D99)),
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Color(0xFF071D99)),
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12),
       ),
-    ),
     );
   }
 
@@ -318,7 +296,8 @@ class _HomepageState extends State<Homepage> {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: navigationItems.length,
-            itemBuilder: (context, index) => _buildNavigationCard(navigationItems[index]),
+            itemBuilder: (context, index) =>
+                _buildNavigationCard(navigationItems[index]),
           ),
         ),
       ],
@@ -381,7 +360,8 @@ class _HomepageState extends State<Homepage> {
           ),
           // Add your calendar widget here
           child: const Center(
-            child: Text('Calendar will be implemented here'),//CalendarWidget()),
+            child:
+                Text('Calendar will be implemented here'), //CalendarWidget()),
           ),
         ),
       ],
@@ -431,19 +411,19 @@ class _HomepageState extends State<Homepage> {
   void _navigateToPage(String title) {
     switch (title) {
       case 'Attendance Tracker':
-        // return const AttendanceTrackerPage();
+      // return const AttendanceTrackerPage();
       case 'Calendar':
-        // return const CalendarPage();
+      // return const CalendarPage();
       case 'Marketplace':
-        // return const MarketplacePage();
+      // return const MarketplacePage();
       case 'Grades Tracker':
-        // return const GradesTrackerPage();
+      // return const GradesTrackerPage();
       case 'Social Collaboration':
-        // return const SocialCollaborationPage();
+      // return const SocialCollaborationPage();
       case 'Schedule Manager':
-        // return const ScheduleManagerPage();
+      // return const ScheduleManagerPage();
       default:
-        //return const SizedBox();
+      //return const SizedBox();
     }
   }
 }

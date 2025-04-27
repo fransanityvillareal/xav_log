@@ -67,7 +67,7 @@ class FAQs extends StatelessWidget {
             // App logo centered at the top
             Center(
               child: Image.asset(
-                'images/fulllogo.png',
+                'assets/images/fulllogo.png',
                 width: logoSize * 1.5,
                 height: logoSize * 1.5,
               ),

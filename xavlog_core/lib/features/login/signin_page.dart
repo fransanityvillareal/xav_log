@@ -1,13 +1,13 @@
 /// Sign-in Page
-/// 
+///
 /// Purpose: Provides the initial sign-in interface for all users
-/// 
+///
 /// Flow:
 /// 1. User enters email and password
 /// 2. User clicks "Sign In" button to create a new account
 /// 3. User can navigate to existing login page if already has an account
 /// 4. User can access Terms & Conditions and FAQs from the footer
-/// 
+///
 /// Backend Implementation Needed:
 /// - Email validation
 /// - Password strength validation
@@ -17,7 +17,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/screens/chat/login_page.dart';
+import 'package:xavlog_core/features/login/login_page.dart';
 import 'account_choose.dart';
 import 'terms_and_conditions.dart';
 import 'faqs.dart';
@@ -49,281 +49,284 @@ class _SigninPageState extends State<SigninPage> {
     final contentPadding = width * 0.02; // Padding is 2% of screen width
     final fontSize = width * 0.03; // Font size scales with screen width
 
+    // Get the height of the keyboard if it's visible
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
-      body: Container(
-        width: width,
-        height: height,
-        // Xavier blue background color
-        decoration: const BoxDecoration(
-          color: Color(0xFF132BB2),
-        ),
-        child: Column(
-          children: [
-            SizedBox(height: height * 0.03),
-            // Logo at the top of the page
-            Image.asset(
-              'images/fulllogo.png',
-              width: logoSize,
-              height: logoSize,
-            ),
-            SizedBox(height: height * 0.02),
-            Expanded(
-              // Triangle-peeked white container for sign-in form
-              child: ClipPath(
-                clipper: TrianglePeekClipper(),
-                child: Container(
-                  width: width,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(width * 0.01),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(height: height * 0.05),
-                      // Sign-in page title
-                      Text(
-                        'Sign-in',
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 16, 16, 16),
-                          fontFamily: 'Jost',
-                          fontSize: fontSize * 2,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      // Email input field
-                      SizedBox(
-                        width: buttonWidth * 2,
-                        child: TextField(
+      body: SingleChildScrollView(
+        // Wrap everything with SingleChildScrollView
+        child: Container(
+          width: width,
+          height: height,
+          decoration: const BoxDecoration(
+            color: Color(0xFF132BB2),
+          ),
+          child: Column(
+            children: [
+              SizedBox(height: height * 0.03),
+              // Logo at the top of the page
+              Image.asset(
+                'assets/images/fulllogo.png',
+                width: logoSize,
+                height: logoSize,
+              ),
+              SizedBox(height: height * 0.02),
+              Expanded(
+                child: ClipPath(
+                  clipper: TrianglePeekClipper(),
+                  child: Container(
+                    width: width,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFFFFF),
+                      borderRadius: BorderRadius.circular(width * 0.01),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(height: height * 0.05),
+                        // Sign-in page title
+                        Text(
+                          'Sign-in',
                           style: TextStyle(
-                            fontSize: fontSize * 1.2,
+                            color: const Color.fromARGB(255, 16, 16, 16),
                             fontFamily: 'Jost',
+                            fontSize: fontSize * 2,
+                            fontWeight: FontWeight.w900,
                           ),
-                          decoration: InputDecoration(
-                            labelText: 'Email Address',
-                            labelStyle: TextStyle(
+                        ),
+                        // Email input field
+                        SizedBox(
+                          width: buttonWidth * 2,
+                          child: TextField(
+                            style: TextStyle(
                               fontSize: fontSize * 1.2,
                               fontFamily: 'Jost',
                             ),
-                            suffixIcon: Icon(
-                              Icons.email,
-                              size: fontSize * 1.4,
-                            ),
-                          ),
-                          // BACKEND TODO: Implement email validation
-                        ),
-                      ),
-                      // Password input field with visibility toggle
-                      SizedBox(
-                        width: buttonWidth * 2,
-                        child: TextField(
-                          style: TextStyle(
-                            fontSize: fontSize * 1.2,
-                            fontFamily: 'Jost',
-                          ),
-                          obscureText: !isPasswordVisible,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            labelStyle: TextStyle(
-                              fontSize: fontSize * 1.2,
-                              fontFamily: 'Jost',
-                            ),
-                            suffixIcon: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: GestureDetector(
-                                onTap: () => setState(() => 
-                                  isPasswordVisible = !isPasswordVisible
-                                ),
-                                child: Icon(
-                                  isPasswordVisible 
-                                      ? Icons.visibility 
-                                      : Icons.visibility_off,
-                                  size: fontSize * 1.4,
-                                ),
-                              ),
-                            ),
-                          ),
-                          // BACKEND TODO: Implement password strength validation
-                        ),
-                      ),
-                      SizedBox(height: height * 0.03),
-                      // Sign In button with hover effect
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        onEnter: (_) => setState(() => isSignInHovered = true),
-                        onExit: (_) => setState(() => isSignInHovered = false),
-                        child: GestureDetector(
-                          onTap: () {
-                            // BACKEND TODO: Implement user registration and validation
-                            // - Validate email format
-                            // - Validate password strength
-                            // - Create user account in database
-                            // - Handle registration errors
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AccountChoosePage(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: buttonWidth * 2,
-                            padding: EdgeInsets.all(contentPadding),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(width * 0.01),
-                              // Gold gradient for buttons
-                              gradient: LinearGradient(
-                                colors: [
-                                  isSignInHovered
-                                      ? const Color.fromARGB(255, 244, 202, 86)
-                                      : const Color(0xFFBFA547),
-                                  isSignInHovered
-                                      ? const Color.fromARGB(255, 244, 202, 86)
-                                      : const Color(0xFFBFA547),
-                                ],
-                              ),
-                            ),
-                            child: Text(
-                              'Sign In',
-                              style: TextStyle(
-                                color: const Color(0xFFFFFFFF),
+                            decoration: InputDecoration(
+                              labelText: 'Email Address',
+                              labelStyle: TextStyle(
                                 fontSize: fontSize * 1.2,
                                 fontFamily: 'Jost',
-                                fontWeight: FontWeight.w800,
+                              ),
+                              suffixIcon: Icon(
+                                Icons.email,
+                                size: fontSize * 1.4,
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: height * 0.03),
-                      // Helper text for users
-                      Text(
-                        'Please use your assigned GBOX account to sign in',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: fontSize,
-                          fontFamily: 'Jost',
-                          fontWeight: FontWeight.w500,
+                        // Password input field with visibility toggle
+                        SizedBox(
+                          width: buttonWidth * 2,
+                          child: TextField(
+                            style: TextStyle(
+                              fontSize: fontSize * 1.2,
+                              fontFamily: 'Jost',
+                            ),
+                            obscureText: !isPasswordVisible,
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              labelStyle: TextStyle(
+                                fontSize: fontSize * 1.2,
+                                fontFamily: 'Jost',
+                              ),
+                              suffixIcon: MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () => setState(() =>
+                                      isPasswordVisible = !isPasswordVisible),
+                                  child: Icon(
+                                    isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    size: fontSize * 1.4,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: height * 0.03),
-                      // Login to existing account link
-                      Container(
-                        alignment: Alignment.center,
-                        width: double.infinity,
-                        child: MouseRegion(
+                        SizedBox(height: height * 0.03),
+                        // Sign In button with hover effect
+                        MouseRegion(
                           cursor: SystemMouseCursors.click,
-                          onEnter: (_) => setState(() => isLoginHovered = true),
-                          onExit: (_) => setState(() => isLoginHovered = false),
+                          onEnter: (_) =>
+                              setState(() => isSignInHovered = true),
+                          onExit: (_) =>
+                              setState(() => isSignInHovered = false),
                           child: GestureDetector(
                             onTap: () {
-                              // Navigate to login page for existing users
+                              // Backend functionality here
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>  LoginPage(
-                                    onTap: () {
-                                      // Define the behavior for the onTap event
-                                      print('LoginPage onTap triggered');
-                                    },
-                                  ),
+                                  builder: (context) =>
+                                      const AccountChoosePage(),
                                 ),
                               );
                             },
-                            child: Text(
-                              'Log-in to my account',
-                              style: TextStyle(
-                                color: isLoginHovered
-                                    ? const Color(0xFFD7A61F)
-                                    : const Color.fromARGB(255, 16, 16, 16),
-                                fontSize: fontSize * 1.2,
-                                fontFamily: 'Jost',
-                                fontWeight: FontWeight.bold,
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: buttonWidth * 2,
+                              padding: EdgeInsets.all(contentPadding),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(width * 0.01),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    isSignInHovered
+                                        ? const Color.fromARGB(
+                                            255, 244, 202, 86)
+                                        : const Color(0xFFBFA547),
+                                    isSignInHovered
+                                        ? const Color.fromARGB(
+                                            255, 244, 202, 86)
+                                        : const Color(0xFFBFA547),
+                                  ],
+                                ),
+                              ),
+                              child: Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  color: const Color(0xFFFFFFFF),
+                                  fontSize: fontSize * 1.2,
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: height * 0.1),
-                      // Footer with Terms & Conditions and FAQs links
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Terms & Conditions link with hover effect
-                          MouseRegion(
+                        SizedBox(height: height * 0.03),
+                        // Helper text for users
+                        Text(
+                          'Please use your assigned GBOX account to sign in',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: fontSize,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: height * 0.03),
+                        // Login to existing account link
+                        Container(
+                          alignment: Alignment.center,
+                          width: double.infinity,
+                          child: MouseRegion(
                             cursor: SystemMouseCursors.click,
-                            onEnter: (_) => setState(() => isTermsHovered = true),
-                            onExit: (_) => setState(() => isTermsHovered = false),
+                            onEnter: (_) =>
+                                setState(() => isLoginHovered = true),
+                            onExit: (_) =>
+                                setState(() => isLoginHovered = false),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const TermsAndConditions(),
+                                        LoginPage(onTap: () {}),
                                   ),
                                 );
                               },
                               child: Text(
-                                'Terms & Conditions',
+                                'Log-in to my account',
                                 style: TextStyle(
-                                  color: isTermsHovered
-                                      ? const Color(0xFF0529CC)
+                                  color: isLoginHovered
+                                      ? const Color(0xFFD7A61F)
                                       : const Color.fromARGB(255, 16, 16, 16),
-                                  fontSize: fontSize,
+                                  fontSize: fontSize * 1.2,
                                   fontFamily: 'Jost',
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ),
-                          // Separator between links
-                          Text(
-                            ' | ',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: fontSize,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          // FAQs link with hover effect
-                          MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            onEnter: (_) => setState(() => isFAQsHovered = true),
-                            onExit: (_) => setState(() => isFAQsHovered = false),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const FAQs(),
+                        ),
+                        SizedBox(height: height * 0.1),
+                        // Footer with Terms & Conditions and FAQs links
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Terms & Conditions link with hover effect
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              onEnter: (_) =>
+                                  setState(() => isTermsHovered = true),
+                              onExit: (_) =>
+                                  setState(() => isTermsHovered = false),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TermsAndConditions(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Terms & Conditions',
+                                  style: TextStyle(
+                                    color: isTermsHovered
+                                        ? const Color(0xFF0529CC)
+                                        : const Color.fromARGB(255, 16, 16, 16),
+                                    fontSize: fontSize,
+                                    fontFamily: 'Jost',
+                                    fontWeight: FontWeight.w800,
                                   ),
-                                );
-                              },
-                              child: Text(
-                                'FAQs',
-                                style: TextStyle(
-                                  color: isFAQsHovered
-                                      ? const Color(0xFF0529CC)
-                                      : const Color.fromARGB(255, 16, 16, 16),
-                                  fontSize: fontSize,
-                                  fontFamily: 'Jost',
-                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: height * 0.02),
-                    ],
+                            // Separator between links
+                            Text(
+                              ' | ',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            // FAQs link with hover effect
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              onEnter: (_) =>
+                                  setState(() => isFAQsHovered = true),
+                              onExit: (_) =>
+                                  setState(() => isFAQsHovered = false),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const FAQs(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'FAQs',
+                                  style: TextStyle(
+                                    color: isFAQsHovered
+                                        ? const Color(0xFF0529CC)
+                                        : const Color.fromARGB(255, 16, 16, 16),
+                                    fontSize: fontSize,
+                                    fontFamily: 'Jost',
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: height * 0.02),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

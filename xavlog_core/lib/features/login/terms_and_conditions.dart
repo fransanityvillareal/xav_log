@@ -70,7 +70,7 @@ class TermsAndConditions extends StatelessWidget {
           children: [
             Center(
               child: Image.asset(
-                'images/fulllogo.png',
+                'assets/images/fulllogo.png',
                 width: logoSize * 1.5, // Adjusted logo size for better fit
                 height: logoSize * 1.5,
               ),

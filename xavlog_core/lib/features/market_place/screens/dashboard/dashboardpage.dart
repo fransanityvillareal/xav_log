@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/screens/home/home_screen.dart';
+import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
+import 'package:xavlog_core/features/market_place/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:xavlog_core/market_place/screens/cart/cart_provider.dart';
 import 'dart:async';
 
 void main() {

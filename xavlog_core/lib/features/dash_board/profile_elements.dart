@@ -66,7 +66,7 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                           height: 45,
                           width: 45,
                           child: Image.asset(
-                            'images/xavloglogo.png',
+                            '/assets/images/xavloglogo.png',
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -197,7 +197,7 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                                     TextButton(
                                       onPressed: () => Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => LoginPage()),
+                                        MaterialPageRoute(builder: (context) => LoginPage(onTap: () {  },)),
                                       ),
                                       child: Text('Yes'),
                                     ),

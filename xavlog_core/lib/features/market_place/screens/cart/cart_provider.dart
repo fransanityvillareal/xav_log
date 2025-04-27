@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/models/product.dart';
+import 'package:xavlog_core/features/market_place/models/product.dart';
 
 class CartProvider extends ChangeNotifier {
   final List<Product> _cartItems = [];

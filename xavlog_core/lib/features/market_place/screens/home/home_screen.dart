@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:xavlog_core/constants.dart';
-import 'package:xavlog_core/market_place/screens/home/components/body.dart';
-import 'package:xavlog_core/market_place/screens/cart/cart_screen.dart';
-import 'package:xavlog_core/market_place/screens/search/search_screen.dart';
+import 'package:xavlog_core/features/market_place/screens/cart/cart_screen.dart';
+import 'package:xavlog_core/features/market_place/screens/home/components/body.dart';
+import 'package:xavlog_core/features/market_place/screens/search/search_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final int initialCategoryIndex;

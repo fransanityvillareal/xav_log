@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/screens/chat/login_page.dart';
-import 'package:xavlog_core/market_place/screens/chat/register_page.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/login_page.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/register_page.dart';
+
 
 class LoginOrRegister extends StatefulWidget {
   const LoginOrRegister({super.key});
@@ -22,7 +23,7 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
   @override
   Widget build(BuildContext context) {
     if (showLoginPage) {
-      return LoginPage(
+      return LoginPageMarketPlace(
         onTap: togglePages,
       );
     } else {

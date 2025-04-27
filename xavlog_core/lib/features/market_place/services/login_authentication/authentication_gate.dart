@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/market_place/services/login_authentication/login_or%20register.dart';
-import 'package:xavlog_core/market_place/screens/chat/chat_home_page.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/login_or%20register.dart';
 
 class AuthenticationGate extends StatelessWidget {
   const AuthenticationGate({super.key});

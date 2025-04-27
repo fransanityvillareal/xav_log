@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
 
-
 class ProfileElementsPage extends StatefulWidget {
   const ProfileElementsPage({super.key});
   @override
@@ -23,7 +22,7 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
     final logoSize = width * 0.45; // 45% of screen width
 
     final contentPadding = width * 0.02; // 2% of screen width
-    final fontSize = width * 0.03; 
+    final fontSize = width * 0.03;
     final backButtonSize = width * 0.07; // 7% of screen width
 
     return Scaffold(
@@ -68,13 +67,15 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                   // Logo section with adjusted spacing
                   Center(
                     child: Image.asset(
-                      'images/fulllogo.png',
+                      'assets/images/fulllogo.png',
+                      
                       width: logoSize,
                       height: logoSize,
                     ),
                   ),
                   Container(
-                    width: constraints.maxWidth * 0.9, // Adjusted container width
+                    width:
+                        constraints.maxWidth * 0.9, // Adjusted container width
                     margin: EdgeInsets.symmetric(vertical: contentPadding * 2),
                     padding: EdgeInsets.all(contentPadding * 2.5),
                     decoration: BoxDecoration(
@@ -107,26 +108,27 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                           'Department',
                           'Program of Study',
                         ].map((label) => Padding(
-                          padding: EdgeInsets.only(bottom: height * 0.02),
-                          child: TextField(
-                            style: TextStyle(fontSize: fontSize * 1.2),
-                            decoration: InputDecoration(
-                              labelText: label,
-                              labelStyle: TextStyle(fontSize: fontSize * 1.2),
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: contentPadding,
-                                vertical: contentPadding * 0.8,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFF071D99),
-                                  width: 1.5,
+                              padding: EdgeInsets.only(bottom: height * 0.02),
+                              child: TextField(
+                                style: TextStyle(fontSize: fontSize * 1.2),
+                                decoration: InputDecoration(
+                                  labelText: label,
+                                  labelStyle:
+                                      TextStyle(fontSize: fontSize * 1.2),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: contentPadding,
+                                    vertical: contentPadding * 0.8,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF071D99),
+                                      width: 1.5,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        )),
+                            )),
                         // Next button with adjusted size
                         SizedBox(height: height * 0.03),
                         MouseRegion(
@@ -143,7 +145,10 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                               height: height * 0.05, // Increased height
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF071D99), Color(0xFF071D99)],
+                                  colors: [
+                                    Color(0xFF071D99),
+                                    Color(0xFF071D99)
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -171,8 +176,8 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                             child: Text(
                               'Change Account',
                               style: TextStyle(
-                                color: _isHovered 
-                                    ? const Color(0xFFD7A61F) 
+                                color: _isHovered
+                                    ? const Color(0xFFD7A61F)
                                     : const Color(0xFF071D99),
                                 fontSize: fontSize * 1.2,
                                 fontWeight: FontWeight.bold,
@@ -195,7 +200,7 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
   // Helper method for the dialog
   void _showChangeAccountDialog(BuildContext context) {
     final fontSize = MediaQuery.of(context).size.width * 0.012;
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -225,7 +230,12 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
           TextButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
+              MaterialPageRoute(
+                builder: (context) => LoginPage(
+                  onTap:
+                      () {}, 
+                ),
+              ),
             ),
             child: Text(
               'Yes',

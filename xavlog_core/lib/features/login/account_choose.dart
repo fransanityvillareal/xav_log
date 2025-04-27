@@ -83,7 +83,7 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                         // XavLog logo centered
                         Center(
                           child: Image.asset(
-                            'images/fulllogo.png',
+                            'assets/images/fulllogo.png',
                             width: logoSize,
                             height: logoSize,
                           ),

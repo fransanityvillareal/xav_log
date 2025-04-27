@@ -3,7 +3,6 @@ import 'package:xavlog_core/features/login/login_page.dart';
 import '../login/terms_and_conditions.dart';
 import '../login/faqs.dart';
 
-
 class ProfilePage extends StatefulWidget {
   final String? orgName;
   final String? description;
@@ -13,7 +12,7 @@ class ProfilePage extends StatefulWidget {
   final bool isOrganization;
 
   const ProfilePage({
-    super.key, 
+    super.key,
     this.orgName,
     this.description,
     this.profileImageUrl,
@@ -34,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late String profileImageUrl;
   late String contact;
   late String email;
-  
+
   // Additional fields for individual profiles
   String department = 'Computer Science';
   String program = 'BS IT';
@@ -43,11 +42,18 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     // Initialize with provided values or defaults
-    name = widget.orgName ?? (widget.isOrganization ? 'Computer Science Society' : 'John Doe');
-    description = widget.description ?? (widget.isOrganization ? 'Student Organization' : 'Student');
-    profileImageUrl = widget.profileImageUrl ?? 'https://picsum.photos/500?random=1';
-    contact = widget.isOrganization ? (widget.orgcontact ?? 'Not provided') : '+1 234 567 8900';
-    email = widget.isOrganization ? (widget.orgemail ?? 'org@example.com') : 'john.doe@example.com';
+    name = widget.orgName ??
+        (widget.isOrganization ? 'Computer Science Society' : 'John Doe');
+    description = widget.description ??
+        (widget.isOrganization ? 'Student Organization' : 'Student');
+    profileImageUrl =
+        widget.profileImageUrl ?? 'https://picsum.photos/500?random=1';
+    contact = widget.isOrganization
+        ? (widget.orgcontact ?? 'Not provided')
+        : '+1 234 567 8900';
+    email = widget.isOrganization
+        ? (widget.orgemail ?? 'org@example.com')
+        : 'john.doe@example.com';
   }
 
   @override
@@ -96,13 +102,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   builder: (context) => IconButton(
                     icon: const Icon(Icons.settings, color: Colors.white),
                     onPressed: () {
-                      Scaffold.of(context).openEndDrawer(); // Open the settings sidebar
+                      Scaffold.of(context)
+                          .openEndDrawer(); // Open the settings sidebar
                     },
                   ),
                 ),
               ],
       ),
-      endDrawer: _isEditing ? null : _buildSettingsSidebar(), // Remove sidebar when editing
+      endDrawer: _isEditing
+          ? null
+          : _buildSettingsSidebar(), // Remove sidebar when editing
       body: SingleChildScrollView(
         child: _isEditing
             ? _buildEditForm()
@@ -145,13 +154,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         [
                           _buildInfoTile(Icons.email, 'Email', email),
                           _buildInfoTile(Icons.phone, 'Phone', contact),
-                          _buildInfoTile(Icons.home_filled, 'Department', department),
-                          _buildInfoTile(Icons.category, 'Program of Study', program),
+                          _buildInfoTile(
+                              Icons.home_filled, 'Department', department),
+                          _buildInfoTile(
+                              Icons.category, 'Program of Study', program),
                         ],
                         showEditIcon: true,
                       ),
                     ),
-                    
+
                   // Organization Information Section
                   if (widget.isOrganization)
                     Padding(
@@ -174,16 +185,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: _buildInfoCard(
                       'Utilities',
                       [
-                        _buildUtilityTile(Icons.rule, 'Terms and Conditions', () {
+                        _buildUtilityTile(Icons.rule, 'Terms and Conditions',
+                            () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const TermsAndConditions()),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const TermsAndConditions()),
                           );
                         }),
                         _buildUtilityTile(Icons.help, 'View FAQs', () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const FAQs()),
+                            MaterialPageRoute(
+                                builder: (context) => const FAQs()),
                           );
                         }),
                         _buildUtilityTile(Icons.logout, 'Log-Out', () {
@@ -208,7 +223,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pop(context); // Close the dialog
+                                      Navigator.pop(
+                                          context); // Close the dialog
                                     },
                                     child: const Text(
                                       'Cancel',
@@ -222,7 +238,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onPressed: () {
                                       Navigator.pushAndRemoveUntil(
                                         context,
-                                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginPage(
+                                            onTap:
+                                                () {}, // 👈 empty function or your real onTap
+                                          ),
+                                        ),
                                         (route) => false,
                                       );
                                     },
@@ -269,25 +290,25 @@ class _ProfilePageState extends State<ProfilePage> {
             _buildTextField('Name', nameController, (value) => name = value),
 
             // Contact Field - Show for both types of accounts with appropriate label
-            _buildTextField(
-              widget.isOrganization ? 'Contact' : 'Phone', 
-              contactController, 
-              (value) => contact = value
-            ),
+            _buildTextField(widget.isOrganization ? 'Contact' : 'Phone',
+                contactController, (value) => contact = value),
 
             // Email Field - Show for both types of accounts
             _buildTextField('Email', emailController, (value) => email = value),
 
             // Description Field
-            _buildTextField('Description', descriptionController, (value) => description = value),
+            _buildTextField('Description', descriptionController,
+                (value) => description = value),
 
             // Department Field - Only for personal accounts
             if (!widget.isOrganization)
-              _buildTextField('Department', departmentController, (value) => department = value),
+              _buildTextField('Department', departmentController,
+                  (value) => department = value),
 
             // Program Field - Only for personal accounts
             if (!widget.isOrganization)
-              _buildTextField('Program of Study', programController, (value) => program = value),
+              _buildTextField('Program of Study', programController,
+                  (value) => program = value),
 
             const SizedBox(height: 20),
 
@@ -296,13 +317,15 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF071D99), // Blue button
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: () {
-                  _saveChanges(nameController.text, contactController.text, emailController.text);
+                  _saveChanges(nameController.text, contactController.text,
+                      emailController.text);
                 },
                 child: const Text(
                   'Save Changes',
@@ -319,14 +342,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, Function(String) onChanged) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      Function(String) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.grey, fontFamily: 'Jost'), // Updated font
+          labelStyle: const TextStyle(
+              color: Colors.grey, fontFamily: 'Jost'), // Updated font
           filled: true,
           fillColor: const Color(0xFFF5F5F5), // Light gray background
           border: OutlineInputBorder(
@@ -335,16 +360,19 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF071D99)), // Blue border
+            borderSide:
+                const BorderSide(color: Color(0xFF071D99)), // Blue border
           ),
         ),
-        style: const TextStyle(color: Colors.black, fontFamily: 'Jost'), // Updated font
+        style: const TextStyle(
+            color: Colors.black, fontFamily: 'Jost'), // Updated font
         onChanged: onChanged,
       ),
     );
   }
 
-  void _saveChanges(String updatedName, String updatedContact, String updatedEmail) {
+  void _saveChanges(
+      String updatedName, String updatedContact, String updatedEmail) {
     setState(() {
       name = updatedName;
       contact = updatedContact;
@@ -353,7 +381,8 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  Widget _buildInfoCard(String title, List<Widget> children, {bool showEditIcon = false}) {
+  Widget _buildInfoCard(String title, List<Widget> children,
+      {bool showEditIcon = false}) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final fontSize = width * 0.03;
@@ -394,7 +423,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     });
                   },
                   child: Icon(
-                    Icons.edit, 
+                    Icons.edit,
                     color: const Color(0xFF071D99),
                     size: fontSize * 1.2,
                   ),
@@ -424,8 +453,8 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
-              icon, 
-              color: const Color(0xFF071D99), 
+              icon,
+              color: const Color(0xFF071D99),
               size: fontSize * 1.2,
             ),
           ),
@@ -445,7 +474,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: fontSize * 1.2, 
+                    fontSize: fontSize * 1.2,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
@@ -462,7 +491,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final fontSize = width * 0.03;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
@@ -514,7 +543,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.white,
-                  child: const Icon(Icons.person, size: 30, color: Color(0xFF071D99)),
+                  child: const Icon(Icons.person,
+                      size: 30, color: Color(0xFF071D99)),
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -536,8 +566,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.account_circle, color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Account Settings', style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
+            leading: const Icon(Icons.account_circle,
+                color: Color.fromARGB(255, 16, 16, 16)),
+            title: const Text('Account Settings',
+                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
             onTap: () {
               // Handle Account Settings action
               Navigator.pop(context);
@@ -547,8 +579,10 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.notifications, color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Notifications', style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
+            leading: const Icon(Icons.notifications,
+                color: Color.fromARGB(255, 16, 16, 16)),
+            title: const Text('Notifications',
+                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
             onTap: () {
               // Handle Notifications action
               Navigator.pop(context);
@@ -558,8 +592,10 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.privacy_tip, color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Privacy Policy', style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
+            leading: const Icon(Icons.privacy_tip,
+                color: Color.fromARGB(255, 16, 16, 16)),
+            title: const Text('Privacy Policy',
+                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
             onTap: () {
               // Handle Privacy Policy action
               Navigator.pop(context);
@@ -569,8 +605,10 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.logout, color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Log Out', style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
+            leading: const Icon(Icons.logout,
+                color: Color.fromARGB(255, 16, 16, 16)),
+            title: const Text('Log Out',
+                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
             onTap: () {
               Navigator.pop(context); // Close the drawer first
               showDialog(
@@ -608,7 +646,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         onPressed: () {
                           Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(
+                                onTap:
+                                    () {}, // 👈 empty function or your real onTap
+                              ),
+                            ),
                             (route) => false,
                           );
                         },
