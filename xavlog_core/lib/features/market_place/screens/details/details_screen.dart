@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
+import 'package:xavlog_core/features/market_place/screens/buy/buy_page.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_screen.dart';
-import 'package:xavlog_core/features/market_place/screens/details/components/body.dart' as details_body;
+import 'package:xavlog_core/features/market_place/screens/details/components/body.dart'
+    as details_body;
 import 'package:xavlog_core/features/market_place/screens/search/search_screen.dart';
 
 class DetailsScreen extends StatelessWidget {
@@ -99,14 +101,12 @@ class DetailsScreen extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          Provider.of<CartProvider>(context, listen: false).addToCart(product);
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("${product.title} added to cart!"),
-              duration: const Duration(seconds: 2),
-              backgroundColor: Colors.black87,
-              behavior: SnackBarBehavior.floating,
+          // Navigate to BuyPage with the current product
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  BuyPage(product: product), // Pass the product here
             ),
           );
         },
