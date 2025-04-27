@@ -1,4 +1,4 @@
-# xavlog_market_place
+# xavlog_core
 
 A new Flutter project.
 

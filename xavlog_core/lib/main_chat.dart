@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/market_place/services/login_authentication/authentication_gate.dart';
 import 'market_place/screens/themes/light_mode.dart';
 
 class MyAppChat extends StatelessWidget {

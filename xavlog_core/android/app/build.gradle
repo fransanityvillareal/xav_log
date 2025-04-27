@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.xavlog_market_place"
+    namespace = "com.example.xavlog_core"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -23,7 +23,7 @@ android {
     }
 
     defaultConfig {
-    applicationId = "com.example.xavlog_market_place"
+    applicationId = "com.example.xavlog_core"
     minSdk = 23  
     targetSdk = flutter.targetSdkVersion
     versionCode = flutter.versionCode

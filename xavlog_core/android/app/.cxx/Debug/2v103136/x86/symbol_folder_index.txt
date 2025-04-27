@@ -1,1 +1,1 @@
-/home/johnfrancis/github_local/xav_log/xavlog_market_place/build/app/intermediates/cxx/Debug/2v103136/obj/x86
+/home/johnfrancis/github_local/xav_log/xavlog_core/build/app/intermediates/cxx/Debug/2v103136/obj/x86

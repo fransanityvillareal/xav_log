@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/screens/dashboard/dashboardpage.dart';
+import 'package:xavlog_core/market_place/screens/dashboard/dashboardpage.dart';
 
 void main() {
   runApp(const SellerIntroduction());
@@ -39,13 +39,12 @@ class IntroductionSeller extends StatelessWidget {
               ),
             ),
           ),
-
           Positioned(
             left: -screenWidth * 0.05,
             bottom: screenHeight * 0.18,
             child: Container(
-              width: screenWidth * 0.1, 
-              height: screenWidth * 0.1, 
+              width: screenWidth * 0.1,
+              height: screenWidth * 0.1,
               decoration: const ShapeDecoration(
                 color: Color(0xFFFFD037),
                 shape: OvalBorder(),
@@ -56,8 +55,8 @@ class IntroductionSeller extends StatelessWidget {
             left: screenWidth * 0.12,
             top: screenHeight * 0.35,
             child: Container(
-              width: screenWidth * 0.28, 
-              height: screenWidth * 0.28, 
+              width: screenWidth * 0.28,
+              height: screenWidth * 0.28,
               decoration: const ShapeDecoration(
                 color: Color(0xFFFFD037),
                 shape: OvalBorder(),
@@ -68,28 +67,23 @@ class IntroductionSeller extends StatelessWidget {
             left: screenWidth * 0.05,
             top: screenHeight * 0.65,
             child: Container(
-              width: screenWidth * 0.32, 
-              height: screenWidth * 0.3, 
+              width: screenWidth * 0.32,
+              height: screenWidth * 0.3,
               decoration: const ShapeDecoration(
                 color: Color(0xFFE14B5A),
                 shape: OvalBorder(),
               ),
             ),
           ),
-
           Align(
             alignment: Alignment.topRight,
             child: Padding(
               padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height *
-                    0.06, 
-                right: MediaQuery.of(context).size.width *
-                    0.07, 
+                top: MediaQuery.of(context).size.height * 0.06,
+                right: MediaQuery.of(context).size.width * 0.07,
               ),
               child: GestureDetector(
-                onTap: () {
-                
-                },
+                onTap: () {},
                 child: const Text(
                   'Skip',
                   style: TextStyle(
@@ -102,7 +96,6 @@ class IntroductionSeller extends StatelessWidget {
               ),
             ),
           ),
-
           Positioned(
             left: screenWidth * 0.1,
             top: screenHeight * 0.08,
@@ -117,7 +110,6 @@ class IntroductionSeller extends StatelessWidget {
               ),
             ),
           ),
-
           Positioned(
             left: screenWidth * 0.08,
             top: screenHeight * 0.16,
@@ -132,22 +124,19 @@ class IntroductionSeller extends StatelessWidget {
               ),
             ),
           ),
-
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             left: MediaQuery.of(context).size.width * 0.05,
             right: MediaQuery.of(context).size.width * 0.05,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width *
-                  0.85, 
+              width: MediaQuery.of(context).size.width * 0.85,
               height: 54,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                            HomeWidget(), 
+                      builder: (context) => HomeWidget(),
                     ),
                   );
                 },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/screens/home/home_screen.dart';
+import 'package:xavlog_core/market_place/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:xavlog_market_place/market_place/screens/cart/cart_provider.dart';
+import 'package:xavlog_core/market_place/screens/cart/cart_provider.dart';
 import 'dart:async';
 
 void main() {
@@ -203,83 +203,85 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Widget _buildMainCategoryButtons() {
-  return Padding(
-    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures even spacing between buttons
-      children: [
-        Expanded(
-          child: _buildCategoryButton(
-            'PE Equipment',
-            'assets/images/sport.png',
-            () {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment
+            .spaceBetween, // Ensures even spacing between buttons
+        children: [
+          Expanded(
+            child: _buildCategoryButton(
+              'PE Equipment',
+              'assets/images/sport.png',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HomeScreen(initialCategoryIndex: 1)),
+                );
+              },
+            ),
+          ),
+          SizedBox(width: 12), // Adds spacing between buttons
+          Expanded(
+            child: _buildCategoryButton('Books', 'assets/images/book.png', () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => HomeScreen(initialCategoryIndex: 1)),
+                    builder: (context) => HomeScreen(initialCategoryIndex: 0)),
               );
-            },
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryButton(
+      String text, String assetPath, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, // Background color of the button
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ], // Add shadow here
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(
+                    assetPath,
+                    width: 50,
+                    height: 45,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(text, style: TextStyle(fontSize: 17)),
+                ],
+              ),
+            ],
           ),
         ),
-        SizedBox(width: 12), // Adds spacing between buttons
-        Expanded(
-          child: _buildCategoryButton('Books', 'assets/images/book.png', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 0)),
-            );
-          }),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildCategoryButton(
-    String text, String assetPath, VoidCallback onTap) {
-  return InkWell(
-    onTap: onTap,
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white, // Background color of the button
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ], // Add shadow here
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Image.asset(
-                  assetPath,
-                  width: 50,
-                  height: 45,
-                  fit: BoxFit.cover,
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(text, style: TextStyle(fontSize: 17)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildSmallCategoryButton(
       String text, String assetPath, VoidCallback onTap) {
@@ -344,7 +346,9 @@ Widget _buildCategoryButton(
               _buildSmallCategoryButton('Tech', 'assets/images/tech.png', () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 3)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HomeScreen(initialCategoryIndex: 3)),
                 );
               }),
               SizedBox(width: 20),
@@ -352,14 +356,18 @@ Widget _buildCategoryButton(
                   'Accessories', 'assets/images/accessories.png', () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 4)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HomeScreen(initialCategoryIndex: 4)),
                 );
               }),
               SizedBox(width: 20),
               _buildSmallCategoryButton('Others', 'assets/images/more.png', () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen(initialCategoryIndex: 5)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          HomeScreen(initialCategoryIndex: 5)),
                 );
               }),
               SizedBox(width: 20),

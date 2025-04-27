@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/constants.dart';
-import 'package:xavlog_market_place/market_place/models/product.dart';
-import 'package:xavlog_market_place/market_place/screens/details/details_screen.dart';
-
+import 'package:xavlog_core/constants.dart';
+import 'package:xavlog_core/market_place/models/product.dart';
+import 'package:xavlog_core/market_place/screens/details/details_screen.dart';
 
 const double kDefaultPadding = 16.0;
 
@@ -32,7 +31,6 @@ class BodyState extends State<Body> {
     'Accessories',
     'Others'
   ];
-  
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +45,8 @@ class BodyState extends State<Body> {
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
           child: Text(
             'Market Place',
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall
-                ?.copyWith(fontWeight: FontWeight.bold,
-                color: Color(0xFF071D99)),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold, color: Color(0xFF071D99)),
           ),
         ),
         const SizedBox(height: 10),
@@ -131,7 +126,8 @@ class ItemCard extends StatelessWidget {
           ),
           Text(
             '\$${product.price}',
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF007F5F)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Color(0xFF007F5F)),
           ),
         ],
       ),

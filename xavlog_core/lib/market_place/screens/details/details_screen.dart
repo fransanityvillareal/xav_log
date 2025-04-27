@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:xavlog_market_place/market_place/models/product.dart';
-import 'package:xavlog_market_place/market_place/screens/cart/cart_screen.dart';
-import 'package:xavlog_market_place/market_place/screens/search/search_screen.dart';
-import 'package:xavlog_market_place/market_place/screens/details/components/body.dart'
+import 'package:xavlog_core/market_place/models/product.dart';
+import 'package:xavlog_core/market_place/screens/cart/cart_screen.dart';
+import 'package:xavlog_core/market_place/screens/search/search_screen.dart';
+import 'package:xavlog_core/market_place/screens/details/components/body.dart'
     as details_body;
-import 'package:xavlog_market_place/market_place/screens/cart/cart_provider.dart';
+import 'package:xavlog_core/market_place/screens/cart/cart_provider.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Product product;
@@ -93,7 +93,7 @@ class DetailsScreen extends StatelessWidget {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF4CAF50), 
+          backgroundColor: Color(0xFF4CAF50),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

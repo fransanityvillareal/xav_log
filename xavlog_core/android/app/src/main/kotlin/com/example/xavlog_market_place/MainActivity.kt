@@ -1,4 +1,4 @@
-package com.example.xavlog_market_place
+package com.example.xavlog_core
 
 import io.flutter.embedding.android.FlutterActivity
 

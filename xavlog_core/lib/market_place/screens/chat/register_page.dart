@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/services/login_authentication/authentication_service.dart';
-import 'package:xavlog_market_place/market_place/screens/chat/components/login_button.dart';
-import 'package:xavlog_market_place/market_place/screens/chat/components/textfield_login.dart';
+import 'package:xavlog_core/market_place/services/login_authentication/authentication_service.dart';
+import 'package:xavlog_core/market_place/screens/chat/components/login_button.dart';
+import 'package:xavlog_core/market_place/screens/chat/components/textfield_login.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
@@ -134,7 +134,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     hintText: "Password",
                     obsecuretext: true,
                     controller: _passwordController,
-                    prefixIcon: Icon(Icons.lock, color: const Color(0xFFBDBDBD)),
+                    prefixIcon:
+                        Icon(Icons.lock, color: const Color(0xFFBDBDBD)),
                   ),
                   const SizedBox(height: 16),
                   TextfieldLogin(

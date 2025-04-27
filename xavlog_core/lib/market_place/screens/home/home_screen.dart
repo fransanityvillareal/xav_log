@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:xavlog_market_place/constants.dart';
-import 'package:xavlog_market_place/market_place/screens/home/components/body.dart';
-import 'package:xavlog_market_place/market_place/screens/cart/cart_screen.dart';
-import 'package:xavlog_market_place/market_place/screens/search/search_screen.dart';
+import 'package:xavlog_core/constants.dart';
+import 'package:xavlog_core/market_place/screens/home/components/body.dart';
+import 'package:xavlog_core/market_place/screens/cart/cart_screen.dart';
+import 'package:xavlog_core/market_place/screens/search/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final int initialCategoryIndex;
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -42,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
               colorFilter: const ColorFilter.mode(kTextColor, BlendMode.srcIn),
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const CartScreen()));
             },
           ),
           const SizedBox(width: kDefaultPaddin / 2),

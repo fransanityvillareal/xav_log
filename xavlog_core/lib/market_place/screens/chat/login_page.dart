@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/services/login_authentication/authentication_service.dart';
-import 'package:xavlog_market_place/market_place/screens/chat/components/login_button.dart';
-import 'package:xavlog_market_place/market_place/screens/chat/components/textfield_login.dart';
+import 'package:xavlog_core/market_place/services/login_authentication/authentication_service.dart';
+import 'package:xavlog_core/market_place/screens/chat/components/login_button.dart';
+import 'package:xavlog_core/market_place/screens/chat/components/textfield_login.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();

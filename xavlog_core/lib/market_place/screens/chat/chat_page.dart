@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/services/chat/chat_services.dart';
-import 'package:xavlog_market_place/market_place/services/login_authentication/authentication_service.dart';
+import 'package:xavlog_core/market_place/services/chat/chat_services.dart';
+import 'package:xavlog_core/market_place/services/login_authentication/authentication_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 

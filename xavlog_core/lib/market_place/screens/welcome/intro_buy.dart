@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_market_place/market_place/screens/welcome/intro_seller.dart';
+import 'package:xavlog_core/market_place/screens/welcome/intro_seller.dart';
 
 void main() {
   runApp(const BuyerIntroduction());
@@ -27,7 +27,6 @@ class IntroductionBuyer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-      
         children: [
           Positioned.fill(
             child: Container(
@@ -58,15 +57,12 @@ class IntroductionBuyer extends StatelessWidget {
             alignment: Alignment.topRight,
             child: Padding(
               padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height *
-                    0.06, 
+                top: MediaQuery.of(context).size.height * 0.06,
                 right: MediaQuery.of(context).size.width *
                     0.07, // Adjusted right spacing
               ),
               child: GestureDetector(
-                onTap: () {
-                  
-                },
+                onTap: () {},
                 child: const Text(
                   'Skip',
                   style: TextStyle(
@@ -102,14 +98,13 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Next Button 
+          // Next Button
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             left: MediaQuery.of(context).size.width * 0.05,
             right: MediaQuery.of(context).size.width * 0.05,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width *
-                  0.85, 
+              width: MediaQuery.of(context).size.width * 0.85,
               height: 54,
               child: ElevatedButton(
                 onPressed: () {
@@ -142,8 +137,7 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-
-          // Blue Dot 
+          // Blue Dot
           Positioned(
             left: MediaQuery.of(context).size.width *
                 0.08, // Adjusted for screen width
@@ -159,12 +153,10 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Red Dot 
+          // Red Dot
           Positioned(
-            left: -MediaQuery.of(context).size.width *
-                0.05, 
-            top: MediaQuery.of(context).size.height *
-                0.6, 
+            left: -MediaQuery.of(context).size.width * 0.05,
+            top: MediaQuery.of(context).size.height * 0.6,
             child: Container(
               width: 94,
               height: 87,
@@ -175,7 +167,7 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
 
-          // Yellow Circle 
+          // Yellow Circle
           Positioned(
             right: MediaQuery.of(context).size.width * 0.05,
             top: MediaQuery.of(context).size.height * 0.50,
@@ -189,10 +181,8 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width *
-                0.1, 
-            top: MediaQuery.of(context).size.height *
-                0.08, 
+            left: MediaQuery.of(context).size.width * 0.1,
+            top: MediaQuery.of(context).size.height * 0.08,
             child: SizedBox(
               width: 70.22,
               child: Text(
@@ -209,13 +199,10 @@ class IntroductionBuyer extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width *
-                0.08, 
-            top: MediaQuery.of(context).size.height *
-                0.16, 
+            left: MediaQuery.of(context).size.width * 0.08,
+            top: MediaQuery.of(context).size.height * 0.16,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width *
-                  0.8, 
+              width: MediaQuery.of(context).size.width * 0.8,
               child: Text(
                 'Find great deals on pre-loved items from fellow ADNU students! Browse listings, connect with sellers, and get what you need at affordable prices—quick, easy, and hassle-free! 🛍️',
                 style: TextStyle(

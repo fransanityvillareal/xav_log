@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:xavlog_market_place/market_place/screens/cart/cart_provider.dart';
+import 'package:xavlog_core/market_place/screens/cart/cart_provider.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -31,7 +31,8 @@ class CartScreen extends StatelessWidget {
                       title: Text(product.title),
                       subtitle: Text('\$${product.price}'),
                       trailing: IconButton(
-                        icon: const Icon(Icons.remove_circle, color: Colors.red),
+                        icon:
+                            const Icon(Icons.remove_circle, color: Colors.red),
                         onPressed: () {
                           cartProvider.removeFromCart(product);
                         },

@@ -32,7 +32,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/johnfrancis/github_local/xav_log/xavlog_market_place/android/app/.cxx/Debug/2v103136/x86",
+		"build" : "/home/johnfrancis/github_local/xav_log/xavlog_core/android/app/.cxx/Debug/2v103136/x86",
 		"source" : "/home/johnfrancis/snap/flutter/common/flutter/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 

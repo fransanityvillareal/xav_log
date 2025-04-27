@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/johnfrancis/Desktop/xav_log/xavlog_market_place/android/app/.cxx/Debug/225d3a1m/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/johnfrancis/Desktop/xav_log/xavlog_core/android/app/.cxx/Debug/225d3a1m/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

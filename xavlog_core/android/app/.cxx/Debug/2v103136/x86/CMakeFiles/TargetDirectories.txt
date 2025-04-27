@@ -1,2 +1,2 @@
-/home/johnfrancis/github_local/xav_log/xavlog_market_place/android/app/.cxx/Debug/2v103136/x86/CMakeFiles/edit_cache.dir
-/home/johnfrancis/github_local/xav_log/xavlog_market_place/android/app/.cxx/Debug/2v103136/x86/CMakeFiles/rebuild_cache.dir
+/home/johnfrancis/github_local/xav_log/xavlog_core/android/app/.cxx/Debug/2v103136/x86/CMakeFiles/edit_cache.dir
+/home/johnfrancis/github_local/xav_log/xavlog_core/android/app/.cxx/Debug/2v103136/x86/CMakeFiles/rebuild_cache.dir
