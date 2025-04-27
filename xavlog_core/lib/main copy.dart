@@ -50,3 +50,6 @@ class XavLog extends StatelessWidget {
   }
 }
 
+// add image
+// add name
+// fix the ui

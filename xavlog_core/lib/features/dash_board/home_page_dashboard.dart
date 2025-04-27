@@ -1167,12 +1167,8 @@ class _HomepageState extends State<Homepage> {
     final fontSize = width * 0.03;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(
-        255,
-        255,
-        255,
-        255,
-      ), // Blue background
+      backgroundColor:
+          const Color.fromARGB(255, 255, 255, 255), // Blue background
       endDrawer: _buildMainMenuDrawer(), // Use endDrawer for right-side drawer
       body: SingleChildScrollView(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 30),
@@ -1370,12 +1366,7 @@ class _HomepageState extends State<Homepage> {
                           margin: const EdgeInsets.only(right: 16),
                           child: Card(
                             elevation: 4,
-                            color: const Color.fromARGB(
-                              255,
-                              8,
-                              33,
-                              96,
-                            ), // Dark blue
+                            color: const Color.fromARGB(255, 8, 33, 96),
                             shadowColor: Colors.black.withOpacity(0.2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -1395,7 +1386,7 @@ class _HomepageState extends State<Homepage> {
                                     item.icon,
                                     size: 48,
                                     color: const Color(0xFFD7A61F),
-                                  ), // Yellow icons
+                                  ),
                                   const SizedBox(height: 12),
                                   Text(
                                     item.title,
@@ -1431,6 +1422,28 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       ),
+      bottomNavigationBar:
+          _buildBottomNavBar(), // Add the bottom navigation bar here
+    );
+  }
+
+// Bottom Navigation Bar
+  Widget _buildBottomNavBar() {
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey[300]!)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(icon: Icon(Icons.home), onPressed: () {}),
+          IconButton(icon: Icon(Icons.search), onPressed: () {}),
+          IconButton(icon: Icon(Icons.shopping_bag), onPressed: () {}),
+          IconButton(icon: Icon(Icons.person), onPressed: () {}),
+        ],
+      ),
     );
   }
 
@@ -1443,12 +1456,12 @@ class _HomepageState extends State<Homepage> {
       case 'Calendar':
       // return const CalendarPage(); // Uncomment and implement this when ready
       case 'Marketplace':
-      // return const MarketplacePage(); // Uncomment and implement this when ready
-      return IntroScreen (); // Redirect to MarketplacePage
+        // return const MarketplacePage(); // Uncomment and implement this when ready
+        return IntroScreen(); // Redirect to MarketplacePage
 
       case 'Grades Tracker':
-      // return const GradesTrackerPage(); // Uncomment and implement this when ready
-      return const InitialPage(); // Redirect to GradesTrackerPage
+        // return const GradesTrackerPage(); // Uncomment and implement this when ready
+        return const InitialPage(); // Redirect to GradesTrackerPage
       case 'Social Collaboration':
       // return const SocialCollaborationPage(); // Uncomment and implement this when ready
       case 'Schedule Manager':
