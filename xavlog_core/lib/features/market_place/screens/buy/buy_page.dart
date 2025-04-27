@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/screens/buy/payment/payment_proof.dart';
-import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 
 class BuyPage extends StatelessWidget {

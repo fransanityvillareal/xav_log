@@ -68,7 +68,6 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
     // Xavlog theme colors
     Color primaryColor = Color.fromARGB(255, 255, 255, 255); // Primary color
     Color secondaryColor = Color(0xFF03DAC6); // Accent color
-    Color backgroundColor = Colors.white; // Background color
     Color textColor = Color(0xFF212121); // Text color
 
     return Scaffold(
