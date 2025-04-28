@@ -39,7 +39,7 @@ dependencies:
   intl: ^0.18.1
   flutter_animate: ^4.2.0
   google_fonts: ^6.2.1
-  file_picker: ^10.1.2  # Replace with the latest version you need
+  file_picker: ^10.1.2 # Replace with the latest version you need
   table_calendar: ^3.0.9
   shared_preferences: ^2.2.2
   image_picker: ^1.1.2
@@ -47,9 +47,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-
-
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -86,16 +83,19 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
-  #   - family: Schyler
+  #   - family: Rubik
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
+  #       - asset: assets/fonts/Rubik-VariableFont_wght.ttf
+  #       - asset: assets/fonts/Rubik-Italic-VariableFont_wght.ttf
+  #       - asset: assets/fonts/Rubik-SemiBold.ttf
+  #       - asset: assets/fonts/Rubik-Bold.ttf
+  #   - family: Jost
   #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  #       - asset: assets/fonts/Jost-VariableFont_wght.ttf
+  #       - asset: assets/fonts/Jost-Italic-VariableFont_wght.ttf
+  #       - asset: assets/fonts/Jost-SemiBold.ttf
+  #       - asset: assets/fonts/Jost-Bold.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

@@ -126,7 +126,7 @@ class ItemCard extends StatelessWidget {
             ),
           ),
           Text(
-            '\$${product.price}',
+            '₱ ${product.price}',
             style: const TextStyle(
                 fontWeight: FontWeight.bold, color: Color(0xFF007F5F)),
           ),

@@ -67,7 +67,7 @@ class Body extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    "\$${product.price}",
+                                    "₱ ${product.price}",
                                     style: const TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,

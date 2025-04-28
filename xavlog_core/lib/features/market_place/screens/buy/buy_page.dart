@@ -60,7 +60,7 @@ class BuyPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "Condition: ${product.condition}",
+                    "Condition: ₱ ${product.condition}",
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
