@@ -65,22 +65,32 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Xavlog theme colors
-    Color primaryColor = Color.fromARGB(255, 255, 255, 255); // Primary color
-    Color secondaryColor = Color(0xFF03DAC6); // Accent color
-    Color textColor = Color(0xFF212121); // Text color
+    // Define your color palette clearly here:
+    Color backgroundColor = Color(0xFFF6F8FA); // background
+    Color primaryColor =
+        Color(0xFF0D47A1); // <-- strong blue for important actions
+    Color secondaryColor =
+        Color(0xFF42A5F5); //  blue for less critical buttons
+    Color textColor = Color(0xFF212121); //dark text
+    Color cardColor = Colors.white; // <-- for cards/containers
 
     return Scaffold(
+      backgroundColor: backgroundColor, // << background is softer
       appBar: AppBar(
-        title: Text('Submit Payment Proof'),
         backgroundColor: primaryColor,
+        title: const Text('Submit Payment Proof',
+            style: TextStyle(color: Colors.white)),
+        iconTheme:
+            const IconThemeData(color: Colors.white), // back button color
+        centerTitle: true,
+        elevation: 1,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // QR Code or Chat Button based on payment method
+            // --- QR code or Chat Button Section ---
             Center(
               child: Column(
                 children: [
@@ -88,17 +98,31 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                     Text(
                       "Scan Seller's QR Code",
                       style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: textColor),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    Image.asset(
-                      widget.qrCodeAsset,
-                      height: widget.qrSizeHeight, // Dynamically adjust size
-                      width: widget.qrSizeWidth, // Dynamically adjust size
-                      fit: BoxFit
-                          .contain, // Ensure the QR code is scaled properly
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Image.asset(
+                        widget.qrCodeAsset,
+                        height: widget.qrSizeHeight,
+                        width: widget.qrSizeWidth,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ],
                   if (widget.method == 'Pay Face-to-Face') ...[
@@ -110,6 +134,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                         fontWeight: FontWeight.w500,
                         color: textColor,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
@@ -120,13 +145,17 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: secondaryColor, // Chat button color
+                        backgroundColor:
+                            secondaryColor, // <-- lighter blue for chat
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 12),
+                            horizontal: 30, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: const Text(
                         'Start Chat',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ],
@@ -135,7 +164,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
             ),
             const SizedBox(height: 30),
 
-            // Dropdown for Proof Type (only visible for non-face-to-face payments)
+            // --- Payment Proof Selection Section ---
             if (widget.method != 'Pay Face-to-Face') ...[
               const Text(
                 'Select Proof Type',
@@ -145,8 +174,13 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
               DropdownButtonFormField<String>(
                 value: _selectedProofType,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  filled: true,
+                  fillColor: cardColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
                 hint: const Text('Choose proof method'),
                 items: _proofTypes.map((type) {
@@ -158,19 +192,22 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                 onChanged: (value) {
                   setState(() {
                     _selectedProofType = value;
-                    _imageFile = null; // Clear image when switching
-                    _refController.clear(); // Clear ref number when switching
+                    _imageFile = null;
+                    _refController.clear();
                   });
                 },
               ),
               const SizedBox(height: 20),
-
               if (_selectedProofType == 'Reference Number') ...[
                 TextField(
                   controller: _refController,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: cardColor,
                     labelText: 'Reference Number',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ] else if (_selectedProofType == 'Upload Screenshot') ...[
@@ -179,11 +216,16 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                   icon: const Icon(Icons.upload_file),
                   label: const Text('Pick Image from Gallery'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: secondaryColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    backgroundColor:
+                        secondaryColor, // <-- lighter blue for uploads
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 if (_imageFile != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
@@ -191,7 +233,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                       _imageFile!,
                       height: 180,
                       width: double.infinity,
-                      fit: BoxFit.cover, // Ensure the image is covered and not distorted
+                      fit: BoxFit.cover,
                     ),
                   ),
               ],
@@ -199,15 +241,11 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
 
             const SizedBox(height: 30),
 
-            // Submit Button (only visible for non-face-to-face payments)
+            // --- Submit Button Section ---
             if (widget.method != 'Pay Face-to-Face') ...[
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
                   onPressed: () {
                     if (_selectedProofType == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -233,15 +271,24 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                       return;
                     }
 
-                    // Successfully submitted
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Payment proof submitted successfully!')),
+                          content:
+                              Text('Payment proof submitted successfully!')),
                     );
                     Navigator.pop(context);
                   },
-                  child: const Text('Submit Payment Proof',
-                      style: TextStyle(fontSize: 18)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor, 
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Submit Payment Proof',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
               ),
             ],

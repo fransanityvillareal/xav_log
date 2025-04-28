@@ -90,6 +90,7 @@ class DetailsScreen extends StatelessWidget {
           BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 5),
         ],
       ),
+      //it0
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Color(0xFF4CAF50),
