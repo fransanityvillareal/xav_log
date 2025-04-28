@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 import 'profile.dart';
 import '../event_finder/eventfinderpage_reg.dart';
 import '../login/login_page.dart';
@@ -29,7 +30,7 @@ import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  const Homepage({super.key}); //(Key? key) : super(Key? keu)
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -1438,7 +1439,8 @@ class _HomepageState extends State<Homepage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(icon: Icon(Icons.home), onPressed: () {}),
+          IconButton(icon: Icon(Icons.home), onPressed: () {
+          }),
           IconButton(icon: Icon(Icons.search), onPressed: () {}),
           IconButton(icon: Icon(Icons.shopping_bag), onPressed: () {}),
           IconButton(icon: Icon(Icons.person), onPressed: () {}),

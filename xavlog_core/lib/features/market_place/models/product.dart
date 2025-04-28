@@ -96,7 +96,7 @@ List<Product> products = [
   ),
   Product(
     id: 11,
-    title: "Luka Shirt",
+    title: "Luka's Shirt",
     price: 890,
     condition: "Used",
     description: "Selling because the size is too large.",
