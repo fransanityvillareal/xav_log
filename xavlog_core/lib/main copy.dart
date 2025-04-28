@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,12 +7,14 @@ import 'package:xavlog_core/firebase_options.dart'; // Firebase config
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Needed before async stuff
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // Initialize Firebase
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform); // Initialize Firebase
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => CartProvider()), // Add your providers here
+        ChangeNotifierProvider(
+            create: (context) => CartProvider()), // Add your providers here
       ],
       child: const XavLog(), // Load the app
     ),
@@ -45,7 +46,7 @@ class XavLog extends StatelessWidget {
           labelLarge: TextStyle(fontFamily: 'Jost'),
         ),
       ),
-      home: const SigninPage(), 
+      home: const SigninPage(),
     );
   }
 }

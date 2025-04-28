@@ -167,6 +167,7 @@ class _SigninPageState extends State<SigninPage> {
                             child: Container(
                               alignment: Alignment.center,
                               width: buttonWidth * 2,
+                              height: buttonWidth * 0.35,
                               padding: EdgeInsets.all(contentPadding),
                               decoration: BoxDecoration(
                                 borderRadius:
