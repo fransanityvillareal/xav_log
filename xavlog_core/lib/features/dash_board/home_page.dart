@@ -139,8 +139,7 @@ class _HomepageState extends State<Homepage> {
                     SizedBox(
                       width: 100,
                       child: Image.asset(
-                        'assets/images/xavloglogo.png', 
-                        
+                        'assets/images/xavloglogo.png',
                         height: 28,
                         fit: BoxFit.contain,
                       ),
@@ -369,42 +368,46 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget _buildActivitiesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Upcoming Activities',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Jost',
-            color: Color(0xFF071D99),
+    return Container(
+      color: Colors.white, // Set background color to white
+      padding: const EdgeInsets.all(16), // Optional: Add some padding
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Upcoming Activities',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Jost',
+              color: Color(0xFF071D99),
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: 5, // Example number of activities
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 4,
-              color: Colors.white,
-              shadowColor: Color(0xFF071D99),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: const Icon(Icons.event, color: Color(0xFFD7A61F)),
-                title: Text('Activity ${index + 1}'),
-                subtitle: Text('Description for activity ${index + 1}'),
-                trailing: const Icon(Icons.arrow_forward_ios),
-              ),
-            );
-          },
-        ),
-      ],
+          const SizedBox(height: 16),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: 5, // Example number of activities
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 4,
+                color: Colors.white,
+                shadowColor: Color(0xFF071D99),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  leading: const Icon(Icons.event, color: Color(0xFFD7A61F)),
+                  title: Text('Activity ${index + 1}'),
+                  subtitle: Text('Description for activity ${index + 1}'),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 import 'profile.dart';
 import '../event_finder/eventfinderpage_reg.dart';
 import '../login/login_page.dart';
@@ -164,6 +163,7 @@ class _HomepageState extends State<Homepage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white, // <-- Make background pure white
           title: Text(
             'Add New Activity',
             style: TextStyle(
@@ -396,7 +396,7 @@ class _HomepageState extends State<Homepage> {
                 children: [
                   // Attendance analytics card
                   Card(
-                    elevation: 2,
+                    color: const Color(0xFFF5F5F5),
                     margin: const EdgeInsets.only(bottom: 16),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -442,6 +442,7 @@ class _HomepageState extends State<Homepage> {
 
                   // Performance Analytics
                   Card(
+                    color: const Color(0xFFF5F5F5),
                     elevation: 2,
                     margin: const EdgeInsets.only(bottom: 16),
                     child: Padding(
@@ -467,6 +468,7 @@ class _HomepageState extends State<Homepage> {
 
                   // Progress Analytics
                   Card(
+                    color: const Color(0xFFF5F5F5),
                     elevation: 2,
                     margin: const EdgeInsets.only(bottom: 16),
                     child: Padding(
@@ -691,8 +693,9 @@ class _HomepageState extends State<Homepage> {
     final width = screenSize.width;
     final fontSize = width * 0.03;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -705,7 +708,7 @@ class _HomepageState extends State<Homepage> {
                   fontSize: fontSize * 1.2,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Jost',
-                  color: Color(0xFF071D99),
+                  color: const Color(0xFF071D99),
                 ),
               ),
               GestureDetector(
@@ -728,6 +731,7 @@ class _HomepageState extends State<Homepage> {
             itemBuilder: (context, index) {
               final activity = activities[index];
               return Card(
+                color: Colors.white,
                 elevation: 4,
                 margin: const EdgeInsets.only(bottom: 8),
                 shape: RoundedRectangleBorder(
@@ -1366,11 +1370,15 @@ class _HomepageState extends State<Homepage> {
                           width: 160,
                           margin: const EdgeInsets.only(right: 16),
                           child: Card(
-                            elevation: 4,
-                            color: const Color.fromARGB(255, 8, 33, 96),
-                            shadowColor: Colors.black.withOpacity(0.2),
+                            elevation:
+                                8, // Increased shadow for a more pronounced effect
+                            color: const Color(
+                                0xFF071D99), // Keep the background color to match theme
+                            shadowColor: Colors.black.withOpacity(
+                                0.3), // Slightly stronger shadow for depth
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                  16), // More rounded corners for modern feel
                             ),
                             child: InkWell(
                               onTap: () {
@@ -1386,16 +1394,19 @@ class _HomepageState extends State<Homepage> {
                                   Icon(
                                     item.icon,
                                     size: 48,
-                                    color: const Color(0xFFD7A61F),
+                                    color: const Color(
+                                        0xFFD7A61F), // Keep yellow icon for contrast
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
                                     item.title,
                                     style: TextStyle(
-                                      fontSize: fontSize * 1,
+                                      fontSize: fontSize *
+                                          1.0, // Adjust size slightly
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Inter',
-                                      color: Colors.white,
+                                      color: Colors
+                                          .white, // Ensure text is white for contrast
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -1439,8 +1450,7 @@ class _HomepageState extends State<Homepage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(icon: Icon(Icons.home), onPressed: () {
-          }),
+          IconButton(icon: Icon(Icons.home), onPressed: () {}),
           IconButton(icon: Icon(Icons.search), onPressed: () {}),
           IconButton(icon: Icon(Icons.shopping_bag), onPressed: () {}),
           IconButton(icon: Icon(Icons.person), onPressed: () {}),
