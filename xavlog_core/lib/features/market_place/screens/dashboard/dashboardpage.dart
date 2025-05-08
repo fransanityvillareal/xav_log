@@ -1,14 +1,22 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:xavlog_core/features/market_place/models/product.dart';
+import 'package:xavlog_core/features/market_place/providers/product_provider.dart'
+    show ProductProvider;
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+
+import 'package:xavlog_core/features/market_place/screens/seller/seller_dashboard_screen.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(
+            create: (context) => ProductProvider(products)), // Add this line
       ],
       child: MaterialApp(
         home: HomeWidget(),
@@ -16,6 +24,49 @@ void main() {
       ),
     ),
   );
+}
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _page = 0;
+
+  final List<Widget> _pages = [
+    HomeWidget(),
+    SellerDashboardScreen(),
+    Placeholder(), // Replace with Message screen
+    Placeholder(), // Replace with Notifications screen
+    Placeholder(), // Replace with Profile screen
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.transparent,
+        buttonBackgroundColor: Colors.green,
+        color: Colors.green,
+        animationDuration: const Duration(milliseconds: 300),
+        items: const <Widget>[
+          Icon(Icons.home, size: 26, color: Colors.white),
+          Icon(Icons.message, size: 26, color: Colors.white),
+          Icon(Icons.add, size: 26, color: Colors.white),
+          Icon(Icons.notifications, size: 26, color: Colors.white),
+          Icon(Icons.person, size: 26, color: Colors.white),
+        ],
+        onTap: (index) {
+          setState(() {
+            _page = index;
+          });
+        },
+      ),
+      body: _pages[_page],
+    );
+  }
 }
 
 class AutoScrollHeader extends StatefulWidget {
@@ -32,87 +83,84 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
     'Flexible transactions. Online or cash, you choose.',
     'Pick up items safely at Ateneo de Naga, hassle-free.',
   ];
+
   final List<String> greetings = [
     'Hello there!',
     'Easy!',
     'Secure!',
   ];
 
+  // Corresponding screens for each banner
+  final List<Widget> screens = [
+    SellerDashboardScreen(),
+    SellerDashboardScreen(),
+    SellerDashboardScreen(),
+  ];
+
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < messages.length - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
+    _startAutoScroll();
+  }
 
-      _pageController.animateToPage(
-        _currentPage,
-        duration: Duration(milliseconds: 900),
-        curve: Curves.easeInOut,
-      );
+  void _startAutoScroll() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      setState(() {
+        _currentPage = (_currentPage + 1) % messages.length;
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      });
+      _startAutoScroll();
     });
   }
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 130,
-      margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: messages.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 6),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1E3C72), Color(0xFF2A5298)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  greetings[index],
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  messages[index],
-                  style: TextStyle(
-                    color: Colors.white.withAlpha((0.9 * 255).toInt()),
-                    fontSize: 14.5,
-                  ),
-                ),
-              ],
-            ),
+    return SizedBox(
+      height: 160,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => screens[_currentPage]),
           );
         },
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: messages.length,
+          itemBuilder: (context, index) {
+            return Card(
+              color: const Color(0xFFFFD700), // Gold color for Xavalog
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: ListTile(
+                  title: Text(
+                    greetings[index],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E3A8A), // Xavalog Blue
+                    ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      messages[index],
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -174,7 +222,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                         ),
                       ),
                     ),
-                    _buildBottomNavBar(),
                   ],
                 ),
               ),
@@ -426,70 +473,51 @@ class _HomeWidgetState extends State<HomeWidget> {
       ),
     );
   }
-
-  Widget _buildBottomNavBar() {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[300]!)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(icon: Icon(Icons.home), onPressed: () {}),
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
-          IconButton(icon: Icon(Icons.shopping_bag), onPressed: () {}),
-          IconButton(icon: Icon(Icons.person), onPressed: () {}),
-        ],
-      ),
-    );
-  }
 }
- // Widget _buildHeader() {
-  //   return Container(
-  //     width: double.infinity,
-  //     margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
-  //     padding: EdgeInsets.all(20),
-  //     decoration: BoxDecoration(
-  //       gradient: LinearGradient(
-  //         colors: [
-  //           Color(0xFF1E3C72),
-  //           Color(0xFF2A5298)
-  //         ], // modern blue gradient
-  //         begin: Alignment.topLeft,
-  //         end: Alignment.bottomRight,
-  //       ),
-  //       borderRadius: BorderRadius.circular(16),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black12,
-  //           blurRadius: 8,
-  //           offset: Offset(0, 4),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           'Hi there! 👋',
-  //           style: TextStyle(
-  //             color: Colors.white,
-  //             fontSize: 24,
-  //             fontWeight: FontWeight.bold,
-  //             letterSpacing: 0.5,
-  //           ),
-  //         ),
-  //         SizedBox(height: 6),
-  //         Text(
-  //           'Welcome to Xavalog – the Ateneo Marketplace at your fingertips.',
-  //           style: TextStyle(
-  //             color: Colors.white.withAlpha((0.9 * 255).toInt()),
-  //             fontSize: 15.5,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+// Widget _buildHeader() {
+//   return Container(
+//     width: double.infinity,
+//     margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
+//     padding: EdgeInsets.all(20),
+//     decoration: BoxDecoration(
+//       gradient: LinearGradient(
+//         colors: [
+//           Color(0xFF1E3C72),
+//           Color(0xFF2A5298)
+//         ], // modern blue gradient
+//         begin: Alignment.topLeft,
+//         end: Alignment.bottomRight,
+//       ),
+//       borderRadius: BorderRadius.circular(16),
+//       boxShadow: [
+//         BoxShadow(
+//           color: Colors.black12,
+//           blurRadius: 8,
+//           offset: Offset(0, 4),
+//         ),
+//       ],
+//     ),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           'Hi there! 👋',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontSize: 24,
+//             fontWeight: FontWeight.bold,
+//             letterSpacing: 0.5,
+//           ),
+//         ),
+//         SizedBox(height: 6),
+//         Text(
+//           'Welcome to Xavalog – the Ateneo Marketplace at your fingertips.',
+//           style: TextStyle(
+//             color: Colors.white.withAlpha((0.9 * 255).toInt()),
+//             fontSize: 15.5,
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }

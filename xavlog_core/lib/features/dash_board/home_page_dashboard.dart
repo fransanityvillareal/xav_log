@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 import 'profile.dart';
 import '../event_finder/eventfinderpage_reg.dart';
 import '../login/login_page.dart';
@@ -398,6 +397,7 @@ class _HomepageState extends State<Homepage> {
                   Card(
                     elevation: 2,
                     margin: const EdgeInsets.only(bottom: 16),
+                    color: Colors.white,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -444,6 +444,7 @@ class _HomepageState extends State<Homepage> {
                   Card(
                     elevation: 2,
                     margin: const EdgeInsets.only(bottom: 16),
+                    color: Colors.white,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -469,6 +470,7 @@ class _HomepageState extends State<Homepage> {
                   Card(
                     elevation: 2,
                     margin: const EdgeInsets.only(bottom: 16),
+                    color: Colors.white,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -693,117 +695,131 @@ class _HomepageState extends State<Homepage> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Upcoming Activities',
-                style: TextStyle(
-                  fontSize: fontSize * 1.2,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Jost',
-                  color: Color(0xFF071D99),
-                ),
-              ),
-              GestureDetector(
-                onTap: _showAddActivityDialog,
-                child: Tooltip(
-                  message: 'Add Activity',
-                  child: CircleAvatar(
-                    backgroundColor: const Color(0xFFD7A61F),
-                    child: const Icon(Icons.add, color: Colors.white),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Upcoming Activities',
+                  style: TextStyle(
+                    fontSize: fontSize * 1.2,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Jost',
+                    color: Color(0xFF071D99),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: activities.length,
-            itemBuilder: (context, index) {
-              final activity = activities[index];
-              return Card(
-                elevation: 4,
-                margin: const EdgeInsets.only(bottom: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                GestureDetector(
+                  onTap: _showAddActivityDialog,
+                  child: Tooltip(
+                    message: 'Add Activity',
+                    child: CircleAvatar(
+                      backgroundColor: const Color(0xFFD7A61F),
+                      child: const Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
                 ),
-                child: ExpansionTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF071D99).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      _getCategoryIcon(activity.category),
-                      color: const Color(0xFF071D99),
-                    ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: activities.length,
+              itemBuilder: (context, index) {
+                final activity = activities[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  title: Text(
-                    activity.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF071D99),
-                    ),
-                  ),
-                  subtitle: Text(
-                    _formatDate(activity.date),
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.category,
-                                size: 20,
-                                color: Color(0xFF071D99),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Category: ${activity.category}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.description,
-                                size: 20,
-                                color: Color(0xFF071D99),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  activity.description,
-                                  style: TextStyle(color: Colors.grey[800]),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                  color: Colors.white,
+                  child: ExpansionTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF071D99).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        _getCategoryIcon(activity.category),
+                        color: const Color(0xFF071D99),
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
+                    title: Text(
+                      activity.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF071D99),
+                      ),
+                    ),
+                    subtitle: Text(
+                      _formatDate(activity.date),
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.category,
+                                  size: 20,
+                                  color: Color(0xFF071D99),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Category: ${activity.category}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.description,
+                                  size: 20,
+                                  color: Color(0xFF071D99),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    activity.description,
+                                    style: TextStyle(color: Colors.grey[800]),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -833,6 +849,7 @@ class _HomepageState extends State<Homepage> {
 
   Drawer _buildMainMenuDrawer() {
     return Drawer(
+      backgroundColor: Colors.white,
       child: Container(
         color: Colors.white,
         child: Column(
@@ -1423,31 +1440,10 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       ),
-      bottomNavigationBar:
-          _buildBottomNavBar(), // Add the bottom navigation bar here
     );
   }
 
 // Bottom Navigation Bar
-  Widget _buildBottomNavBar() {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[300]!)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(icon: Icon(Icons.home), onPressed: () {
-          }),
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
-          IconButton(icon: Icon(Icons.shopping_bag), onPressed: () {}),
-          IconButton(icon: Icon(Icons.person), onPressed: () {}),
-        ],
-      ),
-    );
-  }
 
   Widget _getPageForItem(String title) {
     switch (title) {

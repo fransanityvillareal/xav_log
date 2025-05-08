@@ -166,3 +166,6 @@ List<Product> products = [
     category: "Tech",
   ),
 ];
+
+// Make sure to import this file in your main copy.dart
+// and use `ProductProvider(products)` for your provider initialization.

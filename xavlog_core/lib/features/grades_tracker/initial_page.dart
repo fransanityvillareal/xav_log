@@ -13,11 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/grades_tracker/subject_partitioning.dart';
 
 void main() {
-  
   runApp(const MyApp()); // Calls the correct entry point
 }
 
-class MyApp extends StatelessWidget { // Define the missing MyApp class
+class MyApp extends StatelessWidget {
+  // Define the missing MyApp class
   const MyApp({Key? key}) : super(key: key);
 
   @override
@@ -37,7 +37,6 @@ class InitialPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
       theme: ThemeData(fontFamily: 'Rubik'),
       home: AddSubjectScreen(),
     );
@@ -65,6 +64,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     return Stack(
       children: [
         Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,10 +89,8 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
             ),
             toolbarHeight: 60.0,
           ),
-          
           resizeToAvoidBottomInset: false,
-          body:
-          Stack(
+          body: Stack(
             children: [
               // Decorative Ellipses
               Positioned(
@@ -131,7 +129,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                   ),
                 ),
               ),
-              
+
               Column(
                 children: [
                   ClipRRect(
@@ -171,14 +169,13 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                       ),
                     ),
                   ),
-                  
                   SizedBox(height: 35.0),
-
                   if (addedSubjects.isNotEmpty)
                     Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: 24.0), // Aligns text with QPI padding
+                          padding: EdgeInsets.only(
+                              left: 24.0), // Aligns text with QPI padding
                           child: Text(
                             'My Subjects  ',
                             style: TextStyle(
@@ -191,7 +188,9 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                         ),
                         Expanded(
                           child: Container(
-                            margin: EdgeInsets.only(right: 24.0), // Ensures line ends at QPI padding
+                            margin: EdgeInsets.only(
+                                right:
+                                    24.0), // Ensures line ends at QPI padding
                             child: Divider(
                               color: Color(0xFF071D99), // Line color
                               thickness: 1.5, // Line thickness
@@ -200,7 +199,6 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                         ),
                       ],
                     ),
-
                   Expanded(
                     child: addedSubjects.isEmpty
                         ? Center(
@@ -213,57 +211,68 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                             ),
                           )
                         : Padding(
-                            padding: EdgeInsets.only(top: 25.0), // Adds space between QPI and subjects
+                            padding: EdgeInsets.only(
+                                top:
+                                    25.0), // Adds space between QPI and subjects
                             child: ListView(
                               children: addedSubjects.map((subject) {
-                                  return Column (
-                                    children: [ 
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => SubjectPartitioningScreen(
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SubjectPartitioningScreen(
                                               subjectName: subject,
                                               addedPartitions: [],
-                                              ),
                                             ),
-                                          );
-                                        },
-                                      child: 
-                                        Container(
-                                          width: 380, // Matches QPI padding width
-                                          height: 45,
-                                          margin: EdgeInsets.symmetric(horizontal: 16.0),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFE8E8EB),
-                                            borderRadius: BorderRadius.circular(9), // Sets corner radius
                                           ),
-                                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                          alignment: Alignment.centerLeft,
-                                          child: Row (
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
+                                        );
+                                      },
+                                      child: Container(
+                                        width: 380, // Matches QPI padding width
+                                        height: 45,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFE8E8EB),
+                                          borderRadius: BorderRadius.circular(
+                                              9), // Sets corner radius
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20.0),
+                                        alignment: Alignment.centerLeft,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
                                             Text(
                                               subject,
-                                              style: TextStyle(fontFamily: 'Jost', fontSize: 14.0),
+                                              style: TextStyle(
+                                                  fontFamily: 'Jost',
+                                                  fontSize: 14.0),
                                             ),
-                                            Text (
+                                            Text(
                                               '100 | A+',
-                                              style: TextStyle(fontFamily: 'Jost', fontSize: 14.0, fontWeight: FontWeight.bold, color: Color(0xFF283AA3)),
-                                              )
-                                            ],
-                                          ),
+                                              style: TextStyle(
+                                                  fontFamily: 'Jost',
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF283AA3)),
+                                            )
+                                          ],
                                         ),
-                                      ), 
-                                      SizedBox(height: 12.0),
-                                    ],
-                                  );
-                                }).toList(),
-                              ),
-                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 12.0),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ),
                   ),
-
-
                 ],
               ),
               Positioned(
@@ -322,17 +331,23 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                           color: Colors.white,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 30.0, horizontal: 16.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              buildInputField("Subject Code*", controller: subjectCodeController),
+                              buildInputField("Subject Code*",
+                                  controller: subjectCodeController),
                               SizedBox(height: 18),
-                              buildInputField("Subject Title", controller: subjectTitleController),
+                              buildInputField("Subject Title",
+                                  controller: subjectTitleController),
                               SizedBox(height: 18),
-                              buildInputField("Units*", controller: unitsController),
+                              buildInputField("Units*",
+                                  controller: unitsController),
                               SizedBox(height: 18),
-                              buildInputField("Description", isLarge: true, controller: descriptionController),
+                              buildInputField("Description",
+                                  isLarge: true,
+                                  controller: descriptionController),
                             ],
                           ),
                         ),
@@ -342,7 +357,8 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                         right: 17.0,
                         child: GestureDetector(
                           onTap: () {
-                            if (subjectCodeController.text.isNotEmpty && unitsController.text.isNotEmpty) {
+                            if (subjectCodeController.text.isNotEmpty &&
+                                unitsController.text.isNotEmpty) {
                               setState(() {
                                 addedSubjects.add(subjectCodeController.text);
                                 showOverlay = false;
@@ -352,16 +368,14 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                                 subjectTitleController.clear();
                                 unitsController.clear();
                                 descriptionController.clear();
-                                
                               });
                             }
                           },
-                          child: 
-                            Icon(
+                          child: Icon(
                             Icons.arrow_forward_ios,
                             size: 21.0,
                             color: Colors.black,
-                          ), 
+                          ),
                         ),
                       ),
                     ],
@@ -375,7 +389,8 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
   }
 }
 
-Widget buildInputField(String hintText, {bool isLarge = false, required TextEditingController controller}) {
+Widget buildInputField(String hintText,
+    {bool isLarge = false, required TextEditingController controller}) {
   return Material(
     child: Container(
       width: 323,

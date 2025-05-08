@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:xavlog_core/constants.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
+import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/details/details_screen.dart';
-
 
 const double kDefaultPadding = 16.0;
 
@@ -35,7 +36,8 @@ class BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    List<Product> filteredProducts = products.where((product) {
+    final productProvider = context.watch<ProductProvider>();
+    List<Product> filteredProducts = productProvider.products.where((product) {
       return product.category == categories[selectedIndex];
     }).toList();
 

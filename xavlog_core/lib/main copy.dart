@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:xavlog_core/features/login/signin_page.dart';
+
+import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/firebase_options.dart'; // Firebase config
+import 'package:xavlog_core/features/market_place/models/product.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Needed before async stuff
@@ -15,6 +18,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
             create: (context) => CartProvider()), // Add your providers here
+        ChangeNotifierProvider(
+            create: (context) =>
+                ProductProvider(products)), 
       ],
       child: const XavLog(), // Load the app
     ),
@@ -38,15 +44,8 @@ class XavLog extends StatelessWidget {
           foregroundColor: Colors.black,
           elevation: 0,
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontFamily: 'Jost'),
-          bodyMedium: TextStyle(fontFamily: 'Jost'),
-          titleLarge: TextStyle(fontFamily: 'Jost'),
-          titleMedium: TextStyle(fontFamily: 'Jost'),
-          labelLarge: TextStyle(fontFamily: 'Jost'),
-        ),
       ),
-      home: const SigninPage(),
+      home: const HomeWrapper(), // Use the wrapper with navigation bar
     );
   }
 }
