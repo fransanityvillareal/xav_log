@@ -273,80 +273,93 @@ class _HomepageState extends State<Homepage> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Monthly Analytics',
-            style: TextStyle(
-              fontSize: fontSize * 1.2,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Jost',
-              color: Color(0xFF071D99),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
-          ),
-          const SizedBox(height: 16),
-          Card(
-            elevation: 4,
-            color: Colors.white,
-            shadowColor: Color(0xFF071D99),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.5,
-                    children: [
-                      /////////////// change numbers according to computations of analytics //////////////
-                      _buildStatCard(
-                        'Total Classes',
-                        '28',
-                        Icons.class_,
-                        fontSize * 1.2,
-                      ),
-                      _buildStatCard(
-                        'Total Attendance',
-                        '85%',
-                        Icons.calendar_view_day,
-                        fontSize * 1.2,
-                      ),
-                      _buildStatCard(
-                        'Classes Attended',
-                        '24/28',
-                        Icons.class_,
-                        fontSize * 1.2,
-                      ),
-                      _buildStatCard(
-                        'Performance',
-                        'Good',
-                        Icons.trending_up,
-                        fontSize * 1.2,
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.analytics,
-                      color: Color(0xFF071D99),
-                    ),
-                    title: const Text('View Full Analytics'),
-                    trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      _showAnalyticsSheet();
-                    },
-                  ),
-                ],
+          ],
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Monthly Analytics',
+              style: TextStyle(
+                fontSize: fontSize * 1.2,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Jost',
+                color: Color(0xFF071D99),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Card(
+              elevation: 4,
+              color: Colors.white,
+              shadowColor: Color(0xFF071D99),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    GridView.count(
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.5,
+                      children: [
+                        /////////////// change numbers according to computations of analytics //////////////
+                        _buildStatCard(
+                          'Total Classes',
+                          '28',
+                          Icons.class_,
+                          fontSize * 1.2,
+                        ),
+                        _buildStatCard(
+                          'Total Attendance',
+                          '85%',
+                          Icons.calendar_view_day,
+                          fontSize * 1.2,
+                        ),
+                        _buildStatCard(
+                          'Classes Attended',
+                          '24/28',
+                          Icons.class_,
+                          fontSize * 1.2,
+                        ),
+                        _buildStatCard(
+                          'Performance',
+                          'Good',
+                          Icons.trending_up,
+                          fontSize * 1.2,
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.analytics,
+                        color: Color(0xFF071D99),
+                      ),
+                      title: const Text('View Full Analytics'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        _showAnalyticsSheet();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -730,6 +743,7 @@ class _HomepageState extends State<Homepage> {
             itemBuilder: (context, index) {
               final activity = activities[index];
               return Card(
+                color: Colors.white,
                 elevation: 4,
                 margin: const EdgeInsets.only(bottom: 8),
                 shape: RoundedRectangleBorder(
