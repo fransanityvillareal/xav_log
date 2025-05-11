@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/main%20copy.dart' show XavLog;
 
 class ProfileElementsPage extends StatefulWidget {
   const ProfileElementsPage({super.key});
@@ -68,7 +68,6 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                   Center(
                     child: Image.asset(
                       'assets/images/fulllogo.png',
-                      
                       width: logoSize,
                       height: logoSize,
                     ),
@@ -137,7 +136,7 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const Homepage(),
+                                builder: (context) => const XavLog(),
                               ),
                             ),
                             child: Container(
@@ -232,8 +231,7 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => LoginPage(
-                  onTap:
-                      () {}, 
+                  onTap: () {},
                 ),
               ),
             ),

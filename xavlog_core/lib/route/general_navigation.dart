@@ -19,8 +19,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   late int _page;
 
   // Minimalist palette inspired by Ateneo colors
-  static const Color softBlue = Color(0xFF1E2A78); 
-  static const Color softGold = Color(0xFFF4D35E); 
+  static const Color softBlue = Color.fromARGB(255, 38, 51, 139);
+  static const Color softGold = Color.fromARGB(255, 248, 214, 92);
 
   @override
   void initState() {
@@ -40,11 +40,11 @@ class _MainScaffoldState extends State<MainScaffold> {
         buttonBackgroundColor: softGold,
         animationDuration: const Duration(milliseconds: 300),
         items: const [
-          Icon(Icons.home, size: 28, color: Colors.white),
-          Icon(Icons.bar_chart, size: 28, color: Colors.white),
-          Icon(Icons.event, size: 28, color: Colors.white),
-          Icon(Icons.storefront, size: 28, color: Colors.white),
-          Icon(Icons.account_circle, size: 28, color: Colors.white),
+          Icon(Icons.home_sharp, size: 28, color: Colors.white),
+          Icon(Icons.bar_chart_sharp, size: 28, color: Colors.white),
+          Icon(Icons.event_sharp, size: 28, color: Colors.white),
+          Icon(Icons.storefront_sharp, size: 28, color: Colors.white),
+          Icon(Icons.account_circle_sharp, size: 28, color: Colors.white),
         ],
         onTap: (index) {
           setState(() {

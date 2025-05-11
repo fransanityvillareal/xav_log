@@ -1451,24 +1451,7 @@ class _HomepageState extends State<Homepage> {
   }
 
 // Bottom Navigation Bar
-  Widget _buildBottomNavBar() {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[300]!)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(icon: Icon(Icons.home), onPressed: () {}),
-          IconButton(icon: Icon(Icons.search), onPressed: () {}),
-          IconButton(icon: Icon(Icons.shopping_bag), onPressed: () {}),
-          IconButton(icon: Icon(Icons.person), onPressed: () {}),
-        ],
-      ),
-    );
-  }
+ 
 
   Widget _getPageForItem(String title) {
     switch (title) {

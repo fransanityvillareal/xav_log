@@ -18,11 +18,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
             create: (context) => CartProvider()), // Add your providers here
-        ChangeNotifierProvider(
-            create: (context) =>
-                ProductProvider(products)), 
+        ChangeNotifierProvider(create: (context) => ProductProvider(products)),
       ],
-      child: const XavLog(), // Load the app
+      child: const XavLog(),
     ),
   );
 }

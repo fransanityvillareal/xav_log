@@ -7,8 +7,9 @@ import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dar
 import 'package:xavlog_core/features/market_place/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:xavlog_core/features/market_place/screens/seller/seller_dashboard_screen.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 
 void main() {
   runApp(
@@ -19,12 +20,13 @@ void main() {
             create: (context) => ProductProvider(products)), // Add this line
       ],
       child: MaterialApp(
-        home: HomeWidget(),
+        home: HomePage(), // Use HomePage instead of HomeWidget
         debugShowCheckedModeBanner: false,
       ),
     ),
   );
 }
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -79,22 +81,29 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
   int _currentPage = 0;
 
   final List<String> messages = [
-    'Welcome to Xavalog. The Ateneo Marketplace at your fingertips.',
-    'Flexible transactions. Online or cash, you choose.',
-    'Pick up items safely at Ateneo de Naga, hassle-free.',
+    'Tap here to start selling your items on Xavalog today!',
+    'Looking to buy? Click now and discover great deals!',
+    'See something you like? Chat now to make a deal!',
   ];
 
   final List<String> greetings = [
-    'Hello there!',
-    'Easy!',
-    'Secure!',
+    'Sell Items!',
+    'Browse Items!',
+    'Chat Now!',
+  ];
+
+  // Corresponding icons for each message
+  final List<IconData> actionIcons = [
+    Icons.local_grocery_store_sharp, // Sell Items
+    Icons.search_sharp, // Browse Items
+    Icons.chat_bubble_outline_sharp, // Chat Now
   ];
 
   // Corresponding screens for each banner
   final List<Widget> screens = [
+    HomeScreen(),
     SellerDashboardScreen(),
-    SellerDashboardScreen(),
-    SellerDashboardScreen(),
+    AuthenticationGate(),
   ];
 
   @override
@@ -133,29 +142,62 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
           controller: _pageController,
           itemCount: messages.length,
           itemBuilder: (context, index) {
-            return Card(
-              color: const Color(0xFFFFD700), // Gold color for Xavalog
+            return Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF071D99).withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFFFD700), // Ateneo Gold
+                    Color(0xFFFFE066), // Lightened Gold
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-              child: Center(
-                child: ListTile(
-                  title: Text(
-                    greetings[index],
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E3A8A), // Xavalog Blue
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  children: [
+                    Icon(
+                      actionIcons[index], // Dynamic icon
+                      size: 32,
+                      color: const Color(0xFF1E3A8A), // Ateneo Blue
                     ),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      messages[index],
-                      style: const TextStyle(fontSize: 16),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            greetings[index],
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1E3A8A),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            messages[index],
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             );
@@ -206,13 +248,21 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 'assets/images/place.jpg',
                                 'Ateneo De Naga',
                                 Text(
-                                    'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.')),
+                                    'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.'),
+                                index: 0),
                             _buildSectionTitle('Transactions'),
                             _buildFeaturedContent(
                                 'assets/images/transactions.jpg',
                                 'Flexible Transactions',
                                 Text(
-                                    'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.')),
+                                    'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.'),
+                                index: 1),
+                            _buildFeaturedContent(
+                                'assets/images/buying.jpg',
+                                'Flexible Transactions',
+                                Text(
+                                    'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.'),
+                                index: 3),
                           ]
                               .map((widget) => Padding(
                                     padding: EdgeInsets.only(bottom: 24),
@@ -426,26 +476,80 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Widget _buildFeaturedContent(
-      String assetPath, String title, Text description) {
+    String assetPath,
+    String title,
+    Text description, {
+    required int index,
+  }) {
+    // Use the official working Street View link for index 0
+    final Uri streetViewUri = Uri.parse(
+      'https://www.google.com/maps/@13.630323,123.1851484,3a,90y,12.57h,89.88t/data=!3m7!1e1!3m5!1sCIHM0ogKEICAgICpzOfmkwE!2e10!6shttps:%2F%2Flh3.googleusercontent.com%2Fgpms-cs-s%2FAB8u6HYlEiHQW-0I04qkGSwIs--hqp0S9Z7mZ28O7hNCvSo3zhNipEmmyOFLk-E7CHE6OfsEFZViLtqLNz2qN8Bmqmi_31SZntJa_haa14jtc_YVSFzD8psMuvU91DSxXTgT-BIO_rZOfQ%3Dw900-h600-k-no-pi0.11886842302389766-ya12.567076750166581-ro0-fo100!7i6080!8i3040?entry=ttu&g_ep=EgoyMDI1MDUwNy4wIKXMDSoASAFQAw%3D%3D',
+    );
+
+    void handleTap(BuildContext context) async {
+      if (index == 0) {
+        // Open Street View link with robust error handling
+        try {
+          final launched = await launchUrl(
+            streetViewUri,
+            mode: LaunchMode.externalApplication,
+          );
+          if (!launched) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Could not open Street View.")),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error: $e")),
+          );
+        }
+      } else {
+        // Show zoomable dialog for other images
+        showDialog(
+          context: context,
+          builder: (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(10),
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: InteractiveViewer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    assetPath,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          Stack(
-            alignment: AlignmentDirectional(1, -1),
-            children: [
-              Image.asset(
-                assetPath,
-                width: double.infinity,
-                height: 155,
-                fit: BoxFit.cover,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16, right: 16),
-              ),
-            ],
+          GestureDetector(
+            onTap: () => handleTap(context),
+            child: Stack(
+              alignment: const AlignmentDirectional(1, -1),
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    assetPath,
+                    width: double.infinity,
+                    height: 155,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(68),
@@ -455,15 +559,15 @@ class _HomeWidgetState extends State<HomeWidget> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontSize: 17),
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    Flexible(
-                      child: description,
-                    ),
-                    SizedBox(width: 8),
+                    Flexible(child: description),
                   ],
                 ),
               ],
@@ -474,6 +578,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 }
+
 // Widget _buildHeader() {
 //   return Container(
 //     width: double.infinity,
