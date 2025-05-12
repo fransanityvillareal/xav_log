@@ -31,17 +31,15 @@ void main() async {
 
 final pages = [
   const PageData(
-    imageAssetPath:
-        'assets/lottie/campus_life.json', // Correct Lottie JSON file path
+    imageAssetPath: 'assets/lottie/campus_life.json',
     title: "Your Campus Life, Centralized",
     description:
-        "Explore events, track grades, buy/sell in the marketplace, and more — all in one app built for Ateneans.",
+        "Explore events, track grades, buy/sell in the marketplace, and more all in one app built for Ateneans.",
     bgColor: Color(0xFF071D99),
     textColor: Colors.white,
   ),
   const PageData(
-    imageAssetPath:
-        'assets/lottie/event_life.json', // Correct Lottie JSON file path
+    imageAssetPath: 'assets/lottie/event_life.json',
     title: "Find Events Instantly",
     description:
         "Never miss out. Discover campus events, activities, and announcements in real time.",
@@ -50,8 +48,7 @@ final pages = [
     lottieSize: 340,
   ),
   const PageData(
-    imageAssetPath:
-        'assets/lottie/analytics_life.json', // Correct Lottie JSON file path
+    imageAssetPath: 'assets/lottie/analytics_life.json',
     title: "Grades at Your Fingertips",
     description: "Monitor your academic performance throughout the semester.",
     bgColor: Color(0xFFD7A61F),
@@ -59,18 +56,16 @@ final pages = [
     lottieSize: 360,
   ),
   const PageData(
-    imageAssetPath:
-        'assets/lottie/shop_life.json', // Correct Lottie JSON file path
+    imageAssetPath: 'assets/lottie/shop_life.json',
     title: "Your Ateneo Marketplace",
     description:
-        "Buy and sell items safely with fellow students books, uniforms, gadgets, and more.",
+        "Buy and sell items safely with fellow students books, uniforms, accessories, and more.",
     bgColor: Color(0xFFBFA547),
     textColor: Colors.black,
     lottieSize: 360,
   ),
   const PageData(
-    imageAssetPath:
-        'assets/lottie/notifications_life.json', // Correct Lottie JSON file path
+    imageAssetPath: 'assets/lottie/notifications_life.json',
     title: "Customize Your Experience",
     description:
         "Tailor your dashboard and notifications based on your interests.",
@@ -79,8 +74,7 @@ final pages = [
     lottieSize: 280,
   ),
   const PageData(
-    imageAssetPath:
-        'assets/lottie/login_life.json', // Correct Lottie JSON file path
+    imageAssetPath: 'assets/lottie/login_life.json',
     title: "Ready to Explore?",
     description: "Sign up or log in to start your xavLog journey.",
     bgColor: Color(0xFFEB202C),
@@ -121,7 +115,7 @@ class OnboardingPageStart extends StatelessWidget {
           ),
           child: Center(
             child: Icon(
-              Icons.arrow_forward_rounded,
+              Icons.arrow_forward_ios_sharp,
               color: Colors.white,
               size: screenWidth * 0.08,
             ),
@@ -148,7 +142,7 @@ class PageData {
   final String imageAssetPath;
   final Color bgColor;
   final Color textColor;
-  final double lottieSize; // New
+  final double lottieSize;
 
   const PageData({
     this.title,
@@ -178,7 +172,7 @@ class _Page extends StatelessWidget {
               color: page.textColor,
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Helvetica',
+              fontFamily: 'Jost',
             ),
             textAlign: TextAlign.center,
           ),
@@ -188,7 +182,7 @@ class _Page extends StatelessWidget {
             style: TextStyle(
               color: page.textColor.withOpacity(0.85),
               fontSize: 16,
-              fontFamily: 'Helvetica',
+              fontFamily: 'Jost',
             ),
             textAlign: TextAlign.center,
           ),

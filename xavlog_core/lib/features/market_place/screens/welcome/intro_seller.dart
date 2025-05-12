@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/market_place/screens/dashboard/dashboardpage.dart';
+import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
 
 void main() {
   runApp(const SellerIntroduction());

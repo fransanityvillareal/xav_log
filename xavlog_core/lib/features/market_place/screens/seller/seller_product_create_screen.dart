@@ -112,7 +112,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                 onSaved: (value) => _price = int.parse(value!),
               ),
 
-              // Image Path
+              // a place holder for image
               _buildTextFormField(
                 label: 'Image Asset Path (optional)',
                 icon: Icons.image,
@@ -121,16 +121,58 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
 
               // Condition
               _buildTextFormField(
-                label: 'Condition (optional)',
+                label: 'Condition',
                 icon: Icons.build,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Enter condition' : null,
                 onSaved: (value) => _condition = value ?? '',
               ),
 
-              // Category
-              _buildTextFormField(
-                label: 'Category (optional)',
-                icon: Icons.category,
-                onSaved: (value) => _category = value ?? '',
+              // Category (Dropdown, required)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: DropdownButtonFormField<String>(
+                  value: _category.isNotEmpty ? _category : null,
+                  decoration: InputDecoration(
+                    labelText: 'Category *',
+                    prefixIcon: const Icon(Icons.category, color: Colors.blue),
+                    labelStyle: const TextStyle(color: Colors.black54),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFB0BEC5)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.blue),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.red),
+                    ),
+                  ),
+                  items: [
+                    'Books',
+                    'PE Equipment',
+                    'Accessories',
+                    'Tech',
+                    'Shirt',
+                    'Others',
+                  ]
+                      .map((cat) => DropdownMenuItem(
+                            value: cat,
+                            child: Text(cat),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _category = value ?? '';
+                    });
+                  },
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Category is required'
+                      : null,
+                  onSaved: (value) => _category = value ?? '',
+                ),
               ),
 
               // Add Product Button

@@ -120,6 +120,10 @@ class _ConcentricPageViewState extends State<ConcentricPageView> {
         if (widget.onChange != null) {
           widget.onChange!(page);
         }
+        // If this is the last page, call onFinish if provided
+        if (page == (widget.itemCount ?? 0) - 1 && widget.onFinish != null) {
+          widget.onFinish!();
+        }
       },
       itemBuilder: (context, index) {
         final child = widget.itemBuilder(index);

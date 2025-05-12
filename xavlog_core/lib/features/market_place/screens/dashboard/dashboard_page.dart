@@ -101,8 +101,8 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
 
   // Corresponding screens for each banner
   final List<Widget> screens = [
-    HomeScreen(),
     SellerDashboardScreen(),
+    HomeScreen(),
     AuthenticationGate(),
   ];
 
@@ -156,7 +156,7 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
                 gradient: const LinearGradient(
                   colors: [
                     Color(0xFFFFD700), // Ateneo Gold
-                    Color(0xFFFFE066), // Lightened Gold
+                    Color.fromARGB(255, 253, 223, 102), // Lightened Gold
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -257,9 +257,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 Text(
                                     'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.'),
                                 index: 1),
+                            _buildSectionTitle('Buy and Sell'),
+
                             _buildFeaturedContent(
                                 'assets/images/buying.jpg',
-                                'Flexible Transactions',
+                                'Sell and Buy Items from Ateneans',
                                 Text(
                                     'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.'),
                                 index: 3),
