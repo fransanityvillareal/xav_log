@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
 import 'package:xavlog_core/main%20copy.dart' show XavLog;
+import 'package:xavlog_core/route/welcome.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 
 class ProfileElementsPage extends StatefulWidget {
   const ProfileElementsPage({super.key});
@@ -133,11 +137,11 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
                           child: GestureDetector(
-                            onTap: () => Navigator.push(
+                            onTap: () => Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const XavLog(),
-                              ),
+                                  builder: (_) => const WelcomeScreen()),
+                              (Route<dynamic> route) => false,
                             ),
                             child: Container(
                               width: double.infinity,

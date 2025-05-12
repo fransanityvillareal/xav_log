@@ -1,12 +1,12 @@
 /// Account Choose Page
-/// 
+///
 /// Purpose: Allows users to select between student or organization account types
-/// 
-/// Flow: 
+///
+/// Flow:
 /// 1. User navigates here from the sign-in page
 /// 2. User selects their account type
 /// 3. Based on selection, user is directed to the appropriate profile setup page
-/// 
+///
 /// Backend Implementation Needed:
 /// - Account type selection should be saved to user profile in database
 /// - Authentication state should persist between screens
@@ -21,7 +21,7 @@ import '../dash_board/student_profile_elements.dart';
 class AccountChoosePage extends StatefulWidget {
   // Constructor with optional key parameter
   const AccountChoosePage({super.key});
-  
+
   @override
   State<AccountChoosePage> createState() => _AccountChoosePageState();
 }
@@ -109,7 +109,8 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                         SizedBox(height: height * 0.03),
                         // Title text
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: contentPadding * 2),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: contentPadding * 2),
                           child: Text(
                             'What kind of account are you signing in with?',
                             textAlign: TextAlign.center,
@@ -150,14 +151,16 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => ProfileElementsPage(),
+                                          builder: (context) =>
+                                              ProfileElementsPage(),
                                         ),
                                       );
                                     } else {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => ProfileOrganization(),
+                                          builder: (context) =>
+                                              ProfileOrganization(),
                                         ),
                                       );
                                     }
@@ -185,8 +188,10 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                         // Back to Sign-in link with hover effect
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
-                          onEnter: (event) => setState(() => isTermsHovered = true),
-                          onExit: (event) => setState(() => isTermsHovered = false),
+                          onEnter: (event) =>
+                              setState(() => isTermsHovered = true),
+                          onExit: (event) =>
+                              setState(() => isTermsHovered = false),
                           child: GestureDetector(
                             onTap: () {
                               // Confirmation dialog before going back
@@ -196,21 +201,29 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                                   return AlertDialog(
                                     title: Text(
                                       'Back to Sign-in',
-                                      style: TextStyle(fontSize: fontSize * 1.5),
+                                      style:
+                                          TextStyle(fontSize: fontSize * 1.5),
                                     ),
                                     content: Text(
                                       'Are you sure you want to go back to sign-in page?',
-                                      style: TextStyle(fontSize: fontSize * 1.2),
+                                      style:
+                                          TextStyle(fontSize: fontSize * 1.2),
                                     ),
                                     actions: [
                                       TextButton(
                                         onPressed: () {
-                                          Navigator.pop(context); // Close dialog
+                                          Navigator.pop(
+                                              context); // Close dialog
                                           // Navigate back to sign-in page
-                                          Navigator.pushReplacement(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => SigninPage(),
+                                              builder: (context) => SigninPage(
+                                                onTap: () {
+                                                  // Define the behavior for the onTap event
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
                                             ),
                                           );
                                         },
@@ -224,7 +237,8 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                                         ),
                                       ),
                                       TextButton(
-                                        onPressed: () => Navigator.pop(context), // Close dialog
+                                        onPressed: () => Navigator.pop(
+                                            context), // Close dialog
                                         child: Text(
                                           'No',
                                           style: TextStyle(
@@ -241,7 +255,9 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
                             child: Text(
                               'Back to Sign-in',
                               style: TextStyle(
-                                color: isTermsHovered ? Color(0xFF0529CC) : Color(0xFF071D99),
+                                color: isTermsHovered
+                                    ? Color(0xFF0529CC)
+                                    : Color(0xFF071D99),
                                 fontSize: fontSize * 1.2,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -262,7 +278,7 @@ class _AccountChoosePageState extends State<AccountChoosePage> {
   }
 
   /// Helper method to build a radio option with consistent styling
-  /// 
+  ///
   /// @param text The display text for the radio option
   /// @param value The value this option represents
   /// @param fontSize The font size to use

@@ -4,7 +4,6 @@ import 'package:xavlog_core/features/market_place/screens/chat/components/chat_d
 import 'package:xavlog_core/features/market_place/services/chat/chat_services.dart';
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
 
-
 class ChatHomePage extends StatelessWidget {
   ChatHomePage({super.key});
 

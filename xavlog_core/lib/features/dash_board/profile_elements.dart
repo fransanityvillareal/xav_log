@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 
 class ProfileElementsPage extends StatefulWidget {
   const ProfileElementsPage({super.key});
@@ -129,29 +130,30 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                           'Department',
                           'Program of Study',
                         ].map((label) => Padding(
-                          padding: EdgeInsets.only(bottom: constraints.maxHeight * 0.02),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              labelText: label,
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 10,
+                              padding: EdgeInsets.only(
+                                  bottom: constraints.maxHeight * 0.02),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  labelText: label,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  border: OutlineInputBorder(),
+                                ),
                               ),
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        )),
+                            )),
                         SizedBox(height: 40),
                         // Next button
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
+                              Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => Homepage(),
-                                ),
+                                    builder: (context) => HomeWrapper(
+                                          initialTab: 0,
+                                        )),
                               );
                             },
                             child: Container(
@@ -159,7 +161,10 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                               height: constraints.maxHeight * 0.05,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [Color(0xFF071D99), Color(0xFF071D99)],
+                                  colors: [
+                                    Color(0xFF071D99),
+                                    Color(0xFF071D99)
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -188,7 +193,8 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
                                   title: Text('Change Account'),
-                                  content: Text('Are you sure you want to change account?'),
+                                  content: Text(
+                                      'Are you sure you want to change account?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
@@ -197,7 +203,10 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                                     TextButton(
                                       onPressed: () => Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => LoginPage(onTap: () {  },)),
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginPage(
+                                                  onTap: () {},
+                                                )),
                                       ),
                                       child: Text('Yes'),
                                     ),
@@ -208,12 +217,25 @@ class _ProfileElementsPageState extends State<ProfileElementsPage> {
                             child: Text(
                               'Change Account',
                               style: TextStyle(
-                                color: _isHovered ? Color(0xFFD7A61F) : Color(0xFF071D99),
+                                color: _isHovered
+                                    ? Color(0xFFD7A61F)
+                                    : Color(0xFF071D99),
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
+                        ),
+                        SizedBox(height: constraints.maxHeight * 0.02),
+                        // Go to Dashboard button
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const Homepage()),
+                            );
+                          },
+                          child: const Text('Go to Dashboard'),
                         ),
                       ],
                     ),

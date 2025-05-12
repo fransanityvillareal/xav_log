@@ -33,12 +33,12 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
       print('Error picking file: $e');
     }
     */
-    
+
     // Mock successful file selection for testing
     setState(() {
       _selectedFilePath = 'mock_document.pdf'; // Mock file path
     });
-    
+
     // Show feedback for testing
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Test file selected (Mock)')),
@@ -97,7 +97,7 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                       children: [
                         SizedBox(
                           height: 45, // Fixed height
-                          width: 45,  // Fixed width
+                          width: 45, // Fixed width
                           child: Image.asset(
                             'assets/images/xavloglogo.png',
                             fit: BoxFit.contain,
@@ -197,16 +197,16 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      _selectedFilePath != null 
-                                        ? Icons.check_circle 
-                                        : Icons.upload_file,
+                                      _selectedFilePath != null
+                                          ? Icons.check_circle
+                                          : Icons.upload_file,
                                       color: Color(0xFFD7A61F),
                                     ),
                                     SizedBox(width: 10),
                                     Text(
-                                      _selectedFilePath != null 
-                                        ? 'File Selected (Test Mode)' 
-                                        : 'Upload PDF File (Test Mode)',
+                                      _selectedFilePath != null
+                                          ? 'File Selected (Test Mode)'
+                                          : 'Upload PDF File (Test Mode)',
                                       style: TextStyle(
                                         color: Color(0xFF071D99),
                                         fontFamily: 'Jost',
@@ -245,7 +245,8 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Color(0xFF071D99)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF071D99)),
                                 ),
                               ),
                               validator: (value) {
@@ -287,13 +288,18 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                                       );
                                     } catch (e) {
                                       print('Navigation error: $e');
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Error navigating to dashboard page')),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Error navigating to dashboard page')),
                                       );
                                     }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Please fill all required fields')),
+                                      SnackBar(
+                                          content: Text(
+                                              'Please fill all required fields')),
                                     );
                                   }
                                 },

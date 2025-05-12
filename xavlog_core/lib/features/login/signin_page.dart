@@ -23,7 +23,7 @@ import 'terms_and_conditions.dart';
 import 'faqs.dart';
 
 class SigninPage extends StatefulWidget {
-  const SigninPage({super.key});
+  const SigninPage({super.key, required Null Function() onTap});
   @override
   State<SigninPage> createState() => _SigninPageState();
 }

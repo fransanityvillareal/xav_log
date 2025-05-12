@@ -1,13 +1,13 @@
 /// Login Page
-/// 
+///
 /// Purpose: Allows existing users to log in to their xavLog accounts
-/// 
+///
 /// Flow:
 /// 1. User enters their email and password
 /// 2. User clicks "Log-in" button to authenticate
 /// 3. Upon successful authentication, user is directed to their dashboard
 /// 4. Users without accounts can navigate to sign-up page
-/// 
+///
 /// Backend Implementation Needed:
 /// - User authentication against database
 /// - Password hashing and verification
@@ -23,7 +23,8 @@ import '../dash_board/home_page_dashboard.dart';
 class LoginPage extends StatefulWidget {
   final VoidCallback onTap; // Add this line to accept the onTap callback
 
-  const LoginPage({super.key, required this.onTap}); // Add 'required this.onTap'
+  const LoginPage(
+      {super.key, required this.onTap}); // Add 'required this.onTap'
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -122,12 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                                 suffixIcon: MouseRegion(
                                   cursor: SystemMouseCursors.click,
                                   child: GestureDetector(
-                                    onTap: () => setState(() => 
-                                      isPasswordVisible = !isPasswordVisible
-                                    ),
+                                    onTap: () => setState(() =>
+                                        isPasswordVisible = !isPasswordVisible),
                                     child: Icon(
-                                      isPasswordVisible 
-                                          ? Icons.visibility 
+                                      isPasswordVisible
+                                          ? Icons.visibility
                                           : Icons.visibility_off,
                                       size: fontSize * 1.4,
                                     ),
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                             // - Generate and store auth token
                             // - Handle failed login attempts
                             // - Track login activity for security
-                            
+
                             // Navigate to user dashboard after successful login
                             Navigator.push(
                               context,
@@ -216,14 +216,17 @@ class _LoginPageState extends State<LoginPage> {
                           // "Create now" link with hover effect
                           MouseRegion(
                             cursor: SystemMouseCursors.click,
-                            onEnter: (_) => setState(() => isTermsHovered = true),
-                            onExit: (_) => setState(() => isTermsHovered = false),
+                            onEnter: (_) =>
+                                setState(() => isTermsHovered = true),
+                            onExit: (_) =>
+                                setState(() => isTermsHovered = false),
                             child: GestureDetector(
-                              onTap: () => _showCreateAccountDialog(context, fontSize),
+                              onTap: () =>
+                                  _showCreateAccountDialog(context, fontSize),
                               child: Text(
                                 'Create now',
                                 style: TextStyle(
-                                  color: isTermsHovered 
+                                  color: isTermsHovered
                                       ? const Color(0xFFD7A61F)
                                       : const Color.fromARGB(255, 16, 16, 16),
                                   fontSize: fontSize,
@@ -245,6 +248,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
 //comment
   /**
    * Shows a confirmation dialog for creating a new account
@@ -276,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SigninPage(),
+                    builder: (context) => SigninPage(onTap: () {}),
                   ),
                 );
               },

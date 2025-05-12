@@ -24,11 +24,11 @@ class SellerDashboardScreen extends StatelessWidget {
                   label: const Text('Add Product'),
                   onPressed: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SellerProductCreateScreen(),
-                      ),
-                    );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const SellerProductCreateScreen(),
+                        ));
                   },
                 ),
               ),

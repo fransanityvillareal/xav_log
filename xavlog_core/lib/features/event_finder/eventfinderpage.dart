@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'event_details_page.dart';
 import '../../models/event.dart';
+
 class Category {
   final String name;
   final String imageUrl;
 
   Category({required this.name, required this.imageUrl});
 }
-
-
 
 class EventFinderPage extends StatefulWidget {
   const EventFinderPage({super.key});
@@ -77,32 +76,36 @@ class _EventFinderPageState extends State<EventFinderPage> {
     if (_selectedCategory == 'All') {
       return _events;
     }
-    return _events.where((event) => event.category == _selectedCategory).toList();
+    return _events
+        .where((event) => event.category == _selectedCategory)
+        .toList();
   }
 
   List<Event> _getSearchResults(String query) {
     if (query.isEmpty) {
       return _getFilteredEvents();
     }
-    
+
     final lowercaseQuery = query.toLowerCase();
     return _getFilteredEvents().where((event) {
       return event.title.toLowerCase().contains(lowercaseQuery) ||
-             event.category.toLowerCase().contains(lowercaseQuery) ||
-             event.location.toLowerCase().contains(lowercaseQuery) ||
-             event.description.toLowerCase().contains(lowercaseQuery);
+          event.category.toLowerCase().contains(lowercaseQuery) ||
+          event.location.toLowerCase().contains(lowercaseQuery) ||
+          event.description.toLowerCase().contains(lowercaseQuery);
     }).toList();
   }
 
-  List<Event> get bookmarkedEvents => _events.where((event) => event.isBookmarked).toList();
+  List<Event> get bookmarkedEvents =>
+      _events.where((event) => event.isBookmarked).toList();
 
-  List<Event> get attendedEvents => _events.where((event) => event.isAttending).toList();
+  List<Event> get attendedEvents =>
+      _events.where((event) => event.isAttending).toList();
 
   void _showBookmarkedEvents() {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final fontSize = width * 0.03;
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -236,7 +239,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                               SizedBox(width: width * 0.03),
                               CircleAvatar(
                                 radius: width * 0.08,
-                                backgroundImage: const NetworkImage('https://picsum.photos/100'),
+                                backgroundImage: const NetworkImage(
+                                    'https://picsum.photos/100'),
                               ),
                             ],
                           ),
@@ -253,7 +257,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: 'Search events by name, category, or location',
+                        hintText:
+                            'Search events by name, category, or location',
                         hintStyle: TextStyle(fontSize: fontSize),
                         prefixIcon: Icon(Icons.search, size: fontSize * 1.2),
                         suffixIcon: _searchController.text.isNotEmpty
@@ -319,7 +324,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: _selectedCategory == _categories[index].name
+                                        color: _selectedCategory ==
+                                                _categories[index].name
                                             ? const Color(0xFF071D99)
                                             : Colors.transparent,
                                         width: 2,
@@ -327,7 +333,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     ),
                                     child: CircleAvatar(
                                       radius: width * 0.05,
-                                      backgroundImage: NetworkImage(_categories[index].imageUrl),
+                                      backgroundImage: NetworkImage(
+                                          _categories[index].imageUrl),
                                     ),
                                   ),
                                   SizedBox(height: height * 0.01),
@@ -335,7 +342,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     _categories[index].name,
                                     style: TextStyle(
                                       fontSize: fontSize,
-                                      fontWeight: _selectedCategory == _categories[index].name
+                                      fontWeight: _selectedCategory ==
+                                              _categories[index].name
                                           ? FontWeight.bold
                                           : FontWeight.normal,
                                     ),
@@ -543,8 +551,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
+          Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => EventDetailsPage(
                 event: event,
@@ -617,7 +624,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                   _saveAttendedEvents();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: event.isAttending 
+                  backgroundColor: event.isAttending
                       ? const Color(0xFFD7A61F)
                       : const Color(0xFF071D99),
                   padding: EdgeInsets.symmetric(
@@ -695,7 +702,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Image.network(
                       event.imageUrl,
                       height: imageHeight,
@@ -763,7 +771,9 @@ class _EventFinderPageState extends State<EventFinderPage> {
                   ),
                   child: IconButton(
                     icon: Icon(
-                      event.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      event.isBookmarked
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
                       color: const Color(0xFF071D99),
                       size: iconSize,
                     ),

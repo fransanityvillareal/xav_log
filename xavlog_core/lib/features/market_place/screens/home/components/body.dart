@@ -76,8 +76,7 @@ class BodyState extends State<Body> {
               itemBuilder: (context, index) => ItemCard(
                 key: ValueKey(filteredProducts[index].id),
                 product: filteredProducts[index],
-                press: () => Navigator.push(
-                  context,
+                press: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => DetailsScreen(
                       product: filteredProducts[index],

@@ -236,15 +236,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => LoginPage(
                                             onTap:
                                                 () {}, // 👈 empty function or your real onTap
                                           ),
                                         ),
-                                        (route) => false,
                                       );
                                     },
                                     child: const Text(
@@ -644,8 +642,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                            context,
+                          Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                               builder: (context) => LoginPage(
                                 onTap:
@@ -675,10 +672,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _navigateBackWithData() {
-    Navigator.pop(context, {
-      'name': name,
-      'description': description,
-      'profileImage': profileImageUrl,
-    });
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => LoginPage(
+          onTap: () {},
+        ),
+      ),
+      (route) => false,
+    );
   }
 }

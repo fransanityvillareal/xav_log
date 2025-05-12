@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 
 void main() {
   runApp(const SellerIntroduction());
@@ -133,10 +134,10 @@ class IntroductionSeller extends StatelessWidget {
               height: 54,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HomeWidget(),
+                      builder: (context) => const HomeWrapper(initialTab: 3),
                     ),
                   );
                 },

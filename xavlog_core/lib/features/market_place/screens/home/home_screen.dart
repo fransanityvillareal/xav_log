@@ -5,7 +5,6 @@ import 'package:xavlog_core/features/market_place/screens/cart/cart_screen.dart'
 import 'package:xavlog_core/features/market_place/screens/home/components/body.dart';
 import 'package:xavlog_core/features/market_place/screens/search/search_screen.dart';
 
-
 class HomeScreen extends StatefulWidget {
   final int initialCategoryIndex;
 
@@ -25,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: SvgPicture.asset("assets/icons/back.svg"),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
         actions: [
           IconButton(
@@ -43,8 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
               colorFilter: const ColorFilter.mode(kTextColor, BlendMode.srcIn),
             ),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const CartScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CartScreen()),
+              );
             },
           ),
           const SizedBox(width: kDefaultPaddin / 2),

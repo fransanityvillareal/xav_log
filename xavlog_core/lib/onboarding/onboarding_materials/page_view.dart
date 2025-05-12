@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -292,7 +291,7 @@ class _ButtonState extends State<_Button> {
     await Future.delayed(const Duration(milliseconds: 2900));
     if (mounted) {
       Navigator.of(context, rootNavigator: true).pop();
-      Navigator.of(context).pushReplacementNamed('/login');
+      Navigator.of(context).pushReplacementNamed('/signin');
     }
   }
 
@@ -335,10 +334,11 @@ class _ButtonState extends State<_Button> {
       label: isFinal ? 'Finish' : 'Next',
       child: GestureDetector(
         onTap: () {
-          final bool isFinal =
-              widget.pageController.page == widget.widget.colors.length - 1;
+          final int currentPage = widget.pageController.page?.round() ?? 0;
+          final bool isFinal = currentPage == widget.widget.colors.length - 1;
           if (isFinal) {
-            Navigator.of(context).pushReplacementNamed('/login');
+            Navigator.of(context, rootNavigator: true)
+                .pushReplacementNamed('/signin');
           } else {
             widget.pageController.nextPage(
               duration: widget.widget.duration,

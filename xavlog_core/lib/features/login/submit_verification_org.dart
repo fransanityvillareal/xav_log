@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 
 class VerificationPage extends StatelessWidget {
   final String filePath;
   final String email;
 
-  const VerificationPage({
-    super.key, 
-    required this.filePath, 
-    required this.email
-  });
+  const VerificationPage(
+      {super.key, required this.filePath, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,7 @@ class VerificationPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   // Verification Content
                   Container(
                     width: constraints.maxWidth * 0.9,
@@ -100,6 +98,19 @@ class VerificationPage extends StatelessWidget {
                             color: Colors.grey,
                           ),
                         ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const HomeWrapper(initialTab: 0),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          child: const Text('Go to Dashboard'),
+                        ),
                       ],
                     ),
                   ),
@@ -112,3 +123,11 @@ class VerificationPage extends StatelessWidget {
     );
   }
 }
+
+// When you want to navigate to HomeWrapper after verification, use:
+// Navigator.of(context).push(
+//   MaterialPageRoute(
+//     builder: (context) => const HomeWrapper(initialTab: 3),
+//   ),
+//   (route) => false,
+// );

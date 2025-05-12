@@ -1,21 +1,21 @@
 /// Event Finder Page
-/// 
+///
 /// Purpose: Allows users to discover, search, and filter campus events,
 /// as well as track events they're attending or have bookmarked.
-/// 
+///
 /// Flow:
 /// 1. User browses events by category or uses search functionality
 /// 2. User can bookmark events for later reference
 /// 3. User can mark events they plan to attend
 /// 4. User can access detailed information about specific events
-/// 
+///
 /// UI Components:
 /// - Search bar for finding specific events
 /// - Category filters with visual indicators
 /// - "My Events" section showing events the user is attending
 /// - "Just Announced" section showing all available events
 /// - Bookmark icon with counter showing bookmarked events
-/// 
+///
 /// Backend Implementation Needed:
 /// - Real-time event data fetching from database
 /// - User-specific bookmarks and attendance status storage
@@ -29,7 +29,6 @@ import 'package:xavlog_core/models/event.dart';
 import 'event_details_page.dart';
 import '../dash_board/profile.dart'; // Make sure this file exists in your project
 
-
 /// Category model representing event categories with name and image
 class Category {
   final String name;
@@ -39,7 +38,6 @@ class Category {
 }
 
 /// Event model containing all event details and user interaction states
-
 
 class EventFinderPage extends StatefulWidget {
   const EventFinderPage({super.key});
@@ -51,7 +49,7 @@ class EventFinderPage extends StatefulWidget {
 class _EventFinderPageState extends State<EventFinderPage> {
   // Controller for the search text field
   final TextEditingController _searchController = TextEditingController();
-  
+
   // Currently selected category filter
   String _selectedCategory = 'All';
 
@@ -114,7 +112,9 @@ class _EventFinderPageState extends State<EventFinderPage> {
     if (_selectedCategory == 'All') {
       return _events;
     }
-    return _events.where((event) => event.category == _selectedCategory).toList();
+    return _events
+        .where((event) => event.category == _selectedCategory)
+        .toList();
   }
 
   /// Searches events based on the query text
@@ -122,28 +122,30 @@ class _EventFinderPageState extends State<EventFinderPage> {
     if (query.isEmpty) {
       return _getFilteredEvents();
     }
-    
+
     final lowercaseQuery = query.toLowerCase();
     return _getFilteredEvents().where((event) {
       return event.title.toLowerCase().contains(lowercaseQuery) ||
-             event.category.toLowerCase().contains(lowercaseQuery) ||
-             event.location.toLowerCase().contains(lowercaseQuery) ||
-             event.description.toLowerCase().contains(lowercaseQuery);
+          event.category.toLowerCase().contains(lowercaseQuery) ||
+          event.location.toLowerCase().contains(lowercaseQuery) ||
+          event.description.toLowerCase().contains(lowercaseQuery);
     }).toList();
   }
 
   /// Retrieves bookmarked events
-  List<Event> get bookmarkedEvents => _events.where((event) => event.isBookmarked).toList();
+  List<Event> get bookmarkedEvents =>
+      _events.where((event) => event.isBookmarked).toList();
 
   /// Retrieves events the user is attending
-  List<Event> get attendedEvents => _events.where((event) => event.isAttending).toList();
+  List<Event> get attendedEvents =>
+      _events.where((event) => event.isAttending).toList();
 
   /// Displays a modal with bookmarked events
   void _showBookmarkedEvents() {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final fontSize = width * 0.03;
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -298,7 +300,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     ),
                                     child: CircleAvatar(
                                       radius: width * 0.08,
-                                      backgroundImage: const NetworkImage('https://picsum.photos/100'),
+                                      backgroundImage: const NetworkImage(
+                                          'https://picsum.photos/100'),
                                     ),
                                   ),
                                 ),
@@ -321,7 +324,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: 'Search events by name, category, or location',
+                        hintText:
+                            'Search events by name, category, or location',
                         hintStyle: TextStyle(
                           fontFamily: 'Jost',
                           fontSize: fontSize * 1.1,
@@ -391,7 +395,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: _selectedCategory == _categories[index].name
+                                        color: _selectedCategory ==
+                                                _categories[index].name
                                             ? const Color(0xFF071D99)
                                             : Colors.transparent,
                                         width: 2.5,
@@ -399,7 +404,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     ),
                                     child: CircleAvatar(
                                       radius: width * 0.065,
-                                      backgroundImage: NetworkImage(_categories[index].imageUrl),
+                                      backgroundImage: NetworkImage(
+                                          _categories[index].imageUrl),
                                     ),
                                   ),
                                   SizedBox(height: height * 0.01),
@@ -408,10 +414,12 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                     style: TextStyle(
                                       fontFamily: 'Jost',
                                       fontSize: fontSize * 1.1,
-                                      fontWeight: _selectedCategory == _categories[index].name
+                                      fontWeight: _selectedCategory ==
+                                              _categories[index].name
                                           ? FontWeight.bold
                                           : FontWeight.normal,
-                                      color: _selectedCategory == _categories[index].name
+                                      color: _selectedCategory ==
+                                              _categories[index].name
                                           ? const Color(0xFF071D99)
                                           : Colors.black87,
                                     ),
@@ -697,7 +705,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                   _saveAttendedEvents();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: event.isAttending 
+                  backgroundColor: event.isAttending
                       ? const Color(0xFFD7A61F)
                       : const Color(0xFF071D99),
                   padding: EdgeInsets.symmetric(
@@ -776,7 +784,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Image.network(
                       event.imageUrl,
                       height: imageHeight,
@@ -844,7 +853,9 @@ class _EventFinderPageState extends State<EventFinderPage> {
                   ),
                   child: IconButton(
                     icon: Icon(
-                      event.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      event.isBookmarked
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
                       color: const Color(0xFF071D99),
                       size: iconSize,
                     ),

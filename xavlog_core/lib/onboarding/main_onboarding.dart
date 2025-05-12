@@ -126,9 +126,12 @@ class OnboardingPageStart extends StatelessWidget {
           return SafeArea(child: _Page(page: page));
         },
         onFinish: () {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const SigninPage()),
+            MaterialPageRoute(
+                builder: (_) => SigninPage(onTap: () {
+                      // Define the behavior for the onTap callback here
+                    })),
           );
         },
       ),

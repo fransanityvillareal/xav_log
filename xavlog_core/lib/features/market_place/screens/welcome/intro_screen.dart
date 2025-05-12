@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_seller.dart';
 
-
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
 

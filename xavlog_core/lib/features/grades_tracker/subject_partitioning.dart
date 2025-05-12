@@ -11,7 +11,8 @@ class SubjectPartitioningScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SubjectPartitioningScreenState createState() => _SubjectPartitioningScreenState();
+  _SubjectPartitioningScreenState createState() =>
+      _SubjectPartitioningScreenState();
 }
 
 class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
@@ -148,48 +149,54 @@ class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
                       ],
                     ),
                   Expanded(
-                    child: partitions.isEmpty
-                        ? Center(
-                            child: Text(
-                              "No partitions",
-                              style: TextStyle(
-                                fontSize: 16, 
-                                fontFamily: 'Jost'
+                      child: partitions.isEmpty
+                          ? Center(
+                              child: Text(
+                                "No partitions",
+                                style:
+                                    TextStyle(fontSize: 16, fontFamily: 'Jost'),
                               ),
-                            ),
-                          )
-                        : Padding(
-                          padding: EdgeInsets.only(top: 20.0),
-                          child: ListView(
-                            children: partitions.map((partitionData) {
-                              final name = partitionData['name']!;
-                              final percentage = partitionData['percentage']!;
-                              return Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => SubjectPartitioningScreen(
-                                          subjectName: name, 
-                                          addedPartitions: [],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: 
-                                      Container(
-                                          width: 380, // Matches QPI padding width
+                            )
+                          : Padding(
+                              padding: EdgeInsets.only(top: 20.0),
+                              child: ListView(
+                                children: partitions.map((partitionData) {
+                                  final name = partitionData['name']!;
+                                  final percentage =
+                                      partitionData['percentage']!;
+                                  return Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SubjectPartitioningScreen(
+                                                subjectName: name,
+                                                addedPartitions: [],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width:
+                                              380, // Matches QPI padding width
                                           height: 45,
-                                          margin: EdgeInsets.symmetric(horizontal: 16.0),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 16.0),
                                           decoration: BoxDecoration(
                                             color: Color(0xFFE8E8EB),
-                                            borderRadius: BorderRadius.circular(9), // Sets corner radius
+                                            borderRadius: BorderRadius.circular(
+                                                9), // Sets corner radius
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 27.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 27.0),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   name,
@@ -212,15 +219,13 @@ class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
                                               ],
                                             ),
                                           ),
+                                        ),
                                       ),
-                                  ),
-                                  SizedBox(height: 12.0),
-                                ],
-                              );
-                            }).toList(),
-                          )
-                        )
-                  ),
+                                      SizedBox(height: 12.0),
+                                    ],
+                                  );
+                                }).toList(),
+                              ))),
                 ],
               ),
 
@@ -324,14 +329,18 @@ class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
                     color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30.0, horizontal: 16.0),
                     child: Column(
                       children: [
-                        buildInputField("Partition Name* (e.g., Exams)", controller: partitionNameController),
+                        buildInputField("Partition Name* (e.g., Exams)",
+                            controller: partitionNameController),
                         SizedBox(height: 18),
-                        buildInputField("Percentage*", controller: percentageController),
+                        buildInputField("Percentage*",
+                            controller: percentageController),
                         SizedBox(height: 18),
-                        buildInputField("Description", isLarge: true, controller: descriptionController),
+                        buildInputField("Description",
+                            isLarge: true, controller: descriptionController),
                       ],
                     ),
                   ),
@@ -357,7 +366,8 @@ class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
   }
 }
 
-Widget buildInputField(String hintText, {bool isLarge = false, required TextEditingController controller}) {
+Widget buildInputField(String hintText,
+    {bool isLarge = false, required TextEditingController controller}) {
   return Material(
     child: Container(
       width: 323,

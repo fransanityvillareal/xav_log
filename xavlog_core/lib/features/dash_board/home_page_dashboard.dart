@@ -20,10 +20,9 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'profile.dart';
-import '../event_finder/eventfinderpage_reg.dart';
 import '../login/login_page.dart';
 import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
@@ -904,8 +903,7 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const NotificationsPage(),
                   ),
@@ -925,8 +923,7 @@ class _HomepageState extends State<Homepage> {
               title: const Text('Help & Support'),
               onTap: () {
                 ///////////////// Handle FAQs, open FAQs page ////////////////////////
-                Navigator.push(
-                  context,
+                Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const FAQs()),
                 );
               },
@@ -961,8 +958,7 @@ class _HomepageState extends State<Homepage> {
                             // Handle logout
                             Navigator.pop(context); // Close dialog
                             Navigator.pop(context); // Close drawer
-                            Navigator.push(
-                              context,
+                            Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => LoginPage(
                                   onTap: () {
@@ -1184,290 +1180,302 @@ class _HomepageState extends State<Homepage> {
     final width = screenSize.width;
     final fontSize = width * 0.03;
 
-    return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 255, 255, 255), // Blue background
-      endDrawer: _buildMainMenuDrawer(), // Use endDrawer for right-side drawer
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 30),
-        child: Column(
-          children: [
-            // Profile Section
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 32.0,
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF071D99),
-                    Color(0xFFD7A61F),
-                  ], // Blue to Yellow gradient
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+    return WillPopScope(
+      onWillPop: () async => false, // Prevent back navigation
+      child: Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 255, 255, 255), // Blue background
+        endDrawer:
+            _buildMainMenuDrawer(), // Use endDrawer for right-side drawer
+        body: SingleChildScrollView(
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).padding.top + 30),
+          child: Column(
+            children: [
+              // Profile Section
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 32.0,
                 ),
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF071D99),
+                      Color(0xFFD7A61F),
+                    ], // Blue to Yellow gradient
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                            isOrganization: false,
-                            orgName: _name,
-                            description: _description,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(
+                              isOrganization: false,
+                              orgName: _name,
+                              description: _description,
+                            ),
                           ),
-                        ),
-                      ).then((result) {
-                        // Update dashboard with the returned profile data
-                        if (result != null && result is Map<String, dynamic>) {
-                          setState(() {
-                            _name = result['name'] ?? _name;
-                            _description =
-                                result['description'] ?? _description;
-                          });
-                        }
-                      });
-                    },
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: Hero(
-                        tag: 'orgProfileImage',
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage(_profileImageUrl),
-                          onBackgroundImageError: (_, __) {
+                        )
+                            .then((result) {
+                          // Update dashboard with the returned profile data
+                          if (result != null &&
+                              result is Map<String, dynamic>) {
                             setState(() {
-                              _profileImageUrl =
-                                  'https://picsum.photos/200?random=1';
+                              _name = result['name'] ?? _name;
+                              _description =
+                                  result['description'] ?? _description;
                             });
-                          },
-                          child: _profileImageUrl.isEmpty
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 30,
-                                  color: Color(0xFF071D99),
-                                )
-                              : null,
+                          }
+                        });
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Hero(
+                          tag: 'orgProfileImage',
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.white,
+                            backgroundImage: NetworkImage(_profileImageUrl),
+                            onBackgroundImageError: (_, __) {
+                              setState(() {
+                                _profileImageUrl =
+                                    'https://picsum.photos/200?random=1';
+                              });
+                            },
+                            child: _profileImageUrl.isEmpty
+                                ? const Icon(
+                                    Icons.person,
+                                    size: 30,
+                                    color: Color(0xFF071D99),
+                                  )
+                                : null,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Hello, $_name',
-                          style: TextStyle(
-                            fontSize: fontSize * 1.4,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Jost',
-                            color: Colors.white,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hello, $_name',
+                            style: TextStyle(
+                              fontSize: fontSize * 1.4,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Jost',
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          _description,
-                          style: TextStyle(
-                            fontSize: fontSize * 1.2,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white70,
+                          SizedBox(height: 4),
+                          Text(
+                            _description,
+                            style: TextStyle(
+                              fontSize: fontSize * 1.2,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white70,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Builder(
-                    builder: (context) => Row(
-                      children: [
-                        IconButton(
-                          icon: Stack(
-                            children: [
-                              const Icon(
-                                Icons.notifications,
-                                color: Colors.white,
-                              ),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFD7A61F),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 14,
-                                    minHeight: 14,
-                                  ),
-                                  child: Text(
-                                    _notifNumber,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
+                    Builder(
+                      builder: (context) => Row(
+                        children: [
+                          IconButton(
+                            icon: Stack(
+                              children: [
+                                const Icon(
+                                  Icons.notifications,
+                                  color: Colors.white,
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFD7A61F),
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
-                                    textAlign: TextAlign.center,
+                                    constraints: const BoxConstraints(
+                                      minWidth: 14,
+                                      minHeight: 14,
+                                    ),
+                                    child: Text(
+                                      _notifNumber,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const NotificationsPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () => _showMainMenu(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Analytics Summary
-            _buildAnalyticsSummary(),
-
-            const SizedBox(height: 20),
-
-            // Navigation Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Where Do You Want To Go?',
-                    style: TextStyle(
-                      fontSize: fontSize * 1.2,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Jost',
-                      color: Color(0xFF071D99),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 160,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: navigationItems.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = navigationItems[index];
-                        return Container(
-                          width: 160,
-                          margin: const EdgeInsets.only(right: 16),
-                          child: Card(
-                            elevation:
-                                8, // Increased shadow for a more pronounced effect
-                            color: const Color(
-                                0xFF071D99), // Keep the background color to match theme
-                            shadowColor: Colors.black.withOpacity(
-                                0.3), // Slightly stronger shadow for depth
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  16), // More rounded corners for modern feel
+                              ],
                             ),
-                            child: InkWell(
-                              onTap: () {
-                                final page = _getPageForItem(item.title);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => page),
-                                );
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    item.icon,
-                                    size: 48,
-                                    color: const Color(
-                                        0xFFD7A61F), // Keep yellow icon for contrast
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    item.title,
-                                    style: TextStyle(
-                                      fontSize: fontSize *
-                                          1.0, // Adjust size slightly
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Inter',
-                                      color: Colors
-                                          .white, // Ensure text is white for contrast
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.menu, color: Colors.white),
+                            onPressed: () => _showMainMenu(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Analytics Summary
+              _buildAnalyticsSummary(),
+
+              const SizedBox(height: 20),
+
+              // Navigation Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Where Do You Want To Go?',
+                      style: TextStyle(
+                        fontSize: fontSize * 1.2,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Jost',
+                        color: Color(0xFF071D99),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 160,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: navigationItems.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = navigationItems[index];
+                          return Container(
+                            width: 160,
+                            margin: const EdgeInsets.only(right: 16),
+                            child: Card(
+                              elevation:
+                                  8, // Increased shadow for a more pronounced effect
+                              color: const Color(
+                                  0xFF071D99), // Keep the background color to match theme
+                              shadowColor: Colors.black.withOpacity(
+                                  0.3), // Slightly stronger shadow for depth
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    16), // More rounded corners for modern feel
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  final page = _getPageForItem(item.title);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => page,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      item.icon,
+                                      size: 48,
+                                      color: const Color(
+                                          0xFFD7A61F), // Keep yellow icon for contrast
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      item.title,
+                                      style: TextStyle(
+                                        fontSize: fontSize *
+                                            1.0, // Adjust size slightly
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Inter',
+                                        color: Colors
+                                            .white, // Ensure text is white for contrast
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Calendar Section
-            _buildCalendarSection(),
+              // Calendar Section
+              _buildCalendarSection(),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Upcoming Activities
-            _buildUpcomingActivities(),
-          ],
+              // Upcoming Activities
+              _buildUpcomingActivities(),
+            ],
+          ),
         ),
       ),
     );
   }
 
 // Bottom Navigation Bar
- 
 
   Widget _getPageForItem(String title) {
     switch (title) {
       case 'Attendance Tracker':
       // return const AttendanceTrackerPage(); // Uncomment and implement this when ready
       case 'Event Finder':
-        return const EventFinderPage(); // Redirect to EventFinderPage
+        return const HomeWrapper(
+          initialTab: 2,
+        ); // Redirect to EventFinderPage
       case 'Calendar':
-      // return const CalendarPage(); // Uncomment and implement this when ready
+      // return const CalendarPage();
       case 'Marketplace':
         // return const MarketplacePage(); // Uncomment and implement this when ready
         return IntroScreen(); // Redirect to MarketplacePage
 
       case 'Grades Tracker':
         // return const GradesTrackerPage(); // Uncomment and implement this when ready
-        return const InitialPage(); // Redirect to GradesTrackerPage
+        return const HomeWrapper(
+            initialTab: 1); // Redirect to GradesTrackerPage
       case 'Social Collaboration':
       // return const SocialCollaborationPage(); // Uncomment and implement this when ready
       case 'Schedule Manager':

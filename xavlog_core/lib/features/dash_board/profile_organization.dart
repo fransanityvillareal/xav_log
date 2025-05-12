@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../login/submit_verification_org.dart';
 
-
 class ProfileOrganization extends StatefulWidget {
   const ProfileOrganization({super.key});
 
@@ -15,7 +14,8 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
   String? _selectedFilePath;
   final TextEditingController _emailController = TextEditingController();
 
-  Future<void> _pickPDF() async {//inserting pdf on the app
+  Future<void> _pickPDF() async {
+    //inserting pdf on the app
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -84,7 +84,7 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                       children: [
                         SizedBox(
                           height: 45, // Fixed height
-                          width: 45,  // Fixed width
+                          width: 45, // Fixed width
                           child: Image.asset(
                             '/assets/images/xavloglogo.png',
                             fit: BoxFit.contain,
@@ -182,17 +182,18 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      _selectedFilePath != null 
-                                        ? Icons.check_circle 
-                                        : Icons.upload_file,
+                                      _selectedFilePath != null
+                                          ? Icons.check_circle
+                                          : Icons.upload_file,
                                       color: Color(0xFFD7A61F),
                                     ),
                                     SizedBox(width: 10),
                                     Text(
-                                      _selectedFilePath != null 
-                                        ? 'File Selected' 
-                                        : 'Upload PDF File',
-                                      style: TextStyle(color: Color(0xFF071D99)),
+                                      _selectedFilePath != null
+                                          ? 'File Selected'
+                                          : 'Upload PDF File',
+                                      style:
+                                          TextStyle(color: Color(0xFF071D99)),
                                     ),
                                   ],
                                 ),
@@ -226,7 +227,8 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Color(0xFF071D99)),
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF071D99)),
                                 ),
                               ),
                               validator: (value) {
@@ -256,26 +258,34 @@ class _ProfileOrganizationState extends State<ProfileOrganization> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  if (_formKey.currentState!.validate() && _selectedFilePath != null) {
+                                  if (_formKey.currentState!.validate() &&
+                                      _selectedFilePath != null) {
                                     try {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => VerificationPage(
+                                          builder: (context) =>
+                                              VerificationPage(
                                             filePath: _selectedFilePath!,
                                             email: _emailController.text,
                                           ),
                                         ),
                                       );
                                     } catch (e) {
-                                      print('Navigation error: $e'); // Add this for debugging
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Error navigating to verification page')),
+                                      print(
+                                          'Navigation error: $e'); // Add this for debugging
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Error navigating to verification page')),
                                       );
                                     }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Please fill all required fields')),
+                                      SnackBar(
+                                          content: Text(
+                                              'Please fill all required fields')),
                                     );
                                   }
                                 },

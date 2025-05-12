@@ -1,73 +1,16 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/market_place/models/product.dart';
-import 'package:xavlog_core/features/market_place/providers/product_provider.dart'
-    show ProductProvider;
-import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/home/home_screen.dart';
-import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xavlog_core/features/market_place/screens/seller/seller_dashboard_screen.dart';
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(
-            create: (context) => ProductProvider(products)), // Add this line
-      ],
-      child: MaterialApp(
-        home: HomePage(), // Use HomePage instead of HomeWidget
-        debugShowCheckedModeBanner: false,
-      ),
-    ),
-  );
-}
-
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _page = 0;
-
-  final List<Widget> _pages = [
-    HomeWidget(),
-    SellerDashboardScreen(),
-    Placeholder(), // Replace with Message screen
-    Placeholder(), // Replace with Notifications screen
-    Placeholder(), // Replace with Profile screen
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.transparent,
-        buttonBackgroundColor: Colors.green,
-        color: Colors.green,
-        animationDuration: const Duration(milliseconds: 300),
-        items: const <Widget>[
-          Icon(Icons.home, size: 26, color: Colors.white),
-          Icon(Icons.message, size: 26, color: Colors.white),
-          Icon(Icons.add, size: 26, color: Colors.white),
-          Icon(Icons.notifications, size: 26, color: Colors.white),
-          Icon(Icons.person, size: 26, color: Colors.white),
-        ],
-        onTap: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
-      ),
-      body: _pages[_page],
-    );
+    return HomeWidget(); // Only show the main marketplace content
   }
 }
 
@@ -156,7 +99,7 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
                 gradient: const LinearGradient(
                   colors: [
                     Color(0xFFFFD700), // Ateneo Gold
-                    Color.fromARGB(255, 253, 223, 102), // Lightened Gold
+                    Color(0xFFFFE066), // Lightened Gold
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -221,6 +164,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SizedBox(
           width: double.infinity,
@@ -261,7 +205,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
                             _buildFeaturedContent(
                                 'assets/images/buying.jpg',
-                                'Sell and Buy Items from Ateneans',
+                                'Sell ad Buy Items from Ateneans',
                                 Text(
                                     'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.'),
                                 index: 3),

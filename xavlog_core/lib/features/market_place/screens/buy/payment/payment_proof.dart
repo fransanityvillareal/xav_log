@@ -69,8 +69,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
     Color backgroundColor = Color(0xFFF6F8FA); // background
     Color primaryColor =
         Color(0xFF0D47A1); // <-- strong blue for important actions
-    Color secondaryColor =
-        Color(0xFF42A5F5); //  blue for less critical buttons
+    Color secondaryColor = Color(0xFF42A5F5); //  blue for less critical buttons
     Color textColor = Color(0xFF212121); //dark text
     Color cardColor = Colors.white; // <-- for cards/containers
 
@@ -279,7 +278,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor, 
+                    backgroundColor: primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
