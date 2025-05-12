@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'clipper.dart';
 
@@ -46,7 +48,7 @@ class ConcentricPageView extends StatefulWidget {
     this.verticalPosition = 0.75,
     this.direction = Axis.horizontal,
     this.physics = const ClampingScrollPhysics(),
-    this.duration = const Duration(milliseconds: 1500),
+    this.duration = const Duration(milliseconds: 1400),
     this.curve = Curves.easeInOutSine, // const Cubic(0.7, 0.5, 0.5, 0.1),
     this.nextButtonBuilder,
   })  : assert(colors.length >= 2),
@@ -206,7 +208,7 @@ class _ConcentricPageViewState extends State<ConcentricPageView> {
   }
 }
 
-class _Button extends StatelessWidget {
+class _Button extends StatefulWidget {
   const _Button({
     Key? key,
     required this.pageController,
@@ -217,52 +219,211 @@ class _Button extends StatelessWidget {
   final ConcentricPageView widget;
 
   @override
-  Widget build(BuildContext context) {
-    final size = widget.radius * 2;
-    Widget? child = widget.nextButtonBuilder != null
-        ? widget.nextButtonBuilder!(context)
-        : null;
+  State<_Button> createState() => _ButtonState();
+}
 
-    child = GestureDetector(
-      excludeFromSemantics: true,
-      onTap: () {
-        final isFinal = pageController.page == widget.colors.length - 1;
-        if (isFinal && widget.onFinish != null) {
-          widget.onFinish!();
-          return;
-        }
-        pageController.nextPage(
-          duration: widget.duration,
-          curve: widget.curve,
-        );
-      },
-      child: DecoratedBox(
-        decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: SizedBox.fromSize(
-          child: child,
-          size: Size.square(size),
+class _ButtonState extends State<_Button> {
+  double _holdProgress = 0.0;
+  bool _isHolding = false;
+  late final int _holdDurationMs;
+  late final int _holdTickMs;
+  late final int _holdTicksTotal;
+  late final Ticker _ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    _holdDurationMs = 1500; // 1.5 seconds hold
+    _holdTickMs = 30;
+    _holdTicksTotal = (_holdDurationMs / _holdTickMs).round();
+    _ticker = Ticker(_onTick);
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  void _onTick(Duration elapsed) {
+    if (!_isHolding) return;
+    setState(() {
+      _holdProgress += 1 / _holdTicksTotal;
+      if (_holdProgress >= 1.0) {
+        _holdProgress = 1.0;
+        _isHolding = false;
+        _ticker.stop();
+        _showLottieAndNavigate();
+      }
+    });
+  }
+
+  void _showLottieAndNavigate() async {
+    // Show the dialog, then after a delay, pop and navigate
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset(
+              'assets/lottie/driving_life.json',
+              width: 320,
+              height: 320,
+              repeat: true,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Going to destination...',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                shadows: [Shadow(blurRadius: 8, color: Colors.black45)],
+              ),
+            ),
+          ],
         ),
       ),
     );
+    await Future.delayed(const Duration(milliseconds: 2900));
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
 
-    return AnimatedBuilder(
-      animation: pageController,
-      builder: (context, child) {
-        final currentPage = pageController.page?.floor() ?? 0;
-        final progress = (pageController.page ?? 0) - currentPage;
-        return AnimatedOpacity(
-          opacity: progress > 0.01 ? 0.0 : 1.0,
-          curve: Curves.ease,
-          duration: const Duration(milliseconds: 150),
-          child: IconTheme(
-            data: IconThemeData(
-              color: widget.colors[currentPage % widget.colors.length],
+  void _onHoldStart() {
+    setState(() {
+      _isHolding = true;
+      _holdProgress = 0.0;
+    });
+    _ticker.start();
+  }
+
+  void _onHoldEnd() {
+    setState(() {
+      _isHolding = false;
+      _holdProgress = 0.0;
+    });
+    _ticker.stop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double buttonSize = widget.widget.radius * 2;
+    final double glowSize = buttonSize + 18;
+
+    final bool isFinal =
+        widget.pageController.page == widget.widget.colors.length - 1;
+
+    final Widget? child = widget.widget.nextButtonBuilder?.call(context);
+
+    // Elegant Ateneo Blue & Metallic Gold
+    const Color ateneoBlue = Color(0xFF003A70);
+    const Color gold = Color(0xFFFFD700);
+    final Color backgroundCircleColor =
+        Theme.of(context).brightness == Brightness.dark
+            ? Colors.black
+            : Colors.white;
+
+    return Semantics(
+      button: true,
+      label: isFinal ? 'Finish' : 'Next',
+      child: GestureDetector(
+        onTap: () {
+          final bool isFinal =
+              widget.pageController.page == widget.widget.colors.length - 1;
+          if (isFinal) {
+            Navigator.of(context).pushReplacementNamed('/login');
+          } else {
+            widget.pageController.nextPage(
+              duration: widget.widget.duration,
+              curve: widget.widget.curve,
+            );
+          }
+        },
+        onLongPressStart: (_) => _onHoldStart(),
+        onLongPressEnd: (_) => _onHoldEnd(),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Radiant Gold Glow
+            if (_isHolding || _holdProgress > 0)
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: glowSize,
+                height: glowSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      gold.withOpacity(0.15),
+                      ateneoBlue.withOpacity(0.07),
+                    ],
+                    center: Alignment.center,
+                    radius: 0.85,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gold.withOpacity(0.3),
+                      blurRadius: 14,
+                      spreadRadius: 3,
+                    ),
+                  ],
+                ),
+              ),
+
+            // Main Button
+            DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [ateneoBlue, ateneoBlue.withOpacity(0.85)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: SizedBox.square(
+                dimension: buttonSize,
+                child: Center(
+                  child: DefaultTextStyle(
+                    style: const TextStyle(
+                      color: gold,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    child:
+                        child ?? const Icon(Icons.arrow_forward, color: gold),
+                  ),
+                ),
+              ),
             ),
-            child: child!,
-          ),
-        );
-      },
-      child: child,
+
+            // Circular Progress
+            if (_isHolding || _holdProgress > 0)
+              SizedBox(
+                width: buttonSize - 10,
+                height: buttonSize - 10,
+                child: CircularProgressIndicator(
+                  value: _holdProgress,
+                  strokeWidth: 2.5,
+                  backgroundColor: gold.withOpacity(0.1),
+                  valueColor: const AlwaysStoppedAnimation<Color>(gold),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
