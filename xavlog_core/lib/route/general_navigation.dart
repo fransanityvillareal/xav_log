@@ -34,17 +34,18 @@ class _MainScaffoldState extends State<MainScaffold> {
       backgroundColor: Colors.white,
       body: widget.screens[_page],
       bottomNavigationBar: CurvedNavigationBar(
+        height: 65,
         index: _page,
         backgroundColor: Colors.white,
         color: softBlue,
         buttonBackgroundColor: softGold,
-        animationDuration: const Duration(milliseconds: 300),
+        animationDuration: const Duration(milliseconds: 350),
         items: const [
-          Icon(Icons.home_sharp, size: 28, color: Colors.white),
-          Icon(Icons.bar_chart_sharp, size: 28, color: Colors.white),
-          Icon(Icons.event_sharp, size: 28, color: Colors.white),
-          Icon(Icons.storefront_sharp, size: 28, color: Colors.white),
-          Icon(Icons.account_circle_sharp, size: 28, color: Colors.white),
+          Icon(Icons.home_sharp, size: 25, color: Colors.white),
+          Icon(Icons.bar_chart_sharp, size: 25, color: Colors.white),
+          Icon(Icons.event_sharp, size: 25, color: Colors.white),
+          Icon(Icons.storefront_sharp, size: 25, color: Colors.white),
+          Icon(Icons.account_circle_sharp, size: 25, color: Colors.white),
         ],
         onTap: (index) {
           setState(() {

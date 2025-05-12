@@ -47,7 +47,7 @@ class BodyState extends State<Body> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
           child: Text(
-            'Market Place',
+            'Marketplace',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold, color: Color(0xFF071D99)),
           ),

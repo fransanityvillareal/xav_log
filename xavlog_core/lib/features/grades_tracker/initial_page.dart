@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Rubik'),
+      theme: ThemeData(fontFamily: 'Rubik'), // Set global font to Rubik
       home: const InitialPage(), // Load InitialPage correctly
     );
   }
@@ -35,11 +35,8 @@ class InitialPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Rubik'),
-      home: AddSubjectScreen(),
-    );
+    // Remove nested MaterialApp, just return AddSubjectScreen
+    return AddSubjectScreen();
   }
 }
 
@@ -64,7 +61,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.white, // Set main background to white
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -327,7 +324,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                         height: 380,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
+                          color: Colors.white, // Overlay background white
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(

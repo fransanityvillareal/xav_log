@@ -8,10 +8,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'Rubik', // Set global font to Rubik
+        scaffoldBackgroundColor:
+            Colors.white, // Ensure white background globally
       ),
       debugShowCheckedModeBanner: false,
-
       home: InitialPage(), // Load your renamed page
     );
   }

@@ -244,7 +244,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                           width: logoSize,
                           child: Image.asset(
                             'assets/images/xavloglogo.png',
-                            height: height * 0.08,
+                            height: height * 1.02,
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -369,14 +369,15 @@ class _EventFinderPageState extends State<EventFinderPage> {
                       'Categories',
                       style: TextStyle(
                         fontFamily: 'Jost',
-                        fontSize: fontSize * 1.3,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF071D99),
                       ),
                     ),
                     SizedBox(height: height * 0.02),
                     SizedBox(
-                      height: height * 0.12,
+                      height: height *
+                          0.16, // Adjusted for a larger but reasonable avatar size
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: _categories.length,
@@ -403,7 +404,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                       ),
                                     ),
                                     child: CircleAvatar(
-                                      radius: width * 0.065,
+                                      radius: width *
+                                          0.075, // Adjusted for a visually balanced size
                                       backgroundImage: NetworkImage(
                                           _categories[index].imageUrl),
                                     ),
@@ -471,8 +473,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
           child: Text(
             'Just Announced',
             style: TextStyle(
-              fontFamily: 'Jost',
-              fontSize: fontSize * 1.3,
+              // fontFamily: 'Jost',
+              fontSize: fontSize * 45,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF071D99),
             ),

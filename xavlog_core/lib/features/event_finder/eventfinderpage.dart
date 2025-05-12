@@ -220,7 +220,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                       'Hello, Francis',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: fontSize * 1.4,
+                                        fontSize: fontSize * 1.5,
                                         color: Colors.white,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -229,16 +229,16 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                       '2-BSIT',
                                       style: TextStyle(
                                         color: Colors.white70,
-                                        fontSize: fontSize * 1.2,
+                                        fontSize: fontSize * 1.3,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
                               ),
-                              SizedBox(width: width * 0.03),
+                              SizedBox(width: width * 0.04),
                               CircleAvatar(
-                                radius: width * 0.08,
+                                radius: width * 0.09,
                                 backgroundImage: const NetworkImage(
                                     'https://picsum.photos/100'),
                               ),
@@ -259,11 +259,11 @@ class _EventFinderPageState extends State<EventFinderPage> {
                       decoration: InputDecoration(
                         hintText:
                             'Search events by name, category, or location',
-                        hintStyle: TextStyle(fontSize: fontSize),
-                        prefixIcon: Icon(Icons.search, size: fontSize * 1.2),
+                        hintStyle: TextStyle(fontSize: 16),
+                        prefixIcon: Icon(Icons.search, size: fontSize * 1.9),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
-                                icon: Icon(Icons.clear, size: fontSize * 1.2),
+                                icon: Icon(Icons.clear, size: fontSize * 1.5),
                                 onPressed: () {
                                   setState(() {
                                     _searchController.clear();
@@ -298,20 +298,21 @@ class _EventFinderPageState extends State<EventFinderPage> {
                     Text(
                       'Categories',
                       style: TextStyle(
-                        fontSize: fontSize * 1.3,
+                        fontSize: fontSize * 1.7, // Increased size
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF071D99),
                       ),
                     ),
                     SizedBox(height: height * 0.01),
                     SizedBox(
-                      height: height * 0.10,
+                      height:
+                          height * 0.17, // Increased height for larger avatars
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: _categories.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: EdgeInsets.only(right: width * 0.03),
+                            padding: EdgeInsets.only(right: width * 0.04),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -328,11 +329,12 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                                 _categories[index].name
                                             ? const Color(0xFF071D99)
                                             : Colors.transparent,
-                                        width: 2,
+                                        width: 2.5,
                                       ),
                                     ),
                                     child: CircleAvatar(
-                                      radius: width * 0.05,
+                                      radius: width *
+                                          0.08, // Increased from 0.05 for bigger image
                                       backgroundImage: NetworkImage(
                                           _categories[index].imageUrl),
                                     ),
@@ -394,7 +396,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
           child: Text(
             'Just Announced',
             style: TextStyle(
-              fontSize: fontSize * 1.3,
+              fontSize: fontSize * 1.7,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF071D99),
             ),
@@ -441,7 +443,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: fontSize * 1.3,
+                  fontSize: fontSize * 1.7,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF071D99),
                 ),
@@ -529,23 +531,23 @@ class _EventFinderPageState extends State<EventFinderPage> {
   }
 
   Widget _buildListEventCard(double width, double height, Event event) {
-    final fontSize = width * 0.03;
-    final contentPadding = width * 0.04;
-    final imageSize = width * 0.2;
+    final fontSize = width * 0.038; // Increased font size
+    final contentPadding = width * 0.055; // More padding
+    final imageSize = width * 0.25; // Larger image
 
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: contentPadding,
-        vertical: height * 0.01,
+        vertical: height * 0.018, // More vertical space
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16), // More rounded corners
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -572,11 +574,11 @@ class _EventFinderPageState extends State<EventFinderPage> {
           );
         },
         child: Padding(
-          padding: EdgeInsets.all(contentPadding * 0.5),
+          padding: EdgeInsets.all(contentPadding * 0.7),
           child: Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
                 child: Image.network(
                   event.imageUrl,
                   width: imageSize,
@@ -584,7 +586,8 @@ class _EventFinderPageState extends State<EventFinderPage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(width: width * 0.03),
+              SizedBox(
+                  width: width * 0.045), // More space between image and text
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -593,19 +596,20 @@ class _EventFinderPageState extends State<EventFinderPage> {
                       event.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: fontSize * 1.1,
+                        fontSize: fontSize * 1.18, // Larger title
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: height * 0.005),
+                    SizedBox(height: height * 0.012),
                     Text(
                       event.date.toString().split(' ')[0],
                       style: TextStyle(
-                        color: Colors.grey[600],
+                        color: Colors.grey[700],
                         fontSize: fontSize,
                       ),
                     ),
+                    SizedBox(height: height * 0.005),
                     Text(
                       event.location,
                       style: TextStyle(
@@ -616,6 +620,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                   ],
                 ),
               ),
+              SizedBox(width: width * 0.025),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -628,18 +633,19 @@ class _EventFinderPageState extends State<EventFinderPage> {
                       ? const Color(0xFFD7A61F)
                       : const Color(0xFF071D99),
                   padding: EdgeInsets.symmetric(
-                    horizontal: contentPadding * 0.8,
-                    vertical: contentPadding * 0.4,
+                    horizontal: contentPadding * 1.1,
+                    vertical: contentPadding * 0.7,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  elevation: 2,
                 ),
                 child: Text(
                   event.isAttending ? 'Attending' : 'Attend',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: fontSize * 0.9,
+                    fontSize: fontSize * 1.05,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -692,6 +698,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
         height: cardHeight,
         margin: EdgeInsets.only(right: width * 0.04),
         child: Card(
+          color: Colors.white, // Set background color here
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

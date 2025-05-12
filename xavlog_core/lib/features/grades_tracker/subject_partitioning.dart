@@ -57,6 +57,8 @@ class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
     return Stack(
       children: [
         Scaffold(
+          backgroundColor:
+              Colors.white, // Ensure white background for main content
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -326,7 +328,7 @@ class _SubjectPartitioningScreenState extends State<SubjectPartitioningScreen> {
                   height: 315,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
+                    color: Colors.white, // Overlay background is white
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
