@@ -30,7 +30,7 @@ class ConcentricPageView extends StatefulWidget {
   final WidgetBuilder? nextButtonBuilder;
 
   const ConcentricPageView({
-    Key? key,
+    super.key,
     required this.itemBuilder,
     required this.colors,
     this.pageViewKey,
@@ -50,8 +50,7 @@ class ConcentricPageView extends StatefulWidget {
     this.duration = const Duration(milliseconds: 1400),
     this.curve = Curves.easeInOutSine, // const Cubic(0.7, 0.5, 0.5, 0.1),
     this.nextButtonBuilder,
-  })  : assert(colors.length >= 2),
-        super(key: key);
+  }) : assert(colors.length >= 2);
 
   @override
   _ConcentricPageViewState createState() => _ConcentricPageViewState();
@@ -313,8 +312,8 @@ class _ButtonState extends State<_Button> {
 
   @override
   Widget build(BuildContext context) {
-    final double buttonSize = widget.widget.radius * 2;
-    final double glowSize = buttonSize + 18;
+    final double buttonSize = widget.widget.radius * 2.2;
+    final double glowSize = buttonSize + 10;
 
     final bool isFinal =
         widget.pageController.page == widget.widget.colors.length - 1;
@@ -324,11 +323,6 @@ class _ButtonState extends State<_Button> {
     // Elegant Ateneo Blue & Metallic Gold
     const Color ateneoBlue = Color(0xFF003A70);
     const Color gold = Color(0xFFFFD700);
-    final Color backgroundCircleColor =
-        Theme.of(context).brightness == Brightness.dark
-            ? Colors.black
-            : Colors.white;
-
     return Semantics(
       button: true,
       label: isFinal ? 'Finish' : 'Next',
@@ -371,7 +365,7 @@ class _ButtonState extends State<_Button> {
                     BoxShadow(
                       color: gold.withOpacity(0.3),
                       blurRadius: 14,
-                      spreadRadius: 3,
+                      spreadRadius: 5,
                     ),
                   ],
                 ),
@@ -412,8 +406,8 @@ class _ButtonState extends State<_Button> {
             // Circular Progress
             if (_isHolding || _holdProgress > 0)
               SizedBox(
-                width: buttonSize - 10,
-                height: buttonSize - 10,
+                width: buttonSize - 15,
+                height: buttonSize - 15,
                 child: CircularProgressIndicator(
                   value: _holdProgress,
                   strokeWidth: 2.5,

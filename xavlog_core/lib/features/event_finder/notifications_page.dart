@@ -301,7 +301,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                         Text(
                           "From: ${notification.sender}",
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontFamily: 'Jost',
                             color: Colors.grey[600],
                           ),
@@ -376,7 +376,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                               _formatTimestamp(notification.timestamp),
                               style: TextStyle(
                                 fontFamily: 'Jost',
-                                fontSize: 13,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFF071D99),
                               ),
