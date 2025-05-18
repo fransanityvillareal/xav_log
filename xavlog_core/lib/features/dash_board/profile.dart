@@ -239,8 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => LoginPage(
-                                            onTap:
-                                                () {}, 
+                                            onTap: () {},
                                           ),
                                         ),
                                       );
@@ -383,7 +382,7 @@ class _ProfilePageState extends State<ProfilePage> {
       {bool showEditIcon = false}) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
-    final fontSize = width * 0.03;
+    final fontSize = 23;
 
     return Container(
       width: double.infinity,
@@ -408,7 +407,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: fontSize * 1.2, // 18 -> fontSize * 1.2
+                  fontSize: 23, // Increased font size for titles
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF071D99),
                 ),
@@ -423,7 +422,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Icon(
                     Icons.edit,
                     color: const Color(0xFF071D99),
-                    size: fontSize * 1.2,
+                    size: fontSize * 0.8,
                   ),
                 ),
             ],
@@ -437,8 +436,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildInfoTile(IconData icon, String label, String value) {
     final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final fontSize = width * 0.03;
+    final fontSize = 14;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -465,7 +463,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   label,
                   style: TextStyle(
                     color: Colors.grey,
-                    fontSize: fontSize * 0.8,
+                    fontSize: 15,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -488,7 +486,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildUtilityTile(IconData icon, String label, VoidCallback onTap) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
-    final fontSize = width * 0.03;
+    final fontSize = 14;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

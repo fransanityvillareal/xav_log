@@ -200,14 +200,6 @@ class _EventFinderPageState extends State<EventFinderPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          width: logoSize,
-                          child: Image.asset(
-                            'images/xavloglogo.png',
-                            height: height * 0.08,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
