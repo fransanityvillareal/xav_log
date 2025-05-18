@@ -1,315 +1,412 @@
-/// Account Choose Page
-///
-/// Purpose: Allows users to select between student or organization account types
-///
-/// Flow:
-/// 1. User navigates here from the sign-in page
-/// 2. User selects their account type
-/// 3. Based on selection, user is directed to the appropriate profile setup page
-///
-/// Backend Implementation Needed:
-/// - Account type selection should be saved to user profile in database
-/// - Authentication state should persist between screens
-/// - User role-based permissions system should be implemented
-library;
-
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/dash_board/orgaccount_setup.dart';
 import 'package:xavlog_core/features/login/signin_page.dart';
 import '../dash_board/student_profile_elements.dart';
 
 class AccountChoosePage extends StatefulWidget {
-  // Constructor with optional key parameter
   const AccountChoosePage({super.key});
 
   @override
   State<AccountChoosePage> createState() => _AccountChoosePageState();
 }
 
-class _AccountChoosePageState extends State<AccountChoosePage> {
-  // Track which account type the user has selected
+class _AccountChoosePageState extends State<AccountChoosePage>
+    with SingleTickerProviderStateMixin {
   String? selectedAccount;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  Animation<double>? _fadeAnimation;
 
-  // Boolean variables for UI hover effects
-  bool isSignInHovered = false;
-  bool isTermsHovered = false;
-  bool isFAQsHovered = false;
-  bool isPasswordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Get device screen dimensions for responsive design
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final height = screenSize.height;
-
-    // Calculate responsive dimensions based on screen size
-    final logoSize = width * 0.45; // 45% of screen width
-    final buttonWidth = width * 0.30; // 30% of screen width
-    final contentPadding = width * 0.01; // 1% of screen width for padding
-    final fontSize = width * 0.03; // Dynamic font size based on screen width
+    final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Container(
-              // Ensure container fills at least the screen height
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height,
-              ),
-              width: MediaQuery.of(context).size.width,
-              // Gradient background from blue to gold (Xavier colors)
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF132BB2), // Blue
-                    Color(0xFFD7A61F), // Gold
-                  ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF132BB2),
+              Color(0xFF1A3AC8),
+              Color(0xFF1A3AC8),
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: _fadeAnimation == null
+              ? const SizedBox.shrink()
+              : FadeTransition(
+                  opacity: _fadeAnimation!,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 80),
+                                Hero(
+                                  tag: 'app-logo',
+                                  child: Image.asset(
+                                    'assets/images/fulllogo.png',
+                                    width: size.width * 0.4,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                const SizedBox(height: 60),
+                                _buildAccountSelectionCard(size, theme),
+                                const SizedBox(height: 30),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              child: Column(
-                children: [
-                  // Logo container at the top
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(top: constraints.maxHeight * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: height * 0.03),
-                        // XavLog logo centered
-                        Center(
-                          child: Image.asset(
-                            'assets/images/fulllogo.png',
-                            width: logoSize,
-                            height: logoSize,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: constraints.maxHeight * 0.02),
-                  // Main white container for account selection
-                  Container(
-                    width: constraints.maxWidth * 0.9,
-                    constraints: BoxConstraints(
-                      maxWidth: height,
-                      minHeight: constraints.maxHeight * 0.6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFFFFF),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: height * 0.03),
-                        // Title text
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: contentPadding * 2),
-                          child: Text(
-                            'What kind of account are you signing in with?',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF071D99), // Dark blue
-                              fontSize: fontSize * 1.8,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.05),
-                        // Student account radio option
-                        _buildRadioOption(
-                          'Student Account',
-                          'student',
-                          fontSize * 1.5,
-                          contentPadding,
-                        ),
-                        SizedBox(height: height * 0.02),
-                        // Organization account radio option
-                        _buildRadioOption(
-                          'Organization Account',
-                          'organization',
-                          fontSize * 1.5,
-                          contentPadding,
-                        ),
-                        SizedBox(height: height * 0.05),
-                        // Next button - disabled until an account type is selected
-                        SizedBox(
-                          width: buttonWidth,
-                          child: ElevatedButton(
-                            onPressed: selectedAccount == null
-                                ? null // Disabled if no account type selected
-                                : () {
-                                    // Navigate to appropriate setup page based on selection
-                                    // BACKEND TODO: Save account type selection to user profile
-                                    if (selectedAccount == 'student') {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProfileElementsPage(),
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProfileOrganization(),
-                                        ),
-                                      );
-                                    }
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFD7A61F), // Gold
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              shadowColor: Colors.black,
-                              elevation: 5, // Add shadow
-                            ),
-                            child: Text(
-                              'Next',
-                              style: TextStyle(
-                                fontSize: fontSize * 1.2,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Jost',
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.08),
-                        // Back to Sign-in link with hover effect
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          onEnter: (event) =>
-                              setState(() => isTermsHovered = true),
-                          onExit: (event) =>
-                              setState(() => isTermsHovered = false),
-                          child: GestureDetector(
-                            onTap: () {
-                              // Confirmation dialog before going back
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      'Back to Sign-in',
-                                      style:
-                                          TextStyle(fontSize: fontSize * 1.5),
-                                    ),
-                                    content: Text(
-                                      'Are you sure you want to go back to sign-in page?',
-                                      style:
-                                          TextStyle(fontSize: fontSize * 1.2),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(
-                                              context); // Close dialog
-                                          // Navigate back to sign-in page
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => SigninPage(
-                                                onTap: () {
-                                                  // Define the behavior for the onTap event
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'Yes',
-                                          style: TextStyle(
-                                            color: Color(0xFF071D99),
-                                            fontSize: fontSize * 1.2,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(
-                                            context), // Close dialog
-                                        child: Text(
-                                          'No',
-                                          style: TextStyle(
-                                            color: Color(0xFF071D99),
-                                            fontSize: fontSize * 1.2,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: Text(
-                              'Back to Sign-in',
-                              style: TextStyle(
-                                color: isTermsHovered
-                                    ? Color(0xFF0529CC)
-                                    : Color(0xFF071D99),
-                                fontSize: fontSize * 1.2,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.03),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+        ),
       ),
     );
   }
 
-  /// Helper method to build a radio option with consistent styling
-  ///
-  /// @param text The display text for the radio option
-  /// @param value The value this option represents
-  /// @param fontSize The font size to use
-  /// @param contentPadding Padding amount for content
-  /// @return A styled RadioListTile widget
-  Widget _buildRadioOption(
-    String text,
-    String value,
-    double fontSize,
-    double contentPadding,
-  ) {
+  Widget _buildAccountSelectionCard(Size size, ThemeData theme) {
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: contentPadding * 3),
-      child: RadioListTile<String>(
-        title: Text(
-          text,
-          style: TextStyle(
-            fontSize: fontSize,
-            color: Color(0xFF071D99), // Dark blue
-            fontWeight: FontWeight.w500,
+      width: size.width * 0.9,
+      constraints: BoxConstraints(
+        maxWidth: 500,
+        minHeight: size.height * 0.6,
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.96),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 30,
+            spreadRadius: 5,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Select Your Account Type',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: const Color(0xFF071D99),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Choose the type of account that best fits your needs',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // Account type cards
+            Row(
+              children: [
+                Expanded(
+                  child: _buildAccountCard(
+                    icon: Icons.school,
+                    title: 'Student',
+                    description: 'Access learning resources and track progress',
+                    isSelected: selectedAccount == 'student',
+                    onTap: () => setState(() => selectedAccount = 'student'),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: _buildAccountCard(
+                    icon: Icons.business,
+                    title: 'Organization',
+                    description: 'Manage teams and training programs',
+                    isSelected: selectedAccount == 'organization',
+                    onTap: () =>
+                        setState(() => selectedAccount = 'organization'),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: selectedAccount == null
+                    ? null
+                    : () {
+                        _navigateToNextScreen();
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD7A61F),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 5,
+                  shadowColor: Colors.black.withOpacity(0.3),
+                ),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () => _showBackConfirmation(),
+              child: const Text(
+                'Back to Sign In',
+                style: TextStyle(
+                  color: Color(0xFF071D99),
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountCard({
+    required IconData icon,
+    required String title,
+    required String description,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFF5F7FF) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isSelected ? const Color(0xFFD7A61F) : Colors.grey.shade200,
+          width: isSelected ? 2 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isSelected ? 0.1 : 0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFFD7A61F).withOpacity(0.2)
+                      : Colors.grey.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 30,
+                  color: isSelected
+                      ? const Color(0xFFD7A61F)
+                      : Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? const Color(0xFF071D99)
+                      : Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 10),
+              if (isSelected)
+                const Icon(
+                  Icons.check_circle,
+                  color: Color(0xFFD7A61F),
+                  size: 24,
+                ),
+            ],
           ),
         ),
-        value: value,
-        groupValue: selectedAccount,
-        activeColor: Color(0xFFD7A61F), // Gold when selected
-        onChanged: (String? value) {
-          setState(() {
-            selectedAccount = value;
-          });
+      ),
+    );
+  }
+
+  void _navigateToNextScreen() {
+    final route = selectedAccount == 'student'
+        ? const ProfileElementsPage()
+        : const ProfileOrganization();
+
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => route,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutQuart;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
         },
+        transitionDuration: const Duration(milliseconds: 600),
+      ),
+    );
+  }
+
+  void _showBackConfirmation() {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.help_outline,
+                size: 48,
+                color: Color(0xFFD7A61F),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Go back to Sign In?',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF071D99),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Your current selection will be lost',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Color(0xFF071D99),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SigninPage(onTap: () {}),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD7A61F),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Confirm',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

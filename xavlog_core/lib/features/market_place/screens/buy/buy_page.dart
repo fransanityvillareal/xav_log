@@ -85,6 +85,7 @@ class BuyPage extends StatelessWidget {
           Text(
             "₱${product.price}",
             style: TextStyle(
+              fontFamily: 'Rubik',
               fontSize: 24,
               color: Colors.green.shade700,
               fontWeight: FontWeight.w700,

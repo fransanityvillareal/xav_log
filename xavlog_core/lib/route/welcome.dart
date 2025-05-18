@@ -37,7 +37,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             Lottie.asset(
               'assets/lottie/waiting_life.json',
               width: 300,
-              height: 300,
+              height: 310,
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 20),

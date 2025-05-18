@@ -11,7 +11,7 @@ class TermsAndConditions extends StatelessWidget {
     final width = screenSize.width;
 
     final logoSize = width * 0.45;
-    final fontSize = width * 0.03;
+    final fontSize = 16;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -181,7 +181,7 @@ class TermsAndConditions extends StatelessWidget {
                         item,
                         style: const TextStyle(
                           fontFamily: 'Jost',
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Colors.black87,
                           height: 1.5,
                         ),

@@ -26,6 +26,8 @@ import 'profile.dart';
 import '../login/login_page.dart';
 import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key}); //(Key? key) : super(Key? keu)
@@ -107,6 +109,13 @@ class _HomepageState extends State<Homepage> {
           'Organization', // BACKEND: Missing date field should be handled gracefully
     ),
     /////////////////////// Add more activities as needed through add button on upcoming activities //////////////////////////
+  ];
+
+  final List<String> _carouselImages = [
+    'https://i0.wp.com/dateline-ibalon.com/wp-content/uploads/2024/01/Fr-Olin-adnu-church-wally-ocampo-ritratos-ni-wally.jpg?resize=930%2C450&ssl=1',
+    'https://ol-content-api.global.ssl.fastly.net/sites/default/files/styles/scale_and_crop_center_890x320/public/2023-01/ateneodenaga-banner-1786x642.jpg?itok=oNejbYDa', // Added Ateneo de Naga University logo
+    'https://scontent.fwnp1-1.fna.fbcdn.net/v/t39.30808-6/494225452_1281674080628894_2651345984701877971_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGWG5PqVEFbVgC-LtQN6U8zIgkAOMP_urQiCQA4w_-6tBWMidGDw4cYTGJU9RI6jEd49YSRmSrh72undxqB7i3v&_nc_ohc=iOR3dk2D5EkQ7kNvwHzpfec&_nc_oc=Adk_NUcmi6nBOhw4phaKpdUa0dK4Hn7kpiO3YBy4KXe0fBRYDo2fklqOcwdEMmqNWac&_nc_zt=23&_nc_ht=scontent.fwnp1-1.fna&_nc_gid=IfrXQYVYHPPsJY0kuBPh_A&oh=00_AfIxQ8UhHIL1ux29E0IBCkCJO5RVyMQTweWMEsZdGdPIMg&oe=6828A417',
+    'https://jhs.adnu.edu.ph/pluginfile.php/17657/mod_page/content/12/main-campus.jpg',
   ];
 
   void updateName(String newName) {
@@ -1311,19 +1320,20 @@ class _HomepageState extends State<Homepage> {
                                   child: Container(
                                     padding: const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFD7A61F),
+                                      color:
+                                          Colors.red, // 👈 Add background color
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     constraints: const BoxConstraints(
-                                      minWidth: 14,
                                       minHeight: 14,
+                                      minWidth: 14,
                                     ),
-                                    child: Text(
-                                      _notifNumber,
-                                      style: const TextStyle(
+                                    child: const Text(
+                                      '3', // 👈 Replace with dynamic value if needed
+                                      style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 10,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 10,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -1350,6 +1360,16 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ],
                 ),
+              ),
+
+              const SizedBox(height: 20),
+
+              const SizedBox(height: 16),
+
+              // Carousel Banner with shimmer
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: _buildCarouselBanner(context),
               ),
 
               const SizedBox(height: 20),
@@ -1490,6 +1510,65 @@ class _HomepageState extends State<Homepage> {
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  // --- Carousel Banner ---
+  Widget _buildCarouselBanner(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Center(
+      child: SizedBox(
+        width: screenWidth > 700 ? 700 : screenWidth * 0.95,
+        child: CarouselSlider.builder(
+          itemCount: _carouselImages.length,
+          itemBuilder: (context, index, realIdx) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                _carouselImages[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 160,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+
+                  // Show shimmer while loading
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: double.infinity,
+                      height: 160,
+                      color: Colors.grey[300],
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  // Also show shimmer if there's an error loading the image
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: double.infinity,
+                      height: 160,
+                      color: Colors.grey[300],
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+          options: CarouselOptions(
+            height: 160,
+            autoPlay: true,
+            enlargeCenterPage: true,
+            viewportFraction: 0.92,
+            aspectRatio: 2.1,
+            initialPage: 0,
+          ),
+        ),
+      ),
+    );
   }
 }
 

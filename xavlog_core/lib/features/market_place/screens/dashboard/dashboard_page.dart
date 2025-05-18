@@ -205,7 +205,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
                             _buildFeaturedContent(
                                 'assets/images/buying.jpg',
-                                'Sell ad Buy Items from Ateneans',
+                                'Sell and Buy Items from Ateneans',
                                 Text(
                                     'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.'),
                                 index: 3),

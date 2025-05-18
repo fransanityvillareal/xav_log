@@ -174,8 +174,9 @@ class _Page extends StatelessWidget {
             style: TextStyle(
               color: page.textColor,
               fontSize: 28,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w700,
               fontFamily: 'Jost',
+              letterSpacing: 1.2,
             ),
             textAlign: TextAlign.center,
           ),
@@ -184,7 +185,7 @@ class _Page extends StatelessWidget {
             page.description ?? '',
             style: TextStyle(
               color: page.textColor.withOpacity(0.85),
-              fontSize: 16,
+              fontSize: 17,
               fontFamily: 'Jost',
             ),
             textAlign: TextAlign.center,

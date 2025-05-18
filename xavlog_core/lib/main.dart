@@ -20,6 +20,12 @@ void main() async {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Jost',
+          fontFamilyFallback: [
+            'Rubik',
+          ],
+        ),
         home: const OnboardingPageStart(),
         routes: {
           '/signin': (context) => SigninPage(onTap: () {}),

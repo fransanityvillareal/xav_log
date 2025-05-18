@@ -27,7 +27,7 @@ class FAQs extends StatelessWidget {
 
     // Calculate responsive dimensions based on screen size
     final logoSize = width * 0.45;
-    final fontSize = width * 0.03;
+    final fontSize = 16;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -232,7 +232,7 @@ class FAQs extends StatelessWidget {
                     faq['Q']!,
                     style: const TextStyle(
                       fontFamily: 'Jost',
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
@@ -244,7 +244,7 @@ class FAQs extends StatelessWidget {
                         faq['A']!,
                         style: const TextStyle(
                           fontFamily: 'Jost',
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Color.fromARGB(188, 0, 0, 0),
                           height: 1.5,
                         ),

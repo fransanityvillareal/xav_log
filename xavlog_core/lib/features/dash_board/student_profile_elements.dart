@@ -1,254 +1,425 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
-import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
-import 'package:xavlog_core/main%20copy.dart' show XavLog;
 import 'package:xavlog_core/route/welcome.dart';
-import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 
 class ProfileElementsPage extends StatefulWidget {
   const ProfileElementsPage({super.key});
+
   @override
   State<ProfileElementsPage> createState() => _ProfileElementsPageState();
 }
 
-class _ProfileElementsPageState extends State<ProfileElementsPage> {
-  bool _isHovered = false;
+class _ProfileElementsPageState extends State<ProfileElementsPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _slideAnimation;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _slideAnimation = Tween<double>(begin: 0.2, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final height = screenSize.height;
-
-    // Calculate responsive dimensions
-    final logoSize = width * 0.45; // 45% of screen width
-
-    final contentPadding = width * 0.02; // 2% of screen width
-    final fontSize = width * 0.03;
-    final backButtonSize = width * 0.07; // 7% of screen width
+    final theme = Theme.of(context);
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Container(
-              constraints: BoxConstraints(
-                minHeight: height,
+      resizeToAvoidBottomInset: false,
+      body: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF132BB2),
+                  Color(0xFF1A3AC8),
+                ],
               ),
-              width: width,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF132BB2),
-                    Color(0xFFD7A61F),
-                  ],
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Back button
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).padding.top + contentPadding,
-                      left: contentPadding,
-                    ),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: const Color(0xFFD7A61F),
-                          size: backButtonSize, // Increased back button size
+            ),
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverAppBar(
+                      backgroundColor: const Color(0xFF132BB2),
+                      expandedHeight: 120,
+                      pinned: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFF132BB2),
+                                Color(0xFF1A3AC8),
+                              ],
+                            ),
+                          ),
                         ),
+                      ),
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
-                  ),
-                  // Logo section with adjusted spacing
-                  Center(
-                    child: Image.asset(
-                      'assets/images/fulllogo.png',
-                      width: logoSize,
-                      height: logoSize,
-                    ),
-                  ),
-                  Container(
-                    width:
-                        constraints.maxWidth * 0.9, // Adjusted container width
-                    margin: EdgeInsets.symmetric(vertical: contentPadding * 2),
-                    padding: EdgeInsets.all(contentPadding * 2.5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFFFF),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Student\'s Profile',
-                          style: TextStyle(
-                            color: const Color(0xFF071D99),
-                            fontSize: fontSize * 1.8,
-                            fontWeight: FontWeight.w900,
+                    SliverToBoxAdapter(
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: AnimatedPadding(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutBack,
+                          padding: EdgeInsets.only(
+                            left: 24,
+                            right: 24,
+                            top: 40,
+                            bottom: bottomInset > 0 ? bottomInset + 20 : 40,
                           ),
-                        ),
-                        SizedBox(height: height * 0.03),
-                        // Form fields with adjusted sizes
-                        ...[
-                          'First Name',
-                          'Last Name',
-                          'Student ID',
-                          'Department',
-                          'Program of Study',
-                        ].map((label) => Padding(
-                              padding: EdgeInsets.only(bottom: height * 0.02),
-                              child: TextField(
-                                style: TextStyle(fontSize: fontSize * 1.2),
-                                decoration: InputDecoration(
-                                  labelText: label,
-                                  labelStyle:
-                                      TextStyle(fontSize: fontSize * 1.2),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: contentPadding,
-                                    vertical: contentPadding * 0.8,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFF071D99),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )),
-                        // Next button with adjusted size
-                        SizedBox(height: height * 0.03),
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const WelcomeScreen()),
-                              (Route<dynamic> route) => false,
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              height: height * 0.05, // Increased height
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF071D99),
-                                    Color(0xFF071D99)
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Next',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: fontSize * 1.2,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                          child: Transform.translate(
+                            offset: Offset(
+                                0, 50 * (1 - _animationController.value)),
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: _ProfileForm(
+                                theme: theme,
+                                formKey: _formKey,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: height * 0.02),
-                        // Change Account link
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          onEnter: (_) => setState(() => _isHovered = true),
-                          onExit: (_) => setState(() => _isHovered = false),
-                          child: GestureDetector(
-                            onTap: () => _showChangeAccountDialog(context),
-                            child: Text(
-                              'Change Account',
-                              style: TextStyle(
-                                color: _isHovered
-                                    ? const Color(0xFFD7A61F)
-                                    : const Color(0xFF071D99),
-                                fontSize: fontSize * 1.2,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           );
         },
       ),
     );
   }
+}
 
-  // Helper method for the dialog
-  void _showChangeAccountDialog(BuildContext context) {
-    final fontSize = MediaQuery.of(context).size.width * 0.012;
+class _ProfileForm extends StatefulWidget {
+  final ThemeData theme;
+  final GlobalKey<FormState> formKey;
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text(
-          'Change Account',
-          style: TextStyle(
-            fontSize: fontSize * 1.8,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF071D99),
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to change account?',
-          style: TextStyle(fontSize: fontSize * 1.2),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: fontSize * 1.2,
-                color: const Color(0xFF071D99),
-              ),
+  const _ProfileForm({
+    required this.theme,
+    required this.formKey,
+  });
+
+  @override
+  State<_ProfileForm> createState() => _ProfileFormState();
+}
+
+class _ProfileFormState extends State<_ProfileForm> {
+  bool _isHovered = false;
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _studentIdController = TextEditingController();
+  final _departmentController = TextEditingController();
+  final _programController = TextEditingController();
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _studentIdController.dispose();
+    _departmentController.dispose();
+    _programController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: widget.formKey,
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 24,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
             ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginPage(
-                  onTap: () {},
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                'Student Profile',
+                style: widget.theme.textTheme.headlineSmall?.copyWith(
+                  color: const Color(0xFF071D99),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            child: Text(
-              'Yes',
-              style: TextStyle(
-                fontSize: fontSize * 1.2,
-                color: const Color(0xFFD7A61F),
-                fontWeight: FontWeight.bold,
+            const SizedBox(height: 24),
+
+            // First Name
+            _buildFormField(
+              label: 'First Name',
+              controller: _firstNameController,
+              icon: Icons.person_outline,
+            ),
+            const SizedBox(height: 16),
+
+            // Last Name
+            _buildFormField(
+              label: 'Last Name',
+              controller: _lastNameController,
+              icon: Icons.person_outline,
+            ),
+            const SizedBox(height: 16),
+
+            // Student ID
+            _buildFormField(
+              label: 'Student ID',
+              controller: _studentIdController,
+              icon: Icons.badge_outlined,
+            ),
+            const SizedBox(height: 16),
+
+            // Department
+            _buildFormField(
+              label: 'Department',
+              controller: _departmentController,
+              icon: Icons.school_outlined,
+            ),
+            const SizedBox(height: 16),
+
+            // Program of Study
+            _buildFormField(
+              label: 'Program of Study',
+              controller: _programController,
+              icon: Icons.menu_book_outlined,
+            ),
+            const SizedBox(height: 32),
+
+            // Next Button
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (widget.formKey.currentState!.validate()) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const WelcomeScreen(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD7A61F),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                ),
+                child: const Text(
+                  'Complete Profile',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
               ),
             ),
+            const SizedBox(height: 24),
+
+            // Change Account
+            Center(
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                onEnter: (_) => setState(() => _isHovered = true),
+                onExit: (_) => setState(() => _isHovered = false),
+                child: GestureDetector(
+                  onTap: () => _showChangeAccountDialog(context),
+                  child: Text(
+                    'Change Account Type',
+                    style: TextStyle(
+                      color: _isHovered
+                          ? const Color(0xFFD7A61F)
+                          : const Color(0xFF071D99),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormField({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: const Color(0xFF071D99)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFD7A61F), width: 2),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
+    );
+  }
+
+  void _showChangeAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.swap_horiz_rounded,
+                size: 60,
+                color: Color(0xFFD7A61F),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Change Account Type?',
+                textAlign: TextAlign.center,
+                style: widget.theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF071D99),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'You will be signed out and need to log in again with a different account type.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 28),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF071D99)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Color(0xFF071D99),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(onTap: () {}),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD7A61F),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 4,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        'Continue',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,21 +1,3 @@
-/// Sign-in Page
-///
-/// Purpose: Provides the initial sign-in interface for all users
-///
-/// Flow:
-/// 1. User enters email and password
-/// 2. User clicks "Sign In" button to create a new account
-/// 3. User can navigate to existing login page if already has an account
-/// 4. User can access Terms & Conditions and FAQs from the footer
-///
-/// Backend Implementation Needed:
-/// - Email validation
-/// - Password strength validation
-/// - User authentication against backend server
-/// - Error handling for authentication failures
-/// - Secure credential storage
-library;
-
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
 import 'account_choose.dart';
@@ -28,714 +10,470 @@ class SigninPage extends StatefulWidget {
   State<SigninPage> createState() => _SigninPageState();
 }
 
-class _SigninPageState extends State<SigninPage> {
-  // State variables for UI interaction effects
-  bool isSignInHovered = false;
-  bool isLoginHovered = false;
-  bool isTermsHovered = false;
-  bool isFAQsHovered = false;
-  bool isPasswordVisible = false;
+class _SigninPageState extends State<SigninPage>
+    with SingleTickerProviderStateMixin {
+  // final _storage = const FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isLoading = false;
+  bool _rememberMe = false;
+
+  late final AnimationController _entranceController;
+  late final Animation<Offset> _logoOffsetAnim;
+  late final Animation<Offset> _cardOffsetAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    );
+    _logoOffsetAnim = Tween<Offset>(
+      begin: const Offset(0, -0.7),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _entranceController,
+      curve: Curves.easeOutCubic,
+    ));
+    _cardOffsetAnim = Tween<Offset>(
+      begin: const Offset(0, 0.7),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _entranceController,
+      curve: Curves.easeOutCubic,
+    ));
+    // Ensure the animation starts after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _entranceController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Future<void> _loadSavedCredentials() async {
+  //   try {
+  //     final email = await _storage.read(key: 'saved_email');
+  //     final password = await _storage.read(key: 'saved_password');
+
+  //     if (email != null && password != null) {
+  //       setState(() {
+  //         _emailController.text = email;
+  //         _passwordController.text = password;
+  //         _rememberMe = true;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error loading credentials: $e');
+  //   }
+  // }
+
+  // Future<void> _handleSignIn() async {
+  //   if (!_formKey.currentState!.validate()) return;
+
+  //   setState(() => _isLoading = true);
+
+  // //   try {
+  // //     // Simulate authentication
+  // //     await Future.delayed(const Duration(seconds: 1));
+
+  // //     if (_rememberMe) {
+  // //       await _storage.write(
+  // //         key: 'saved_email',
+  // //         value: _emailController.text,
+  // //       );
+  // //       await _storage.write(
+  // //         key: 'saved_password',
+  // //         value: _passwordController.text,
+  // //       );
+  // //     } else {
+  // //       await _storage.delete(key: 'saved_email');
+  // //       await _storage.delete(key: 'saved_password');
+  // //     }
+
+  // //     if (!mounted) return;
+  // //     Navigator.pushReplacement(
+  // //       context,
+  // //       MaterialPageRoute(
+  // //         builder: (context) => const AccountChoosePage(),
+  // //       ),
+  // //     );
+  // //   } catch (e) {
+  // //     if (!mounted) return;
+  // //     ScaffoldMessenger.of(context).showSnackBar(
+  // //       SnackBar(
+  // //         content: Text('Sign in failed: ${e.toString()}'),
+  // //         backgroundColor: Colors.red,
+  // //       ),
+  // //     );
+  // //   } finally {
+  // //     if (mounted) {
+  // //       setState(() => _isLoading = false);
+  // //     }
+  // //   }
+  // // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadSavedCredentials();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    // Get device dimensions for responsive layout
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final height = screenSize.height;
-
-    // Calculate responsive dimensions based on screen size
-    final logoSize = width * 0.45; // Logo size is 45% of screen width
-    final buttonWidth = width * 0.30; // Button width is 30% of screen width
-    final fontSize = width * 0.04; // Increased base font size scaling
-
-    // Get the height of the keyboard if it's visible
+    final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        // Wrap everything with SingleChildScrollView
-        child: Container(
-          width: width,
-          height: height,
-          decoration: const BoxDecoration(
-            color: Color(0xFF132BB2),
-          ),
-          child: Column(
-            children: [
-              SizedBox(height: height * 0.03),
-              // Logo at the top of the page
-              Image.asset(
-                'assets/images/fulllogo.png',
-                width: logoSize,
-                height: logoSize,
-              ),
-              SizedBox(height: height * 0.04), // More space below logo
-              Expanded(
-                child: ClipPath(
-                  clipper: TrianglePeekClipper(),
-                  child: Container(
-                    width: width,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFFFF),
-                      borderRadius: BorderRadius.circular(width * 0.01),
+      backgroundColor: const Color(0xFF132BB2),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: size.height - MediaQuery.of(context).padding.vertical,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    SlideTransition(
+                      position: _logoOffsetAnim,
+                      child: Hero(
+                        tag: 'app-logo',
+                        child: Image.asset(
+                          'assets/images/fulllogo.png',
+                          width: size.width * 0.5,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.account_circle, size: 100),
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            height: height * 0.06), // More space at top of card
-                        // Sign-in page title
-                        Text(
-                          'Sign-in',
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 16, 16, 16),
-                            fontFamily: 'Jost',
-                            fontSize: fontSize * 2.0, // Larger title
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        SizedBox(
-                            height: height * 0.045), // Space before email field
-                        // Email input field
-                        SizedBox(
-                          width: buttonWidth * 2,
-                          child: TextField(
-                            style: TextStyle(
-                              fontSize: fontSize * 1.25, // Larger input text
-                              fontFamily: 'Jost',
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Email Address',
-                              labelStyle: TextStyle(
-                                fontSize: fontSize * 1.18, // Larger label
-                                fontFamily: 'Jost',
-                              ),
-                              suffixIcon: Icon(
-                                Icons.email,
-                                size: fontSize * 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: height * 0.03), // Space between fields
-                        // Password input field with visibility toggle
-                        SizedBox(
-                          width: buttonWidth * 2,
-                          child: TextField(
-                            style: TextStyle(
-                              fontSize: fontSize * 1.25, // Larger input text
-                              fontFamily: 'Jost',
-                            ),
-                            obscureText: !isPasswordVisible,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              labelStyle: TextStyle(
-                                fontSize: fontSize * 1.18, // Larger label
-                                fontFamily: 'Jost',
-                              ),
-                              suffixIcon: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () => setState(() =>
-                                      isPasswordVisible = !isPasswordVisible),
-                                  child: Icon(
-                                    isPasswordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    size: fontSize * 1.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                            height: height * 0.045), // More space before button
-                        // Sign In button with hover effect
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          onEnter: (_) =>
-                              setState(() => isSignInHovered = true),
-                          onExit: (_) =>
-                              setState(() => isSignInHovered = false),
-                          child: GestureDetector(
-                            onTap: () {
-                              // Backend functionality here
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AccountChoosePage(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: buttonWidth *
-                                  2.0, // Slightly narrower for balance
-                              height: buttonWidth *
-                                  0.39, // Reduced height for better proportion
-                              padding: EdgeInsets.symmetric(
-                                  vertical:
-                                      height * 0.008), // Less vertical padding
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(width * 0.018),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    isSignInHovered
-                                        ? const Color.fromARGB(
-                                            255, 244, 202, 86)
-                                        : const Color(0xFFBFA547),
-                                    isSignInHovered
-                                        ? const Color.fromARGB(
-                                            255, 244, 202, 86)
-                                        : const Color(0xFFBFA547),
-                                  ],
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.10),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 5),
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                'Sign In',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: fontSize *
-                                      1.18, // Reduced button text size
-                                  fontFamily: 'Rubik',
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                            height: height * 0.04), // More space after button
-                        // Helper text for users
-                        Text(
-                          'Please use your assigned GBOX account to sign in',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: fontSize * 1.1, // Larger helper text
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(
-                            height:
-                                height * 0.04), // More space before login link
-                        // Login to existing account link
-                        Container(
-                          alignment: Alignment.center,
-                          width: double.infinity,
-                          margin: EdgeInsets.only(
-                              top: height * 0.01, bottom: height * 0.01),
-                          child: MouseRegion(
-                            cursor: SystemMouseCursors.click,
-                            onEnter: (_) =>
-                                setState(() => isLoginHovered = true),
-                            onExit: (_) =>
-                                setState(() => isLoginHovered = false),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        LoginPage(onTap: () {}),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Log-in to my account',
-                                style: TextStyle(
-                                  color: isLoginHovered
-                                      ? const Color(0xFFD7A61F)
-                                      : const Color.fromARGB(255, 16, 16, 16),
-                                  fontSize: fontSize * 1.25, // Larger link text
-                                  fontFamily: 'Jost',
-                                  fontWeight: FontWeight.w700,
-                                  decoration: TextDecoration.underline,
-                                  letterSpacing: 0.5,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                            height: height * 0.08), // More space before footer
-                        // Footer with Terms & Conditions and FAQs links
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Terms & Conditions link with hover effect
-                            MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              onEnter: (_) =>
-                                  setState(() => isTermsHovered = true),
-                              onExit: (_) =>
-                                  setState(() => isTermsHovered = false),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const TermsAndConditions(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'Terms & Conditions',
-                                  style: TextStyle(
-                                    color: isTermsHovered
-                                        ? const Color(0xFF0529CC)
-                                        : const Color.fromARGB(255, 16, 16, 16),
-                                    fontSize:
-                                        fontSize * 1.1, // Larger footer link
-                                    fontFamily: 'Jost',
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Separator between links
-                            Text(
-                              ' | ',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            // FAQs link with hover effect
-                            MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              onEnter: (_) =>
-                                  setState(() => isFAQsHovered = true),
-                              onExit: (_) =>
-                                  setState(() => isFAQsHovered = false),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const FAQs(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'FAQs',
-                                  style: TextStyle(
-                                    color: isFAQsHovered
-                                        ? const Color(0xFF0529CC)
-                                        : const Color.fromARGB(255, 16, 16, 16),
-                                    fontSize:
-                                        fontSize * 1.1, // Larger footer link
-                                    fontFamily: 'Jost',
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+
+                // Sign-in card
+                SlideTransition(
+                  position: _cardOffsetAnim,
+                  child: AnimatedSlide(
+                    offset: _isLoading ? const Offset(0, 0.04) : Offset.zero,
+                    duration: const Duration(milliseconds: 2500), // much longer
+                    curve: Curves.easeInOutCubic,
+                    child: AnimatedScale(
+                      scale: _isLoading ? 0.98 : 1.0,
+                      duration:
+                          const Duration(milliseconds: 1800), // much longer
+                      curve: Curves.easeInOutCubic,
+                      child: Container(
+                        width: size.width,
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 18,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 8),
                             ),
                           ],
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.12),
+                            width: 1.2,
+                          ),
                         ),
-                        SizedBox(height: height * 0.03), // More space at bottom
-                      ],
+                        child: Form(
+                          key: _formKey,
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    // Button Text
+                                    fontFamily: 'Jost',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 32,
+                                    letterSpacing: 1.1,
+                                    color: const Color.fromARGB(255, 0, 0, 0), // or Theme.of(context).primaryColor
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Email field
+                                TextFormField(
+                                  controller: _emailController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Email Address',
+                                    labelStyle: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                    prefixIcon:
+                                        const Icon(Icons.email_outlined),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    errorStyle: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.redAccent),
+                                  ),
+                                  style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500),
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your email';
+                                    }
+                                    if (!RegExp(
+                                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                        .hasMatch(value)) {
+                                      return 'Please enter a valid email';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Password field
+                                TextFormField(
+                                  controller: _passwordController,
+                                  obscureText: !_isPasswordVisible,
+                                  decoration: InputDecoration(
+                                    labelText: 'Password',
+                                    prefixIcon: const Icon(Icons.lock_outline),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isPasswordVisible
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isPasswordVisible =
+                                              !_isPasswordVisible;
+                                        });
+                                      },
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your password';
+                                    }
+                                    if (value.length < 6) {
+                                      return 'Password must be at least 6 characters';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Remember me checkbox
+                                Row(
+                                  children: [
+                                    Theme(
+                                      data: Theme.of(context).copyWith(
+                                        unselectedWidgetColor: Colors.grey,
+                                      ),
+                                      child: Checkbox(
+                                        value: _rememberMe,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _rememberMe = value ?? false;
+                                          });
+                                        },
+                                        activeColor:
+                                            const Color(0xFFBFA547), // Gold
+                                        checkColor: Colors.white,
+                                        side:
+                                            MaterialStateBorderSide.resolveWith(
+                                                (states) {
+                                          if (states.contains(
+                                              MaterialState.selected)) {
+                                            return const BorderSide(
+                                                color: Color(0xFF003A70),
+                                                width:
+                                                    2); // Blue border when checked
+                                          }
+                                          return const BorderSide(
+                                              color: Colors.grey, width: 1.5);
+                                        }),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
+                                    const Text('Remember me'),
+                                    const Spacer(),
+                                    TextButton(
+                                      onPressed: () {
+                                        // Add forgot password functionality
+                                      },
+                                      child: const Text('Forgot Password?'),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Sign in button
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: _isLoading
+                                        ? null
+                                        : () async {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              setState(() => _isLoading = true);
+                                              // Placeholder for backend authentication
+                                              await Future.delayed(
+                                                  const Duration(seconds: 1));
+                                              if (!mounted) return;
+                                              setState(
+                                                  () => _isLoading = false);
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const AccountChoosePage(),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      backgroundColor: const Color(0xFFBFA547),
+                                    ),
+                                    child: _isLoading
+                                        ? const CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                          )
+                                        : const Text(
+                                            'Sign In',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              fontFamily: 'Jost',
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Please use your assigned GBOX account to sign in',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Login link
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            LoginPage(onTap: () {}),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Log in to my account',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                // Footer links
+                Padding(
+                  padding: const EdgeInsets.only(top: 24, bottom: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const TermsAndConditions(),
+                            ),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(fontSize: 14),
+                        ),
+                        child: const Text('Terms & Conditions'),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 4,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FAQs(),
+                            ),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(fontSize: 14),
+                        ),
+                        child: const Text('FAQs'),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-
-/**
- * Custom Clipper for Triangle Peek Design
- * 
- * Creates a custom shape for the sign-in container with a triangular
- * peek at the top, giving the UI a distinctive appearance.
- */
-class TrianglePeekClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-
-    // Calculate responsive triangle dimensions
-    double triangleHeight = size.height * 0.15; // 15% of container height
-    double triangleWidth = size.width;
-    double startY = triangleHeight;
-
-    // Create the path with a triangle at the top
-    path.moveTo(0, startY);
-    path.lineTo(triangleWidth / 2, 0);
-    path.lineTo(triangleWidth, startY);
-    path.lineTo(triangleWidth, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-
-
-
-
-
-
-
-
-
-/// Sign-in Page
-///
-/// Purpose: Provides the initial sign-in interface for all users
-///
-/// Flow:
-/// 1. User enters email and password
-/// 2. User clicks "Sign In" button to create a new account
-/// 3. User can navigate to existing login page if already has an account
-/// 4. User can access Terms & Conditions and FAQs from the footer
-///
-/// Backend Implementation Needed:
-/// - Email validation
-/// - Password strength validation
-/// - User authentication against backend server
-/// - Error handling for authentication failures
-/// - Secure credential storage
-// library;
-
-// import 'package:flutter/material.dart';
-// import 'package:xavlog_core/features/login/login_page.dart';
-// import 'account_choose.dart';
-// import 'terms_and_conditions.dart';
-// import 'faqs.dart';
-
-// class SigninPage extends StatefulWidget {
-//   const SigninPage({super.key});
-//   @override
-//   State<SigninPage> createState() => _SigninPageState();
-// }
-
-// class _SigninPageState extends State<SigninPage> {
-//   bool isSignInHovered = false;
-//   bool isLoginHovered = false;
-//   bool isTermsHovered = false;
-//   bool isFAQsHovered = false;
-//   bool isPasswordVisible = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final screenSize = MediaQuery.of(context).size;
-//     final width = screenSize.width;
-//     final height = screenSize.height;
-
-//     final logoSize = width * 0.4;
-//     final contentPadding = width * 0.05;
-//     final fontSize = width * 0.04;
-
-//     return Scaffold(
-//       body: SingleChildScrollView(
-//         child: Container(
-//           width: width,
-//           height: height,
-//           color: const Color(0xFF132BB2),
-//           child: Column(
-//             children: [
-//               SizedBox(height: height * 0.05),
-//               Image.asset(
-//                 'assets/images/fulllogo.png',
-//                 width: logoSize,
-//                 height: logoSize,
-//               ),
-//               Expanded(
-//                 child: ClipPath(
-//                   clipper: TrianglePeekClipper(),
-//                   child: Container(
-//                     width: width,
-//                     padding: EdgeInsets.symmetric(horizontal: contentPadding),
-//                     decoration: BoxDecoration(
-//                       color: Colors.white,
-//                       borderRadius: BorderRadius.only(
-//                         topLeft: Radius.circular(width * 0.02),
-//                         topRight: Radius.circular(width * 0.02),
-//                       ),
-//                     ),
-//                     child: Column(
-//                       children: [
-//                         SizedBox(height: height * 0.08),
-//                         Text(
-//                           'Sign-in',
-//                           style: TextStyle(
-//                             color: Colors.black87,
-//                             fontFamily: 'Jost',
-//                             fontSize: fontSize * 2,
-//                             fontWeight: FontWeight.w900,
-//                           ),
-//                         ),
-//                         SizedBox(height: height * 0.04),
-//                         _buildInputField(
-//                           label: 'Email Address',
-//                           icon: Icons.email,
-//                           fontSize: fontSize,
-//                         ),
-//                         SizedBox(height: height * 0.025),
-//                         _buildPasswordField(fontSize),
-//                         SizedBox(height: height * 0.04),
-//                         _buildSignInButton(width, fontSize),
-//                         SizedBox(height: height * 0.03),
-//                         Text(
-//                           'Please use your assigned GBOX account to sign in',
-//                           textAlign: TextAlign.center,
-//                           style: TextStyle(
-//                             color: Colors.grey,
-//                             fontSize: fontSize * 0.9,
-//                             fontFamily: 'Jost',
-//                           ),
-//                         ),
-//                         SizedBox(height: height * 0.03),
-//                         _buildLoginLink(fontSize),
-//                         const Spacer(),
-//                         _buildFooterLinks(fontSize),
-//                         SizedBox(height: height * 0.03),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildInputField({
-//     required String label,
-//     required IconData icon,
-//     required double fontSize,
-//   }) {
-//     return TextField(
-//       style: TextStyle(
-//         fontSize: fontSize,
-//         fontFamily: 'Jost',
-//       ),
-//       decoration: InputDecoration(
-//         labelText: label,
-//         labelStyle: TextStyle(
-//           fontSize: fontSize,
-//           fontFamily: 'Jost',
-//         ),
-//         prefixIcon: Icon(icon, size: fontSize * 1.2),
-//         border: OutlineInputBorder(
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildPasswordField(double fontSize) {
-//     return TextField(
-//       style: TextStyle(
-//         fontSize: fontSize,
-//         fontFamily: 'Jost',
-//       ),
-//       obscureText: !isPasswordVisible,
-//       decoration: InputDecoration(
-//         labelText: 'Password',
-//         labelStyle: TextStyle(
-//           fontSize: fontSize,
-//           fontFamily: 'Jost',
-//         ),
-//         prefixIcon: const Icon(Icons.lock_outline),
-//         suffixIcon: GestureDetector(
-//           onTap: () => setState(() => isPasswordVisible = !isPasswordVisible),
-//           child: Icon(
-//             isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-//             size: fontSize * 1.2,
-//           ),
-//         ),
-//         border: OutlineInputBorder(
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildSignInButton(double width, double fontSize) {
-//     return MouseRegion(
-//       cursor: SystemMouseCursors.click,
-//       onEnter: (_) => setState(() => isSignInHovered = true),
-//       onExit: (_) => setState(() => isSignInHovered = false),
-//       child: GestureDetector(
-//         onTap: () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => const AccountChoosePage(),
-//             ),
-//           );
-//         },
-//         child: Container(
-//           width: double.infinity,
-//           padding: const EdgeInsets.symmetric(vertical: 16),
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(12),
-//             gradient: LinearGradient(
-//               colors: [
-//                 isSignInHovered
-//                     ? const Color(0xFFF4CA56)
-//                     : const Color(0xFFBFA547),
-//                 isSignInHovered
-//                     ? const Color(0xFFF4CA56)
-//                     : const Color(0xFFBFA547),
-//               ],
-//             ),
-//           ),
-//           child: Center(
-//             child: Text(
-//               'Sign In',
-//               style: TextStyle(
-//                 color: Colors.white,
-//                 fontSize: fontSize,
-//                 fontFamily: 'Jost',
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildLoginLink(double fontSize) {
-//     return MouseRegion(
-//       cursor: SystemMouseCursors.click,
-//       onEnter: (_) => setState(() => isLoginHovered = true),
-//       onExit: (_) => setState(() => isLoginHovered = false),
-//       child: GestureDetector(
-//         onTap: () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => LoginPage(onTap: () {}),
-//             ),
-//           );
-//         },
-//         child: Text(
-//           'Log-in to my account',
-//           style: TextStyle(
-//             color: isLoginHovered
-//                 ? const Color(0xFFD7A61F)
-//                 : const Color.fromARGB(255, 16, 16, 16),
-//             fontSize: fontSize,
-//             fontFamily: 'Jost',
-//             fontWeight: FontWeight.w600,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildFooterLinks(double fontSize) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         _buildFooterLink('Terms & Conditions', fontSize, isTermsHovered, () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => const TermsAndConditions(),
-//             ),
-//           );
-//         }),
-//         const Text(
-//           ' | ',
-//           style: TextStyle(color: Colors.grey),
-//         ),
-//         _buildFooterLink('FAQs', fontSize, isFAQsHovered, () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => const FAQs(),
-//             ),
-//           );
-//         }),
-//       ],
-//     );
-//   }
-
-//   Widget _buildFooterLink(
-//       String text, double fontSize, bool isHovered, VoidCallback onTap) {
-//     return MouseRegion(
-//       cursor: SystemMouseCursors.click,
-//       onEnter: (_) => setState(() {
-//         if (text == 'Terms & Conditions') isTermsHovered = true;
-//         if (text == 'FAQs') isFAQsHovered = true;
-//       }),
-//       onExit: (_) => setState(() {
-//         if (text == 'Terms & Conditions') isTermsHovered = false;
-//         if (text == 'FAQs') isFAQsHovered = false;
-//       }),
-//       child: GestureDetector(
-//         onTap: onTap,
-//         child: Text(
-//           text,
-//           style: TextStyle(
-//             color: isHovered
-//                 ? const Color(0xFF0529CC)
-//                 : const Color.fromARGB(255, 16, 16, 16),
-//             fontSize: fontSize * 0.9,
-//             fontFamily: 'Jost',
-//             fontWeight: FontWeight.bold,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// /**
-//  * Custom Clipper for Triangle Peek Design
-//  * 
-//  * Creates a custom shape for the sign-in container with a triangular
-//  * peek at the top, giving the UI a distinctive appearance.
-//  */
-// class TrianglePeekClipper extends CustomClipper<Path> {
-//   @override
-//   Path getClip(Size size) {
-//     Path path = Path();
-
-//     // Calculate responsive triangle dimensions
-//     double triangleHeight = size.height * 0.15; // 15% of container height
-//     double triangleWidth = size.width;
-//     double startY = triangleHeight;
-
-//     // Create the path with a triangle at the top
-//     path.moveTo(0, startY);
-//     path.lineTo(triangleWidth / 2, 0);
-//     path.lineTo(triangleWidth, startY);
-//     path.lineTo(triangleWidth, size.height);
-//     path.lineTo(0, size.height);
-//     path.close();
-
-//     return path;
-//   }
-
-//   @override
-//   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-// }
