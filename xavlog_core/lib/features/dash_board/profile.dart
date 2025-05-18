@@ -240,7 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         MaterialPageRoute(
                                           builder: (context) => LoginPage(
                                             onTap:
-                                                () {}, // 👈 empty function or your real onTap
+                                                () {}, 
                                           ),
                                         ),
                                       );

@@ -37,8 +37,15 @@ class Body extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(product.category,
-                            style: const TextStyle(color: Colors.white)),
+                        Text(
+                          product.category,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Jost',
+                          ),
+                        ),
                         Text(
                           product.title,
                           style: Theme.of(context)
@@ -47,6 +54,8 @@ class Body extends StatelessWidget {
                               .copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: 'Jost',
+                                fontSize: 26,
                               ),
                         ),
                         const SizedBox(height: kDefaultPaddin / 2),
@@ -62,33 +71,39 @@ class Body extends StatelessWidget {
                                     "Price",
                                     style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.black,
+                                      fontFamily: 'Inter',
                                     ),
                                   ),
                                   Text(
-                                    "₱ ${product.price}",
+                                    "PHP ${product.price}",
                                     style: const TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.green,
+                                      fontFamily: 'Inter',
                                     ),
                                   ),
                                   const SizedBox(height: kDefaultPaddin),
                                   const Text(
                                     "Condition",
                                     style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                      fontFamily: 'Inter',
+                                    ),
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
                                     product.condition,
                                     style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                      fontFamily: 'Inter',
+                                    ),
                                   ),
                                 ],
                               ),
@@ -107,49 +122,57 @@ class Body extends StatelessWidget {
                         const Text(
                           "Description",
                           style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontFamily: 'Jost',
+                          ),
                         ),
                         const SizedBox(height: 5),
                         Text(
                           product.description,
                           style: const TextStyle(
-                              fontSize: 14, color: Colors.black54),
+                            fontSize: 16,
+                            color: Colors.black54,
+                            fontFamily: 'Inter',
+                          ),
                         ),
                         const SizedBox(height: kDefaultPaddin),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: ElevatedButton(
+                              child: ElevatedButton.icon(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          MyAppChat(), // Navigate to the chat app
+                                      builder: (context) => MyAppChat(),
                                     ),
                                   );
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: const Text(
+                                icon: const Icon(Icons.chat_bubble_outline,
+                                    color: Colors.white),
+                                label: const Text(
                                   "Chat Now",
                                   style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF071D99),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(13),
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 12),
                             Expanded(
-                              child: ElevatedButton(
+                              child: ElevatedButton.icon(
                                 onPressed: () {
                                   Provider.of<CartProvider>(context,
                                           listen: false)
@@ -157,35 +180,51 @@ class Body extends StatelessWidget {
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        "${product.title} added to cart!",
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                      content: Row(
+                                        children: [
+                                          const Icon(Icons.check_circle_outline,
+                                              color: Color(0xFFD7A61F)),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              "${product.title} added to cart!",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Jost',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       duration: const Duration(seconds: 2),
-                                      backgroundColor: Colors.black87,
+                                      backgroundColor: const Color(0xFF071D99),
                                       behavior: SnackBarBehavior.floating,
                                       margin: const EdgeInsets.all(16),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
+                                      elevation: 8,
                                     ),
                                   );
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 231, 169, 36),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: const Text(
+                                icon: const Icon(Icons.shopping_cart_outlined,
+                                    color: Colors.white),
+                                label: const Text(
                                   "Add to Cart",
                                   style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFD7A61F),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(13),
+                                  ),
                                 ),
                               ),
                             ),

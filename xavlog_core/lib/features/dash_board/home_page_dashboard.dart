@@ -114,8 +114,8 @@ class _HomepageState extends State<Homepage> {
   final List<String> _carouselImages = [
     'https://i0.wp.com/dateline-ibalon.com/wp-content/uploads/2024/01/Fr-Olin-adnu-church-wally-ocampo-ritratos-ni-wally.jpg?resize=930%2C450&ssl=1',
     'https://ol-content-api.global.ssl.fastly.net/sites/default/files/styles/scale_and_crop_center_890x320/public/2023-01/ateneodenaga-banner-1786x642.jpg?itok=oNejbYDa', // Added Ateneo de Naga University logo
-    'https://scontent.fwnp1-1.fna.fbcdn.net/v/t39.30808-6/494225452_1281674080628894_2651345984701877971_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGWG5PqVEFbVgC-LtQN6U8zIgkAOMP_urQiCQA4w_-6tBWMidGDw4cYTGJU9RI6jEd49YSRmSrh72undxqB7i3v&_nc_ohc=iOR3dk2D5EkQ7kNvwHzpfec&_nc_oc=Adk_NUcmi6nBOhw4phaKpdUa0dK4Hn7kpiO3YBy4KXe0fBRYDo2fklqOcwdEMmqNWac&_nc_zt=23&_nc_ht=scontent.fwnp1-1.fna&_nc_gid=IfrXQYVYHPPsJY0kuBPh_A&oh=00_AfIxQ8UhHIL1ux29E0IBCkCJO5RVyMQTweWMEsZdGdPIMg&oe=6828A417',
     'https://jhs.adnu.edu.ph/pluginfile.php/17657/mod_page/content/12/main-campus.jpg',
+    'https://live.staticflickr.com/2336/2144157090_cb221623eb_h.jpg',
   ];
 
   void updateName(String newName) {
@@ -300,7 +300,7 @@ class _HomepageState extends State<Homepage> {
             Text(
               'Monthly Analytics',
               style: TextStyle(
-                fontSize: fontSize * 1.2,
+                fontSize: 23,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Jost',
                 color: Color(0xFF071D99),
@@ -328,25 +328,25 @@ class _HomepageState extends State<Homepage> {
                           'Total Classes',
                           '28',
                           Icons.class_,
-                          fontSize * 1.2,
+                          fontSize * 1.5,
                         ),
                         _buildStatCard(
                           'Total Attendance',
                           '85%',
                           Icons.calendar_view_day,
-                          fontSize * 1.2,
+                          fontSize * 1.5,
                         ),
                         _buildStatCard(
                           'Classes Attended',
                           '24/28',
                           Icons.class_,
-                          fontSize * 1.2,
+                          fontSize * 1.5,
                         ),
                         _buildStatCard(
                           'Performance',
                           'Good',
                           Icons.trending_up,
-                          fontSize * 1.2,
+                          fontSize * 1.5,
                         ),
                       ],
                     ),
@@ -690,7 +690,7 @@ class _HomepageState extends State<Homepage> {
           Text(
             value,
             style: TextStyle(
-              fontSize: fontSize * 1.2,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               fontFamily: 'Jost',
               color: Color(0xFF071D99),
@@ -710,10 +710,6 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget _buildUpcomingActivities() {
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final fontSize = width * 0.03;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -725,7 +721,7 @@ class _HomepageState extends State<Homepage> {
               Text(
                 'Upcoming Activities',
                 style: TextStyle(
-                  fontSize: fontSize * 1.2,
+                  fontSize: 23,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Jost',
                   color: Color(0xFF071D99),
@@ -1107,7 +1103,7 @@ class _HomepageState extends State<Homepage> {
           Text(
             'Your Calendar',
             style: TextStyle(
-              fontSize: fontSize * 1.2,
+              fontSize: 23,
               fontWeight: FontWeight.bold,
               fontFamily: 'Jost',
               color: const Color(0xFF071D99),
@@ -1380,85 +1376,6 @@ class _HomepageState extends State<Homepage> {
               const SizedBox(height: 20),
 
               // Navigation Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Where Do You Want To Go?',
-                      style: TextStyle(
-                        fontSize: fontSize * 1.2,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Jost',
-                        color: Color(0xFF071D99),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 160,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: navigationItems.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = navigationItems[index];
-                          return Container(
-                            width: 160,
-                            margin: const EdgeInsets.only(right: 16),
-                            child: Card(
-                              elevation:
-                                  8, // Increased shadow for a more pronounced effect
-                              color: const Color(
-                                  0xFF071D99), // Keep the background color to match theme
-                              shadowColor: Colors.black.withOpacity(
-                                  0.3), // Slightly stronger shadow for depth
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    16), // More rounded corners for modern feel
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  final page = _getPageForItem(item.title);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => page,
-                                    ),
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      item.icon,
-                                      size: 48,
-                                      color: const Color(
-                                          0xFFD7A61F), // Keep yellow icon for contrast
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      item.title,
-                                      style: TextStyle(
-                                        fontSize: fontSize *
-                                            1.0, // Adjust size slightly
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Inter',
-                                        color: Colors
-                                            .white, // Ensure text is white for contrast
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
               const SizedBox(height: 20),
 

@@ -49,7 +49,9 @@ class BodyState extends State<Body> {
           child: Text(
             'Marketplace',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold, color: Color(0xFF071D99)),
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF071D99),
+                fontSize: 32),
           ),
         ),
         const SizedBox(height: 10),
@@ -123,13 +125,18 @@ class ItemCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),
             child: Text(
               product.title,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Text(
-            '₱ ${product.price}',
+            'PHP ${product.price}',
             style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Color(0xFF007F5F)),
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF007F5F),
+                fontSize: 16),
           ),
         ],
       ),
@@ -213,6 +220,7 @@ class _CategoryState extends State<Category> {
             Text(
               widget.categories[index],
               style: TextStyle(
+                fontSize: 18, // Increased font size for navigation text
                 fontWeight: FontWeight.bold,
                 color: widget.selectedIndex == index
                     ? const Color.fromARGB(255, 0, 0, 0)

@@ -50,4 +50,6 @@ class ChatService {
         .orderBy("timestamp", descending: false)
         .snapshots();
   }
+
+  getUserTypingStatus(String receiverID) {}
 }

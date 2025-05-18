@@ -15,6 +15,8 @@ class HomePage extends StatelessWidget {
 }
 
 class AutoScrollHeader extends StatefulWidget {
+  const AutoScrollHeader({super.key});
+
   @override
   _AutoScrollHeaderState createState() => _AutoScrollHeaderState();
 }
@@ -124,7 +126,7 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
                           Text(
                             greetings[index],
                             style: const TextStyle(
-                              fontSize: 17,
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF1E3A8A),
                             ),
@@ -133,7 +135,7 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
                           Text(
                             messages[index],
                             style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: 16,
                               color: Colors.black87,
                             ),
                           ),
@@ -192,14 +194,22 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 'assets/images/place.jpg',
                                 'Ateneo De Naga',
                                 Text(
-                                    'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.'),
+                                    'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.',
+                                    style: TextStyle(
+                                      fontSize: 18, // Increased font size
+                                      fontFamily: 'Jost',
+                                    )),
                                 index: 0),
                             _buildSectionTitle('Transactions'),
                             _buildFeaturedContent(
                                 'assets/images/transactions.jpg',
                                 'Flexible Transactions',
                                 Text(
-                                    'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.'),
+                                    'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.',
+                                    style: TextStyle(
+                                      fontSize: 18, // Increased font size
+                                      fontFamily: 'Jost',
+                                    )),
                                 index: 1),
                             _buildSectionTitle('Buy and Sell'),
 
@@ -207,7 +217,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 'assets/images/buying.jpg',
                                 'Sell and Buy Items from Ateneans',
                                 Text(
-                                    'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.'),
+                                    'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.',
+                                    style: TextStyle(
+                                      fontSize: 18, // Increased font size
+                                      fontFamily: 'Jost',
+                                    )),
                                 index: 3),
                           ]
                               .map((widget) => Padding(
@@ -236,7 +250,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         child: Text(
           title,
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 25,
             fontWeight: FontWeight.bold,
             color: Color.fromARGB(255, 0, 0, 0),
           ),
@@ -266,7 +280,7 @@ class _HomeWidgetState extends State<HomeWidget> {
               },
             ),
           ),
-          SizedBox(width: 12), // Adds spacing between buttons
+          SizedBox(width: 12),
           Expanded(
             child: _buildCategoryButton('Books', 'assets/images/book.png', () {
               Navigator.push(
@@ -316,7 +330,9 @@ class _HomeWidgetState extends State<HomeWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(text, style: TextStyle(fontSize: 17)),
+                  Text(text,
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
                 ],
               ),
             ],
@@ -348,7 +364,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -506,7 +522,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 17,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -524,51 +540,3 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 }
-
-// Widget _buildHeader() {
-//   return Container(
-//     width: double.infinity,
-//     margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
-//     padding: EdgeInsets.all(20),
-//     decoration: BoxDecoration(
-//       gradient: LinearGradient(
-//         colors: [
-//           Color(0xFF1E3C72),
-//           Color(0xFF2A5298)
-//         ], // modern blue gradient
-//         begin: Alignment.topLeft,
-//         end: Alignment.bottomRight,
-//       ),
-//       borderRadius: BorderRadius.circular(16),
-//       boxShadow: [
-//         BoxShadow(
-//           color: Colors.black12,
-//           blurRadius: 8,
-//           offset: Offset(0, 4),
-//         ),
-//       ],
-//     ),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(
-//           'Hi there! 👋',
-//           style: TextStyle(
-//             color: Colors.white,
-//             fontSize: 24,
-//             fontWeight: FontWeight.bold,
-//             letterSpacing: 0.5,
-//           ),
-//         ),
-//         SizedBox(height: 6),
-//         Text(
-//           'Welcome to Xavalog – the Ateneo Marketplace at your fingertips.',
-//           style: TextStyle(
-//             color: Colors.white.withAlpha((0.9 * 255).toInt()),
-//             fontSize: 15.5,
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }

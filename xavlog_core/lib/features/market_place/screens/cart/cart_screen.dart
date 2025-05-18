@@ -29,7 +29,7 @@ class CartScreen extends StatelessWidget {
                     return ListTile(
                       leading: Image.asset(product.image, width: 50),
                       title: Text(product.title),
-                      subtitle: Text('₱ ${product.price}'),
+                      subtitle: Text('PHP ${product.price}'),
                       trailing: IconButton(
                         icon:
                             const Icon(Icons.remove_circle, color: Colors.red),

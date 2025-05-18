@@ -83,7 +83,7 @@ class BuyPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            "₱${product.price}",
+            "PHP ${product.price}",
             style: TextStyle(
               fontFamily: 'Rubik',
               fontSize: 24,

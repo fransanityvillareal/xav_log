@@ -46,7 +46,7 @@ class SellerDashboardScreen extends StatelessWidget {
                                 : const Icon(Icons.image_not_supported),
                             title: Text(product.title),
                             subtitle: Text(product.description),
-                            trailing: Text('₱${product.price}'),
+                            trailing: Text('PHP ${product.price}'),
                           );
                         },
                       ),
