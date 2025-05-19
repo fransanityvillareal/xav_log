@@ -35,23 +35,27 @@ class ProductSearchDelegate extends SearchDelegate<String> {
       return const Center(child: Text("No results found"));
     }
 
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: Image.asset(results[index].image, width: 50, height: 50),
-          title: Text(results[index].title),
-          subtitle:
-              Text("\$${results[index].price} - ${results[index].condition}"),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DetailsScreen(product: results[index])),
-            );
-          },
-        );
-      },
+    return Container(
+      color: Colors.white, // Set white background
+      child: ListView.builder(
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: Image.asset(results[index].image, width: 50, height: 50),
+            title: Text(results[index].title),
+            subtitle:
+                Text("\$${results[index].price} - ${results[index].condition}"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DetailsScreen(product: results[index])),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -61,17 +65,20 @@ class ProductSearchDelegate extends SearchDelegate<String> {
         .where((p) => p.title.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(suggestions[index].title),
-          onTap: () {
-            query = suggestions[index].title;
-            showResults(context);
-          },
-        );
-      },
+    return Container(
+      color: Colors.white, // Set white background
+      child: ListView.builder(
+        itemCount: suggestions.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(suggestions[index].title),
+            onTap: () {
+              query = suggestions[index].title;
+              showResults(context);
+            },
+          );
+        },
+      ),
     );
   }
 }

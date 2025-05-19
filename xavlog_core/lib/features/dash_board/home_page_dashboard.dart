@@ -20,6 +20,10 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:xavlog_core/features/event_finder/eventfinderpage.dart';
+import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
+import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
+import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'profile.dart';
@@ -378,222 +382,222 @@ class _HomepageState extends State<Homepage> {
     final fontSize = width * 0.035;
 
     showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: screenSize.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Student Analytics',
-                    style: TextStyle(
-                      fontFamily: 'Jost',
-                      fontSize: fontSize * 1.4,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF071D99),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+              height: screenSize.height * 0.8,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16.0),
+              child: Column(
                 children: [
-                  // Attendance analytics card
-                  Card(
-                    color: const Color(0xFFF5F5F5),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Attendance Overview',
-                            style: TextStyle(
-                              fontFamily: 'Jost',
-                              fontSize: fontSize * 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF071D99),
-                            ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Student Analytics',
+                          style: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: fontSize * 1.4,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF071D99),
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildPieChartItem(
-                                'Present',
-                                0.85,
-                                const Color(0xFF071D99),
-                              ),
-                              _buildPieChartItem(
-                                'Absent',
-                                0.08,
-                                Colors.red,
-                              ),
-                              _buildPieChartItem(
-                                'Late',
-                                0.07,
-                                const Color(0xFFD7A61F),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          const Text('Attendance Distribution'),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Performance Analytics
-                  Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Subject Performance',
-                            style: TextStyle(
-                              fontFamily: 'Jost',
-                              fontSize: fontSize * 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF071D99),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          SizedBox(height: 200, child: _buildBarChart()),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Progress Analytics
-                  Card(
-                    color: const Color(0xFFF5F5F5),
-                    elevation: 2,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Semester Progress',
-                            style: TextStyle(
-                              fontFamily: 'Jost',
-                              fontSize: fontSize * 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF071D99),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Completed',
-                                      style: TextStyle(
-                                        fontFamily: 'Jost',
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '60%',
-                                      style: TextStyle(
-                                        fontFamily: 'Jost',
-                                        fontSize: fontSize * 1.3,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 50,
-                                width: 1,
-                                color: Colors.grey[300],
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Remaining',
-                                      style: TextStyle(
-                                        fontFamily: 'Jost',
-                                        color: Colors.orange,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '40%',
-                                      style: TextStyle(
-                                        fontFamily: 'Jost',
-                                        fontSize: fontSize * 1.3,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Export Button
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF071D99),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Analytics report exported'),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.download, color: Colors.white),
-                    label: Text(
-                      'Export Report',
-                      style: TextStyle(
-                        fontFamily: 'Jost',
-                        color: Colors.white,
-                      ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(16.0),
+                      children: [
+                        // Attendance analytics card
+                        Card(
+                          color: const Color(0xFFF5F5F5),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Attendance Overview',
+                                  style: TextStyle(
+                                    fontFamily: 'Jost',
+                                    fontSize: fontSize * 1.2,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF071D99),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildPieChartItem(
+                                      'Present',
+                                      0.85,
+                                      const Color(0xFF071D99),
+                                    ),
+                                    _buildPieChartItem(
+                                      'Absent',
+                                      0.08,
+                                      Colors.red,
+                                    ),
+                                    _buildPieChartItem(
+                                      'Late',
+                                      0.07,
+                                      const Color(0xFFD7A61F),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                const Text('Attendance Distribution'),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Performance Analytics
+                        Card(
+                          elevation: 2,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Subject Performance',
+                                  style: TextStyle(
+                                    fontFamily: 'Jost',
+                                    fontSize: fontSize * 1.2,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF071D99),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(height: 200, child: _buildBarChart()),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Progress Analytics
+                        Card(
+                          color: const Color(0xFFF5F5F5),
+                          elevation: 2,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Semester Progress',
+                                  style: TextStyle(
+                                    fontFamily: 'Jost',
+                                    fontSize: fontSize * 1.2,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF071D99),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            'Completed',
+                                            style: TextStyle(
+                                              fontFamily: 'Jost',
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            '60%',
+                                            style: TextStyle(
+                                              fontFamily: 'Jost',
+                                              fontSize: fontSize * 1.3,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 50,
+                                      width: 1,
+                                      color: Colors.grey[300],
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            'Remaining',
+                                            style: TextStyle(
+                                              fontFamily: 'Jost',
+                                              color: Colors.orange,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            '40%',
+                                            style: TextStyle(
+                                              fontFamily: 'Jost',
+                                              fontSize: fontSize * 1.3,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Export Button
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF071D99),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Analytics report exported'),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.download, color: Colors.white),
+                          label: Text(
+                            'Export Report',
+                            style: TextStyle(
+                              fontFamily: 'Jost',
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+            ));
   }
 
   Widget _buildPieChartItem(String label, double value, Color color) {
@@ -1006,89 +1010,89 @@ class _HomepageState extends State<Homepage> {
     final events = _getEventsForDay(selectedDay);
 
     showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
-                    style: TextStyle(
-                      fontSize: fontSize * 1.2,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF071D99),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
+                          style: TextStyle(
+                            fontSize: fontSize * 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF071D99),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                  const Divider(height: 1),
+                  events.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            'No events for this day',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: fontSize,
+                            ),
+                          ),
+                        )
+                      : Flexible(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            itemCount: events.length,
+                            itemBuilder: (context, index) {
+                              final event = events[index];
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: ListTile(
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF071D99,
+                                      ).withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      _getCategoryIcon(event.category),
+                                      color: const Color(0xFF071D99),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    event.title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF071D99),
+                                    ),
+                                  ),
+                                  subtitle: Text(event.description),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
                 ],
               ),
-            ),
-            const Divider(height: 1),
-            events.isEmpty
-                ? Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Text(
-                      'No events for this day',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: fontSize,
-                      ),
-                    ),
-                  )
-                : Flexible(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      itemCount: events.length,
-                      itemBuilder: (context, index) {
-                        final event = events[index];
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: const Color(
-                                  0xFF071D99,
-                                ).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                _getCategoryIcon(event.category),
-                                color: const Color(0xFF071D99),
-                              ),
-                            ),
-                            title: Text(
-                              event.title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF071D99),
-                              ),
-                            ),
-                            subtitle: Text(event.description),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
-          ],
-        ),
-      ),
-    );
+            ));
   }
 
   Widget _buildCalendarSection() {
@@ -1360,8 +1364,6 @@ class _HomepageState extends State<Homepage> {
 
               const SizedBox(height: 20),
 
-              const SizedBox(height: 16),
-
               // Carousel Banner with shimmer
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -1376,6 +1378,10 @@ class _HomepageState extends State<Homepage> {
               const SizedBox(height: 20),
 
               // Navigation Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: _buildNavigationSection(),
+              ),
 
               const SizedBox(height: 20),
 
@@ -1484,6 +1490,155 @@ class _HomepageState extends State<Homepage> {
             initialPage: 0,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavigationSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Quick Access',
+          style: TextStyle(
+            backgroundColor: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Jost',
+            color: Color(0xFF071D99),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 180,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: navigationItems.length,
+            itemBuilder: (context, index) =>
+                _buildNavigationCard(navigationItems[index]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavigationCard(DashboardItem item) {
+    return Container(
+      width: 140,
+      margin: const EdgeInsets.only(right: 16),
+      child: Card(
+        color: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: InkWell(
+          onTap: () => _navigateToPage(item.title),
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(item.icon, size: 40, color: const Color(0xFFD7A61F)),
+                const SizedBox(height: 12),
+                Text(
+                  item.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Inter',
+                    color: Color(0xFF003865), // Optional: XavLog blue
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToPage(String title) {
+    switch (title) {
+      case 'Attendance Tracker':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const Homepage()),
+        );
+        break;
+
+      case 'Calendar':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const CalendarPage()),
+        );
+        break;
+
+      case 'Event Finder':
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => const HomeWrapper(initialTab: 2)),
+        );
+        break;
+
+      case 'Marketplace':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const BuyerIntroduction()),
+        );
+        break;
+
+      case 'Grades Tracker':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const HomeWrapper(initialTab: 1,)),
+        );
+        break;
+
+      case 'Social Collaboration':
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => const HomeWrapper(initialTab: 3)),
+        );
+        break;
+
+      case 'Schedule Manager':
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const ScheduleManagerPage()),
+        );
+        break;
+
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Page not found!')),
+        );
+    }
+  }
+}
+
+class ScheduleManagerPage extends StatelessWidget {
+  const ScheduleManagerPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Schedule Manager'),
+      ),
+      body: const Center(
+        child: Text('Schedule Manager Page'),
+      ),
+    );
+  }
+}
+
+class CalendarPage extends StatelessWidget {
+  const CalendarPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Calendar'),
+      ),
+      body: const Center(
+        child: Text('Calendar Page'),
       ),
     );
   }

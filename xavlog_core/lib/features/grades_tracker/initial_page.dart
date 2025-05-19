@@ -11,6 +11,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/grades_tracker/subject_partitioning.dart';
+import 'package:lottie/lottie.dart'; // Import Lottie for animations
+import 'dart:async'; // Import for Timer
+import 'dart:ui'; // Import for ImageFilter
 
 void main() {
   runApp(const MyApp()); // Calls the correct entry point
@@ -47,6 +50,7 @@ class AddSubjectScreen extends StatefulWidget {
 
 class _AddSubjectScreenState extends State<AddSubjectScreen> {
   bool showOverlay = false;
+  bool showPopupAnimation = false; // Flag to show the popup animation
 
   // Controllers for text input
   final subjectCodeController = TextEditingController();
@@ -55,13 +59,30 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
   final descriptionController = TextEditingController();
 
   List<String> addedSubjects = [];
+  String qpiValue = '0.00'; // Initial QPI value
+
+  void _onOverlayClosed() {
+    // Add a delay before showing the popup
+    Future.delayed(Duration(seconds: 5), () {
+      setState(() {
+        showPopupAnimation = true;
+      });
+
+      // Automatically dismiss the popup after 3 seconds
+      Timer(Duration(seconds: 3), () {
+        setState(() {
+          showPopupAnimation = false;
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: Colors.white, // Set main background to white
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,7 +174,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                           Padding(
                             padding: const EdgeInsets.only(right: 24.0),
                             child: Text(
-                              '0.00',
+                              qpiValue, // Dynamically updated QPI value
                               style: TextStyle(
                                 fontFamily: 'Jost',
                                 fontWeight: FontWeight.w600,
@@ -357,7 +378,11 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                                 unitsController.text.isNotEmpty) {
                               setState(() {
                                 addedSubjects.add(subjectCodeController.text);
+                                qpiValue = '3.60'; // Update QPI value
                                 showOverlay = false;
+
+                                // Trigger the popup after exiting the overlay
+                                _onOverlayClosed();
 
                                 // Clear text fields after saving
                                 subjectCodeController.clear();
@@ -376,6 +401,38 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                       ),
                     ],
                   ),
+                ),
+              ),
+            ),
+          ),
+
+        // Ensure the popup overlay is rendered last to appear on top
+        if (showPopupAnimation)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.7), // Darken the background
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie/congrats.json', // Path to animation file
+                      width: 300, // Adjusted width for popup
+                      height: 300, // Adjusted height for popup
+                      repeat: false,
+                    ),
+                    SizedBox(height: 20), // Add spacing below the animation
+                    Text(
+                      'Congratulations, you are a President\'s Lister!',
+                      style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 20.0, // Adjusted font size for popup
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
             ),
