@@ -13,9 +13,6 @@ class SellerIntroduction extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 32, 47),
-      ),
       home: const IntroductionSeller(),
     );
   }
@@ -137,7 +134,7 @@ class IntroductionSeller extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomeWrapper(initialTab: 3),
+                      builder: (context) => const HomeWrapper(initialTab: 3,),
                     ),
                   );
                 },

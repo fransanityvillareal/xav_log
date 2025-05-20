@@ -225,7 +225,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                             255, 230, 230, 230); // darker gold when pressed
                       }
                       return const Color.fromARGB(
-                          255, 255, 255, 255)!; // normal gold
+                          255, 255, 255, 255); // normal gold
                     }),
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),

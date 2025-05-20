@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_seller.dart';
 
 void main() {
@@ -12,9 +13,6 @@ class BuyerIntroduction extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 32, 47),
-      ),
       home: const IntroductionBuyer(),
     );
   }
@@ -62,7 +60,14 @@ class IntroductionBuyer extends StatelessWidget {
                     0.07, // Adjusted right spacing
               ),
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ),
+                  );
+                },
                 child: const Text(
                   'Skip',
                   style: TextStyle(
