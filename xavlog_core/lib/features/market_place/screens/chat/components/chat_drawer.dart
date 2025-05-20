@@ -18,7 +18,7 @@ class ChatDrawer extends StatelessWidget {
     String username = email.split('@')[0];
 
     return Drawer(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(30),

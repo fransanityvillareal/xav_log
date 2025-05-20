@@ -43,7 +43,7 @@ class PaymentProofPage extends StatefulWidget {
 class _PaymentProofPageState extends State<PaymentProofPage> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
-  String? _selectedProofType; // Start as null
+  String? _selectedProofType;
   final TextEditingController _refController = TextEditingController();
 
   final List<String> _proofTypes = ['Reference Number', 'Upload Screenshot'];
@@ -65,22 +65,19 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Define your color palette clearly here:
-    Color backgroundColor = Color(0xFFF6F8FA); // background
-    Color primaryColor =
-        Color(0xFF0D47A1); // <-- strong blue for important actions
-    Color secondaryColor = Color(0xFF42A5F5); //  blue for less critical buttons
-    Color textColor = Color(0xFF212121); //dark text
-    Color cardColor = Colors.white; // <-- for cards/containers
+    Color backgroundColor = const Color(0xFFF6F8FA);
+    Color primaryColor = const Color(0xFF0D47A1);
+    Color secondaryColor = const Color(0xFF42A5F5);
+    Color textColor = const Color(0xFF212121);
+    Color cardColor = Colors.white;
 
     return Scaffold(
-      backgroundColor: backgroundColor, // << background is softer
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: primaryColor,
         title: const Text('Submit Payment Proof',
             style: TextStyle(color: Colors.white)),
-        iconTheme:
-            const IconThemeData(color: Colors.white), // back button color
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         elevation: 1,
       ),
@@ -89,7 +86,6 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- QR code or Chat Button Section ---
             Center(
               child: Column(
                 children: [
@@ -144,8 +140,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            secondaryColor, // <-- lighter blue for chat
+                        backgroundColor: secondaryColor,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 30, vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -162,8 +157,6 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
               ),
             ),
             const SizedBox(height: 30),
-
-            // --- Payment Proof Selection Section ---
             if (widget.method != 'Pay Face-to-Face') ...[
               const Text(
                 'Select Proof Type',
@@ -174,18 +167,23 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                 value: _selectedProofType,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: cardColor,
+                  fillColor: Colors.white, // dropdown field background white
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
+                dropdownColor: Colors.white, // dropdown menu background white
+                iconEnabledColor: textColor, // dropdown arrow color
                 hint: const Text('Choose proof method'),
                 items: _proofTypes.map((type) {
-                  return DropdownMenuItem(
+                  return DropdownMenuItem<String>(
                     value: type,
-                    child: Text(type),
+                    child: Text(
+                      type,
+                      style: TextStyle(color: textColor),
+                    ),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -212,16 +210,42 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
               ] else if (_selectedProofType == 'Upload Screenshot') ...[
                 ElevatedButton.icon(
                   onPressed: _pickImage,
-                  icon: const Icon(Icons.upload_file),
-                  label: const Text('Pick Image from Gallery'),
-                  style: ElevatedButton.styleFrom(
+                  icon: const Icon(Icons.upload_file,
+                      size: 20, color: Color.fromARGB(255, 0, 0, 0)),
+                  label: const Text(
+                    'Pick Image from Gallery',
+                    style: TextStyle(
+                        fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
+                  ),
+                  style: ButtonStyle(
                     backgroundColor:
-                        secondaryColor, // <-- lighter blue for uploads
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                        MaterialStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(MaterialState.pressed)) {
+                        return const Color.fromARGB(
+                            255, 230, 230, 230); // darker gold when pressed
+                      }
+                      return const Color.fromARGB(
+                          255, 255, 255, 255)!; // normal gold
+                    }),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12)),
+                    shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
+                        (states) {
+                      return RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(
+                          color: states.contains(MaterialState.pressed)
+                              ? Colors
+                                  .blue.shade900 // darker blue border on press
+                              : Colors.blue.shade700, // normal blue border
+                          width: 2,
+                        ),
+                      );
+                    }),
+                    elevation: MaterialStateProperty.all<double>(0),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -237,10 +261,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                   ),
               ],
             ],
-
             const SizedBox(height: 30),
-
-            // --- Submit Button Section ---
             if (widget.method != 'Pay Face-to-Face') ...[
               SizedBox(
                 width: double.infinity,
@@ -269,13 +290,59 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                       );
                       return;
                     }
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('Payment proof submitted successfully!')),
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: cardColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          title: Text(
+                            'Success',
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                            ),
+                          ),
+                          content: Text(
+                            'Payment proof submitted successfully!',
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: secondaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // close dialog
+                                Navigator.of(context)
+                                    .pop(); // go back to previous screen
+                              },
+                              child: const Text(
+                                'OK',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                    Navigator.pop(context);
+
+                    // Show success popup dialog instead of SnackBar
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
