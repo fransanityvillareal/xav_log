@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_page.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/components/chat_drawer.dart';
@@ -9,6 +11,24 @@ class ChatHomePage extends StatelessWidget {
 
   final ChatService _chatService = ChatService();
   final AuthenticationService _authenticationService = AuthenticationService();
+
+  Future<String> _getProfileImageUrl(String uid, String? fallbackUrl) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null &&
+            data['profileImageUrl'] != null &&
+            data['profileImageUrl'] != "") {
+          return data['profileImageUrl'] as String;
+        }
+      }
+    } catch (e) {
+      // ignore error, fallback to photoURL
+    }
+    return fallbackUrl ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,69 +94,76 @@ class ChatHomePage extends StatelessWidget {
             final photoUrl = user['photoURL'];
             final email = user['email'];
             final initials = email.isNotEmpty ? email[0].toUpperCase() : "?";
+            final uid = user['uid'];
 
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                      receiverEmail: user['email'],
-                      receiverID: user['uid'],
+            return FutureBuilder<String>(
+              future: _getProfileImageUrl(uid, photoUrl),
+              builder: (context, snapshot) {
+                final profileImageUrl = snapshot.data ?? '';
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          receiverEmail: user['email'],
+                          receiverID: user['uid'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundImage: (profileImageUrl.isNotEmpty)
+                              ? NetworkImage(profileImageUrl)
+                              : null,
+                          backgroundColor: const Color(0xFFCAD6E2),
+                          child: (profileImageUrl.isEmpty)
+                              ? Text(
+                                  initials,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            email,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF1C1C1C),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios,
+                            size: 16, color: Colors.grey),
+                      ],
                     ),
                   ),
                 );
               },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundImage: photoUrl != null && photoUrl != ""
-                          ? NetworkImage(photoUrl)
-                          : null,
-                      backgroundColor: const Color(0xFFCAD6E2),
-                      child: photoUrl == null || photoUrl == ""
-                          ? Text(
-                              initials,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            )
-                          : null,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        email,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF1C1C1C),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const Icon(Icons.arrow_forward_ios,
-                        size: 16, color: Colors.grey),
-                  ],
-                ),
-              ),
             );
           },
         );

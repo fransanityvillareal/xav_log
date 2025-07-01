@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'event_details_page.dart';
 import '../../models/event.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Category {
   final String name;
@@ -71,6 +73,32 @@ class _EventFinderPageState extends State<EventFinderPage> {
       description: 'A celebration of diverse cultures and traditions.',
     ),
   ];
+
+  String _name = 'Loading...';
+  String _description = '';
+  String _profileImageUrl = 'https://via.placeholder.com/150';
+
+  Future<void> _fetchUserProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        final data = doc.data();
+        setState(() {
+          _name =
+              '${data?['firstName'] ?? 'NoName'} ${data?['lastName'] ?? ''}';
+          _description =
+              '${data?['program'] ?? ''} - ${data?['department'] ?? ''}';
+          String url =
+              data?['profileImageUrl'] ?? 'https://via.placeholder.com/150';
+          _profileImageUrl = '$url?ts=${DateTime.now().millisecondsSinceEpoch}';
+        });
+      }
+    }
+  }
 
   List<Event> _getFilteredEvents() {
     if (_selectedCategory == 'All') {
@@ -165,6 +193,12 @@ class _EventFinderPageState extends State<EventFinderPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
@@ -209,7 +243,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      'Hello, Francis',
+                                      'Hello, $_name',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: fontSize * 1.5,
@@ -218,7 +252,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     Text(
-                                      '2-BSIT',
+                                      _description,
                                       style: TextStyle(
                                         color: Colors.white70,
                                         fontSize: fontSize * 1.3,
@@ -231,8 +265,7 @@ class _EventFinderPageState extends State<EventFinderPage> {
                               SizedBox(width: width * 0.04),
                               CircleAvatar(
                                 radius: width * 0.09,
-                                backgroundImage: const NetworkImage(
-                                    'https://picsum.photos/100'),
+                                backgroundImage: NetworkImage(_profileImageUrl),
                               ),
                             ],
                           ),

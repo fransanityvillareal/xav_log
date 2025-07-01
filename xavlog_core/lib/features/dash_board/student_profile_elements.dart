@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:xavlog_core/features/dash_board/profile_image_uploader.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
 import 'package:xavlog_core/route/welcome.dart';
 
@@ -13,7 +16,6 @@ class _ProfileElementsPageState extends State<ProfileElementsPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _slideAnimation;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -27,12 +29,6 @@ class _ProfileElementsPageState extends State<ProfileElementsPage>
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
-      ),
-    );
-    _slideAnimation = Tween<double>(begin: 0.2, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutBack,
       ),
     );
     _animationController.forward();
@@ -161,6 +157,21 @@ class _ProfileFormState extends State<_ProfileForm> {
     super.dispose();
   }
 
+  Future<void> addUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'email': user.email, // Add email if needed
+        'uid': user.uid, // Add UID if needed
+        'studentId': _studentIdController.text.trim(),
+        'department': _departmentController.text.trim(),
+        'program': _programController.text.trim(),
+      }); // Overwrites existing data
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -190,6 +201,12 @@ class _ProfileFormState extends State<_ProfileForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
+            const SizedBox(height: 24),
+
+            // Profile Image Uploader
+            const Center(
+              child: ProfileImageUploader(),
             ),
             const SizedBox(height: 24),
 
@@ -238,15 +255,32 @@ class _ProfileFormState extends State<_ProfileForm> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (widget.formKey.currentState!.validate()) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const WelcomeScreen(),
-                      ),
-                      (Route<dynamic> route) => false,
-                    );
+                    try {
+                      await addUserData();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const WelcomeScreen(),
+                        ),
+                        (Route<dynamic> route) => false,
+                      );
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Error'),
+                          content: Text('Failed to save profile: $e'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(

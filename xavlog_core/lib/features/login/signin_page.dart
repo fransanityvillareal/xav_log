@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'account_choose.dart';
 import 'terms_and_conditions.dart';
 import 'faqs.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'authentication_service.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key, required Null Function() onTap});
@@ -23,6 +27,8 @@ class _SigninPageState extends State<SigninPage>
   late final AnimationController _entranceController;
   late final Animation<Offset> _logoOffsetAnim;
   late final Animation<Offset> _cardOffsetAnim;
+
+  final AuthenticationService _authService = AuthenticationService();
 
   @override
   void initState() {
@@ -51,6 +57,7 @@ class _SigninPageState extends State<SigninPage>
     });
   }
 
+  
   @override
   void dispose() {
     _entranceController.dispose();
@@ -58,74 +65,6 @@ class _SigninPageState extends State<SigninPage>
     _passwordController.dispose();
     super.dispose();
   }
-
-  // Future<void> _loadSavedCredentials() async {
-  //   try {
-  //     final email = await _storage.read(key: 'saved_email');
-  //     final password = await _storage.read(key: 'saved_password');
-
-  //     if (email != null && password != null) {
-  //       setState(() {
-  //         _emailController.text = email;
-  //         _passwordController.text = password;
-  //         _rememberMe = true;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error loading credentials: $e');
-  //   }
-  // }
-
-  // Future<void> _handleSignIn() async {
-  //   if (!_formKey.currentState!.validate()) return;
-
-  //   setState(() => _isLoading = true);
-
-  // //   try {
-  // //     // Simulate authentication
-  // //     await Future.delayed(const Duration(seconds: 1));
-
-  // //     if (_rememberMe) {
-  // //       await _storage.write(
-  // //         key: 'saved_email',
-  // //         value: _emailController.text,
-  // //       );
-  // //       await _storage.write(
-  // //         key: 'saved_password',
-  // //         value: _passwordController.text,
-  // //       );
-  // //     } else {
-  // //       await _storage.delete(key: 'saved_email');
-  // //       await _storage.delete(key: 'saved_password');
-  // //     }
-
-  // //     if (!mounted) return;
-  // //     Navigator.pushReplacement(
-  // //       context,
-  // //       MaterialPageRoute(
-  // //         builder: (context) => const AccountChoosePage(),
-  // //       ),
-  // //     );
-  // //   } catch (e) {
-  // //     if (!mounted) return;
-  // //     ScaffoldMessenger.of(context).showSnackBar(
-  // //       SnackBar(
-  // //         content: Text('Sign in failed: ${e.toString()}'),
-  // //         backgroundColor: Colors.red,
-  // //       ),
-  // //     );
-  // //   } finally {
-  // //     if (mounted) {
-  // //       setState(() => _isLoading = false);
-  // //     }
-  // //   }
-  // // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadSavedCredentials();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +148,8 @@ class _SigninPageState extends State<SigninPage>
                                     fontWeight: FontWeight.w600,
                                     fontSize: 32,
                                     letterSpacing: 1.1,
-                                    color: const Color.fromARGB(255, 0, 0, 0), // or Theme.of(context).primaryColor
+                                    color: const Color.fromARGB(255, 0, 0,
+                                        0), // or Theme.of(context).primaryColor
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -343,20 +283,42 @@ class _SigninPageState extends State<SigninPage>
                                         : () async {
                                             if (_formKey.currentState!
                                                 .validate()) {
+                                              // Validate email domain before setting loading state
+                                              if (!_emailController.text
+                                                  .trim()
+                                                  .endsWith(
+                                                      '@gbox.adnu.edu.ph')) {
+                                                _authService
+                                                    .showDomainErrorPopup(
+                                                        context);
+                                                return;
+                                              }
+
                                               setState(() => _isLoading = true);
-                                              // Placeholder for backend authentication
-                                              await Future.delayed(
-                                                  const Duration(seconds: 1));
-                                              if (!mounted) return;
-                                              setState(
-                                                  () => _isLoading = false);
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const AccountChoosePage(),
-                                                ),
-                                              );
+                                              try {
+                                                await _authService
+                                                    .signInWithEmailAndPassword(
+                                                  _emailController.text.trim(),
+                                                  _passwordController.text
+                                                      .trim(),
+                                                  context,
+                                                );
+                                              } catch (e) {
+                                                setState(
+                                                    () => _isLoading = false);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Error: $e',
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
                                             }
                                           },
                                     style: ElevatedButton.styleFrom(
@@ -404,7 +366,7 @@ class _SigninPageState extends State<SigninPage>
                                     );
                                   },
                                   child: const Text(
-                                    'Log in to my account',
+                                    'Create account',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
@@ -477,3 +439,4 @@ class _SigninPageState extends State<SigninPage>
     );
   }
 }
+//debug me

@@ -2,11 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xavlog_core/features/login/signin_page.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/firebase_options.dart';
+import 'package:xavlog_core/onboarding/onboarding_materials/page_route.dart';
 import 'package:xavlog_core/onboarding/onboarding_materials/page_view.dart';
 
 void main() async {
@@ -125,13 +127,13 @@ class OnboardingPageStart extends StatelessWidget {
           final page = pages[index % pages.length];
           return SafeArea(child: _Page(page: page));
         },
-        onFinish: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => SigninPage(onTap: () {
-                      // Define the behavior for the onTap callback here
-                    })),
+        onFinish: () async {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('onboardingCompleted', true);
+
+          // Use ConcentricPageRoute for navigation to SigninPage
+          Navigator.of(context).pushReplacement(
+            ConcentricPageRoute(builder: (context) => SigninPage(onTap: () {})),
           );
         },
       ),

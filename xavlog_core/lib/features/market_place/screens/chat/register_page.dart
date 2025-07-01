@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     try {
-      await _authenticationService.signUpWithEmailAndPassword(email, password);
+      await _authenticationService.signUpWithEmailAndPassword(email, password, context);
     } catch (e) {
       showDialog(
         context: context,

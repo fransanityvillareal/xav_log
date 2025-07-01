@@ -20,9 +20,6 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:xavlog_core/features/event_finder/eventfinderpage.dart';
-import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
-import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
@@ -32,6 +29,8 @@ import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key}); //(Key? key) : super(Key? keu)
@@ -41,8 +40,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  String _name = 'Francis';
-  String _description = '2 - BSIT';
+  String _name = 'Loading...';
+  String _description = '';
   String _notifNumber = '3';
   String _profileImageUrl = 'https://picsum.photos/200?random=1';
 
@@ -1184,6 +1183,37 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data();
+        setState(() {
+          _name =
+              '${data?['firstName'] ?? 'NoName'} ${data?['lastName'] ?? ''}';
+          _description =
+              '${data?['program'] ?? ''} - ${data?['department'] ?? ''}';
+          // Fetch profile image from Firestore, fallback to placeholder
+          String url =
+              data?['profileImageUrl'] ?? 'https://picsum.photos/200?random=1';
+          // Add a timestamp to avoid caching issues
+          _profileImageUrl = '$url?ts=${DateTime.now().millisecondsSinceEpoch}';
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
@@ -1587,7 +1617,10 @@ class _HomepageState extends State<Homepage> {
 
       case 'Grades Tracker':
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const HomeWrapper(initialTab: 1,)),
+          MaterialPageRoute(
+              builder: (context) => const HomeWrapper(
+                    initialTab: 1,
+                  )),
         );
         break;
 

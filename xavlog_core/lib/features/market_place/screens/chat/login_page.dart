@@ -3,7 +3,6 @@ import 'package:xavlog_core/features/market_place/screens/chat/components/login_
 import 'package:xavlog_core/features/market_place/screens/chat/components/textfield_login.dart';
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
 
-
 class LoginPageMarketPlace extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -19,6 +18,7 @@ class LoginPageMarketPlace extends StatelessWidget {
       await authenticationService.signInWithEmailAndPassword(
         _emailController.text,
         _passwordController.text,
+        context, // Added the missing argument
       );
     } catch (e) {
       showDialog(
@@ -36,49 +36,6 @@ class LoginPageMarketPlace extends StatelessWidget {
       );
     }
   }
-  // void login(BuildContext context) async {
-  //   final authenticationService = AuthenticationService();
-
-  //   final email = _emailController.text.trim();
-  //   if (!email.endsWith('@gbox.adnu.edu.ph')) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //         title: const Text("Invalid Email"),
-  //         content: const Text(
-  //             "Please use your GBox email (e.g. user@gbox.adnu.edu.ph)."),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.of(context).pop(),
-  //             child: const Text("OK"),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //     return;
-  //   }
-
-  //   try {
-  //     await authenticationService.signInWithEmailAndPassword(
-  //       email,
-  //       _passwordController.text,
-  //     );
-  //   } catch (e) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //         title: const Text("Login Failed"),
-  //         content: Text(e.toString()),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.of(context).pop(),
-  //             child: const Text("OK"),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

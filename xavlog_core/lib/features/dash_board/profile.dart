@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../login/terms_and_conditions.dart';
 import '../login/faqs.dart';
+import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? orgName;
@@ -28,41 +33,138 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   bool _isEditing = false;
-  late String name;
-  late String description;
+  late String name = 'Loading...';
+  late String description = ' ';
   late String profileImageUrl;
-  late String contact;
-  late String email;
+  late String contact = ' ';
+  late String email = '';
 
   // Additional fields for individual profiles
-  String department = 'Computer Science';
-  String program = 'BS IT';
+  String department = '';
+  String program = '';
+  String studentId = '';
 
   @override
   void initState() {
     super.initState();
-    // Initialize with provided values or defaults
-    name = widget.orgName ??
-        (widget.isOrganization ? 'Computer Science Society' : 'John Doe');
-    description = widget.description ??
-        (widget.isOrganization ? 'Student Organization' : 'Student');
-    profileImageUrl =
-        widget.profileImageUrl ?? 'https://picsum.photos/500?random=1';
-    contact = widget.isOrganization
-        ? (widget.orgcontact ?? 'Not provided')
-        : '+1 234 567 8900';
-    email = widget.isOrganization
-        ? (widget.orgemail ?? 'org@example.com')
-        : 'john.doe@example.com';
+    profileImageUrl = 'https://via.placeholder.com/150'; // Default image URL
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Handle the case where no user is signed in
+      print('No user is signed in');
+      return;
+    }
+
+    final uid = user.uid; // Get the current user's UID
+    final doc =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+
+    if (doc.exists) {
+      final data = doc.data();
+      setState(() {
+        name = '${data?['firstName'] ?? 'NoName'} ${data?['lastName'] ?? ''}';
+        description =
+            '${data?['program'] ?? ''} - ${data?['department'] ?? ''}';
+        email = data?['email'] ?? 'No Email';
+        studentId = data?['studentId'] ?? 'No ID';
+        department = data?['department'] ?? '';
+        program = data?['program'] ?? '';
+        profileImageUrl =
+            data?['profileImageUrl'] ?? 'https://via.placeholder.com/150';
+
+        // Add a timestamp to avoid caching issues
+        profileImageUrl =
+            '$profileImageUrl?ts=${DateTime.now().millisecondsSinceEpoch}';
+      });
+    }
+  }
+
+  Future<void> _uploadProfileImage() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg'],
+      withData: true,
+    );
+
+    if (result != null && result.files.single.bytes != null) {
+      final fileBytes = result.files.single.bytes!;
+      final fileName = result.files.single.name;
+      final fileExt = fileName.split('.').last;
+      final tempFile = File('${Directory.systemTemp.path}/$fileName');
+      await tempFile.writeAsBytes(fileBytes);
+
+      // Show preview dialog
+      bool? confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Preview Profile Image'),
+          content: Image.memory(fileBytes,
+              width: 300, height: 300, fit: BoxFit.cover),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Upload'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true) return;
+
+      try {
+        await Supabase.instance.client.storage.from('xavlog-profile').upload(
+            fileName, tempFile,
+            fileOptions: const FileOptions(upsert: true));
+
+        final publicUrl = Supabase.instance.client.storage
+            .from('xavlog-profile')
+            .getPublicUrl(fileName);
+
+        print('Public URL: $publicUrl');
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .set({'profileImageUrl': publicUrl}, SetOptions(merge: true));
+
+        setState(() {
+          profileImageUrl =
+              '$publicUrl?ts=${DateTime.now().millisecondsSinceEpoch}';
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.greenAccent, 
+            content: Text(
+              'Profile image uploaded successfully!',
+              style: TextStyle(color: Colors.black), 
+            ),
+          ),
+        );
+      } catch (e) {
+        print('Error uploading profile image: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload image: $e')),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-
     // Responsive dimensions
-    final fontSize = width * 0.03;
+    final fontSize = MediaQuery.of(context).size.width * 0.03;
 
     return Scaffold(
       backgroundColor: Colors.white, // Set background to white
@@ -119,10 +221,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  CircleAvatar(
-                    radius: width * 0.10, // Responsive avatar size
-                    backgroundColor: const Color.fromARGB(255, 146, 146, 146),
-                    backgroundImage: NetworkImage(profileImageUrl),
+                  GestureDetector(
+                    onTap: _uploadProfileImage,
+                    child: CircleAvatar(
+                      radius: MediaQuery.of(context).size.width *
+                          0.10, // Responsive avatar size
+                      backgroundColor: const Color.fromARGB(255, 146, 146, 146),
+                      backgroundImage: NetworkImage(profileImageUrl),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -153,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         'Personal Information',
                         [
                           _buildInfoTile(Icons.email, 'Email', email),
-                          _buildInfoTile(Icons.phone, 'Phone', contact),
+                          _buildInfoTile(Icons.phone, 'ID', studentId),
                           _buildInfoTile(
                               Icons.home_filled, 'Department', department),
                           _buildInfoTile(
@@ -380,10 +486,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildInfoCard(String title, List<Widget> children,
       {bool showEditIcon = false}) {
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final fontSize = 23;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -422,7 +524,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Icon(
                     Icons.edit,
                     color: const Color(0xFF071D99),
-                    size: fontSize * 0.8,
+                    size: 23 * 0.8,
                   ),
                 ),
             ],
@@ -435,7 +537,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildInfoTile(IconData icon, String label, String value) {
-    final screenSize = MediaQuery.of(context).size;
     final fontSize = 14;
 
     return Padding(
@@ -484,8 +585,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildUtilityTile(IconData icon, String label, VoidCallback onTap) {
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
     final fontSize = 14;
 
     return Padding(

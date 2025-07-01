@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:xavlog_core/features/login/account_choose.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
+import 'package:xavlog_core/features/login/signin_page.dart';
 
 class AuthenticationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,10 +27,42 @@ class AuthenticationService {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      _firestore.collection('Users').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'email': email,
-      }, SetOptions(merge: true));
+      final userDoc = await _firestore
+          .collection('Users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (userDoc.exists) {
+        String? firstName = userDoc.data()?['firstName'];
+
+        // Check if firstName is null
+        if (firstName == null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AccountChoosePage(),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const HomeWrapper(initialTab: 0)),
+          );
+        }
+      } else {
+        // Initialize user data for new users
+        await _firestore.collection('Users').doc(userCredential.user!.uid).set({
+          'uid': userCredential.user!.uid,
+          'email': email,
+        }, SetOptions(merge: true));
+
+        // Navigate to SigninPage for new users
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SigninPage(onTap: () {})),
+        );
+      }
+
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       throw (e.code);
