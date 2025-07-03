@@ -9,11 +9,15 @@ import 'package:xavlog_core/features/market_place/services/login_authentication/
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
+  final bool isGroup;
+  final Map<String, dynamic>? groupData;
 
   const ChatPage({
     super.key,
     required this.receiverEmail,
     required this.receiverID,
+    this.isGroup = false,
+    this.groupData,
   });
 
   @override
@@ -26,10 +30,57 @@ class _ChatPageState extends State<ChatPage> {
   final ChatService _chatService = ChatService();
   final AuthenticationService _authenticationService = AuthenticationService();
 
+  // Theme color state
+  Color _backgroundColor = const Color.fromARGB(255, 255, 255, 255);
+
+  // List of selectable colors
+  final List<Color> _themeColors = [
+    const Color(0xFF1A365D), // Deep Navy (softer than original dark blue)
+    const Color(0xFF2C5282), // Ateneo Blue (softer variant)
+    const Color(0xFF80FFDB), // Mint Teal (replaces gold)
+    const Color(0xFF4CC9F0), // Azure Teal (replaces blue variant)
+    const Color(0xFF52B788), // Forest Teal (replaces green)
+    const Color(0xFFF07167), // Coral (red alternative)
+    const Color(0xFFB5179E), // Vibrant Purple (replaces original purple)
+  ];
+
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(
-          widget.receiverID, _messageController.text);
+      if (widget.isGroup) {
+        // Get sender email and firstName from Users collection (fallback to auth email, then UID)
+        final user = _authenticationService.getCurrentUser;
+        String senderName = user?.uid ?? '';
+        String senderFirstName = '';
+        if (user != null) {
+          final userDoc = await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(user.uid)
+              .get();
+          final userData = userDoc.data();
+          if (userData != null) {
+            senderName = userData['email'] ?? user.email ?? user.uid;
+            senderFirstName = userData['firstName'] ?? '';
+          } else {
+            senderName = user.email ?? user.uid;
+            senderFirstName = '';
+          }
+        }
+        // Send group message
+        await FirebaseFirestore.instance
+            .collection('Groups')
+            .doc(widget.receiverID)
+            .collection('messages')
+            .add({
+          'message': _messageController.text,
+          'senderID': user!.uid,
+          'senderName': senderName,
+          'senderFirstName': senderFirstName,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+      } else {
+        await _chatService.sendMessage(
+            widget.receiverID, _messageController.text);
+      }
       _messageController.clear();
       _scrollToBottom();
     }
@@ -47,12 +98,80 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  void _showThemeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choose Chat Background'),
+        content: SizedBox(
+          width: 320,
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: _themeColors.map((color) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _backgroundColor = color;
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: _backgroundColor == color
+                          ? Colors.black
+                          : Colors.white,
+                      width: 2.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: _backgroundColor == color
+                      ? const Icon(Icons.check, color: Colors.white, size: 20)
+                      : null,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(
+          widget.receiverEmail,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255), // Gold header text
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            letterSpacing: 0.2,
+          ),
+        ),
+        iconTheme:
+            const IconThemeData(color: Color.fromARGB(255, 255, 255, 255)),
         backgroundColor: const Color(0xFF003A70), // Ateneo Blue
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.color_lens_rounded),
+            tooltip: 'Change Chat Theme',
+            onPressed: _showThemeDialog,
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -65,8 +184,19 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildMessageList() {
     String senderID = _authenticationService.getCurrentUser!.uid;
+    Stream<QuerySnapshot> messageStream;
+    if (widget.isGroup) {
+      messageStream = FirebaseFirestore.instance
+          .collection('Groups')
+          .doc(widget.receiverID)
+          .collection('messages')
+          .orderBy('timestamp')
+          .snapshots();
+    } else {
+      messageStream = _chatService.getMessages(widget.receiverID, senderID);
+    }
     return StreamBuilder(
-      stream: _chatService.getMessages(widget.receiverID, senderID),
+      stream: messageStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) return const Text("Error loading messages.");
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -88,8 +218,15 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    bool isCurrentUser =
-        data['senderID'] == _authenticationService.getCurrentUser!.uid;
+
+    bool isCurrentUser = false;
+    if (widget.isGroup) {
+      isCurrentUser =
+          data['senderID'] == _authenticationService.getCurrentUser!.uid;
+    } else {
+      isCurrentUser =
+          data['senderID'] == _authenticationService.getCurrentUser!.uid;
+    }
 
     final alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
@@ -98,8 +235,59 @@ class _ChatPageState extends State<ChatPage> {
     final textColor = isCurrentUser ? Colors.white : Colors.black87;
     final textAlign = isCurrentUser ? TextAlign.right : TextAlign.left;
 
-    final timeString =
-        DateFormat('hh:mm a').format((data['timestamp'] as Timestamp).toDate());
+    // For group chat, show sender first name above the message (except for current user)
+    Widget? senderNameWidget;
+    if (widget.isGroup && !isCurrentUser) {
+      senderNameWidget = FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('Users')
+            .doc(data['senderID'])
+            .get(),
+        builder: (context, snapshot) {
+          String display = '';
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>?;
+            display = userData?['firstName'] ??
+                userData?['email'] ??
+                data['senderID'].toString();
+          } else {
+            display = '';
+          }
+          return display.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 4, right: 4, bottom: 2),
+                  child: Text(
+                    display,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink();
+        },
+      );
+    }
+
+    String timeString = '';
+    if (data['timestamp'] != null) {
+      try {
+        timeString = DateFormat('hh:mm a')
+            .format((data['timestamp'] as Timestamp).toDate());
+      } catch (_) {
+        timeString = '';
+      }
+    }
+
+    Color timestampColor;
+    double bgLuminance = _backgroundColor.computeLuminance();
+    if (bgLuminance < 0.4) {
+      timestampColor = Colors.white.withOpacity(0.85);
+    } else {
+      timestampColor = Colors.grey.shade700;
+    }
 
     return Align(
       alignment: alignment,
@@ -109,6 +297,7 @@ class _ChatPageState extends State<ChatPage> {
           crossAxisAlignment:
               isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
+            if (senderNameWidget != null) senderNameWidget,
             Container(
               constraints: const BoxConstraints(maxWidth: 260),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -137,8 +326,8 @@ class _ChatPageState extends State<ChatPage> {
               child: Text(
                 timeString,
                 style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade600,
+                  fontSize: 12,
+                  color: timestampColor,
                 ),
               ),
             ),
@@ -152,7 +341,7 @@ class _ChatPageState extends State<ChatPage> {
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        color: Colors.grey.shade100,
+        color: const Color.fromARGB(255, 22, 45, 83),
         child: Row(
           children: [
             Expanded(

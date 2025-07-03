@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Cloud Firestore
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:xavlog_core/constants.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
+import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 
 class ChatDrawer extends StatelessWidget {
   const ChatDrawer({super.key});
 
-  void logout() {
-    final _authentication = AuthenticationService();
-    _authentication.signOut();
+  void logout(BuildContext context) async {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AuthenticationGate()),
+      (route) => false,
+    );
   }
 
   @override
@@ -26,6 +29,7 @@ class ChatDrawer extends StatelessWidget {
         String displayName = user?.displayName ?? username;
         String profileImageUrl = "https://via.placeholder.com/150";
         String gbox = "";
+
         if (snapshot.hasData &&
             snapshot.data != null &&
             snapshot.data!.exists) {
@@ -37,6 +41,7 @@ class ChatDrawer extends StatelessWidget {
             gbox = data['studentId'] ?? "";
           }
         }
+
         return Drawer(
           backgroundColor: Colors.white,
           shape: const RoundedRectangleBorder(
@@ -48,35 +53,47 @@ class ChatDrawer extends StatelessWidget {
           elevation: 10,
           child: Column(
             children: [
-              SizedBox(height: 20),
+              // Header Section
               Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
                 decoration: const BoxDecoration(
+                  color: Color(0xFF003A70), // Match ateneoBlue from login
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    topRight: Radius.circular(30),
                   ),
-                  color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      spreadRadius: 0,
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
+                      color: Color.fromRGBO(0, 0, 0, 0.1),
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
                         radius: 35,
                         backgroundImage: NetworkImage(profileImageUrl),
-                        backgroundColor: Colors.transparent,
-                        child: ClipOval(),
+                        backgroundColor: Colors.grey[200],
+                        child:
+                            profileImageUrl == "https://via.placeholder.com/150"
+                                ? const Icon(Icons.person,
+                                    size: 40, color: Colors.white)
+                                : null,
                       ),
-                      const SizedBox(width: 16),
-                      Column(
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -84,53 +101,54 @@ class ChatDrawer extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           if (gbox.isNotEmpty)
                             Padding(
-                              padding: const EdgeInsets.only(top: 2.0),
+                              padding: const EdgeInsets.only(top: 4.0),
                               child: Text(
                                 gbox,
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  color: Colors.black54,
+                                  color: Colors.white70,
                                 ),
                               ),
                             ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             email,
                             style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
+                              fontSize: 13,
+                              color: Colors.white70,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
 
+              // Menu Items
               Expanded(
                 child: ListView(
-                  padding: EdgeInsets.zero,
+                  padding: const EdgeInsets.only(top: 16),
                   children: [
-                    ListTile(
-                      leading: Icon(Icons.home,
-                          color: Theme.of(context).iconTheme.color),
-                      title: Text("Home",
-                          style: Theme.of(context).textTheme.bodyLarge),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    _buildListTile(
+                      context,
+                      icon: Icons.home_filled,
+                      title: "Home",
+                      onTap: () => Navigator.pop(context),
                     ),
-                    ListTile(
-                      leading: Icon(Icons.settings,
-                          color: Theme.of(context).iconTheme.color),
-                      title: Text("Settings",
-                          style: Theme.of(context).textTheme.bodyLarge),
+                    _buildListTile(
+                      context,
+                      icon: Icons.settings,
+                      title: "Settings",
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(
@@ -141,26 +159,57 @@ class ChatDrawer extends StatelessWidget {
                         );
                       },
                     ),
+                    _buildListTile(
+                      context,
+                      icon: Icons.group,
+                      title: "Contacts",
+                      onTap: () {},
+                    ),
+                    _buildListTile(
+                      context,
+                      icon: Icons.notifications,
+                      title: "Notifications",
+                      onTap: () {},
+                    ),
+                    _buildListTile(
+                      context,
+                      icon: Icons.help_center,
+                      title: "Help & Support",
+                      onTap: () {},
+                    ),
                   ],
-                ),
-              ),
-
-              // Logout button
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, right: 16.0, bottom: 24.0),
-                child: ListTile(
-                  leading: Icon(Icons.logout,
-                      color: Theme.of(context).iconTheme.color),
-                  title: Text("Logout",
-                      style: Theme.of(context).textTheme.bodyLarge),
-                  onTap: logout,
                 ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  // Helper method to create consistent list tiles
+  Widget _buildListTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      leading: Icon(
+        icon,
+        color: Colors.grey[800],
+        size: 24,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87,
+        ),
+      ),
+      onTap: onTap,
     );
   }
 }

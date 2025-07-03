@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import '../login/terms_and_conditions.dart';
 import '../login/faqs.dart';
 import 'dart:io';
@@ -104,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
       bool? confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Preview Profile Image'),
           content: Image.memory(fileBytes,
               width: 300, height: 300, fit: BoxFit.cover),
@@ -145,10 +147,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Colors.greenAccent, 
+            backgroundColor: Colors.greenAccent,
             content: Text(
               'Profile image uploaded successfully!',
-              style: TextStyle(color: Colors.black), 
+              style: TextStyle(color: Colors.black),
             ),
           ),
         );
@@ -259,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         'Personal Information',
                         [
                           _buildInfoTile(Icons.email, 'Email', email),
-                          _buildInfoTile(Icons.phone, 'ID', studentId),
+                          _buildInfoTile(Icons.perm_identity, 'ID', studentId),
                           _buildInfoTile(
                               Icons.home_filled, 'Department', department),
                           _buildInfoTile(
@@ -312,6 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
+                                backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
@@ -328,26 +331,27 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(
-                                          context); // Close the dialog
-                                    },
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
                                     child: const Text(
                                       'Cancel',
                                       style: TextStyle(
-                                        color: Colors.grey,
+                                        color: Color.fromARGB(255, 0, 0, 0),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
+                                    onPressed: () async {
+                                      // Close dialog first
+                                      Navigator.of(context).pop();
+
+                                      // Sign out and navigate
+                                      await FirebaseAuth.instance.signOut();
+                                      Navigator.of(context).pushAndRemoveUntil(
                                         MaterialPageRoute(
-                                          builder: (context) => LoginPage(
-                                            onTap: () {},
-                                          ),
-                                        ),
+                                            builder: (context) => LoginPage()),
+                                        (route) => false,
                                       );
                                     },
                                     child: const Text(
@@ -374,8 +378,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildEditForm() {
     final nameController = TextEditingController(text: name);
-    final contactController = TextEditingController(text: contact);
     final emailController = TextEditingController(text: email);
+    final idController = TextEditingController(text: studentId);
     final descriptionController = TextEditingController(text: description);
     final departmentController = TextEditingController(text: department);
     final programController = TextEditingController(text: program);
@@ -392,12 +396,29 @@ class _ProfilePageState extends State<ProfilePage> {
             // Name Field
             _buildTextField('Name', nameController, (value) => name = value),
 
-            // Contact Field - Show for both types of accounts with appropriate label
-            _buildTextField(widget.isOrganization ? 'Contact' : 'Phone',
-                contactController, (value) => contact = value),
+            // Email Field (disabled)
+            AbsorbPointer(
+              child: TextFormField(
+                controller: emailController,
+                enabled: false, // also makes keyboard not open
+                readOnly: true,
+                style: const TextStyle(color: Colors.grey), // Greyed-out text
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  filled: true,
+                  fillColor: Colors.grey.shade200, // Light background
+                  prefixIcon:
+                      const Icon(Icons.email_outlined, color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade400),
+                  ),
+                ),
+              ),
+            ),
 
-            // Email Field - Show for both types of accounts
-            _buildTextField('Email', emailController, (value) => email = value),
+            // ID Field (editable)
+            _buildTextField('ID', idController, (value) => studentId = value),
 
             // Description Field
             _buildTextField('Description', descriptionController,
@@ -427,7 +448,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 onPressed: () {
-                  _saveChanges(nameController.text, contactController.text,
+                  _saveChanges(nameController.text, idController.text,
                       emailController.text);
                 },
                 child: const Text(
@@ -475,13 +496,40 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _saveChanges(
-      String updatedName, String updatedContact, String updatedEmail) {
-    setState(() {
-      name = updatedName;
-      contact = updatedContact;
-      email = updatedEmail;
-      _isEditing = false;
-    });
+      String updatedName, String updatedId, String updatedEmail) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    // Split name into first and last name
+    final nameParts = updatedName.trim().split(' ');
+    final firstName = nameParts.isNotEmpty ? nameParts.first : '';
+    final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+    try {
+      await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': updatedEmail,
+        'department': department,
+        'program': program,
+        'studentId': updatedId,
+      }, SetOptions(merge: true));
+
+      setState(() {
+        name = updatedName;
+        studentId = updatedId;
+        email = updatedEmail;
+        _isEditing = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $e')),
+      );
+    }
   }
 
   Widget _buildInfoCard(String title, List<Widget> children,
@@ -700,16 +748,15 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.logout,
-                color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Log Out',
-                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
+            leading: const Icon(Icons.logout, color: Colors.black),
+            title: const Text('Log Out', style: TextStyle(color: Colors.black)),
             onTap: () {
-              Navigator.pop(context); // Close the drawer first
+              Navigator.pop(context); // Close drawer
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
+                    backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -726,26 +773,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // Close the dialog
-                        },
+                        onPressed: () => Navigator.of(context).pop(),
                         child: const Text(
                           'Cancel',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: Color.fromARGB(255, 0, 0, 0),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          // Close dialog using root navigator
+                          Navigator.of(context, rootNavigator: true).pop();
+
+                          // Sign out and navigate
+                          await FirebaseAuth.instance.signOut();
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                              builder: (context) => LoginPage(
-                                onTap:
-                                    () {}, // 👈 empty function or your real onTap
-                              ),
-                            ),
+                                builder: (context) => LoginPage()),
                             (route) => false,
                           );
                         },
@@ -762,7 +809,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               );
             },
-          ),
+          )
         ],
       ),
     );
@@ -771,9 +818,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _navigateBackWithData() {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => LoginPage(
-          onTap: () {},
-        ),
+        builder: (context) => HomeWrapper(initialTab: 2,),
       ),
       (route) => false,
     );

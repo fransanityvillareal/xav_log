@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/dash_board/orgaccount_setup.dart';
-import 'package:xavlog_core/features/login/signin_page.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
 import '../dash_board/student_profile_elements.dart';
 
 class AccountChoosePage extends StatefulWidget {
@@ -384,7 +384,7 @@ class _AccountChoosePageState extends State<AccountChoosePage>
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => SigninPage(onTap: () {}),
+                          builder: (_) => LoginPage(),
                         ),
                       );
                     },

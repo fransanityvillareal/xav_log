@@ -17,10 +17,11 @@
 /// - Communication system for announcements and messaging
 library;
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'profile.dart';
-import '../login/login_page.dart';
 import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1232,6 +1233,7 @@ class _OrgDashboardState extends State<OrgDashboard> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      backgroundColor: Colors.white,
                       title: const Text('Logout'),
                       content: const Text('Are you sure you want to logout?'),
                       actions: [
@@ -1241,21 +1243,16 @@ class _OrgDashboardState extends State<OrgDashboard> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Handle logout
                             Navigator.pop(context); // Close dialog
                             Navigator.pop(context); // Close drawer
-                            Navigator.push(
-                              context,
+                            FirebaseAuth.instance.signOut();
+                            // Remove all previous routes and go to LoginPage
+                            Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                builder: (context) => LoginPage(
-                                  onTap: () {
-                                    // You can put what should happen when the user taps "Log-in"
-                                    // For example, nothing yet because you want them to log in manually first
-                                    // or you could just Navigator.pop(context); etc.
-                                  },
-                                ),
+                                builder: (context) => LoginPage(),
                               ),
-                            ); // Redirect to login page
+                              (Route<dynamic> route) => false,
+                            );
                           },
                           child: const Text('Logout'),
                         ),

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/login/account_choose.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
-import 'package:xavlog_core/features/login/signin_page.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
 
 class AuthenticationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -59,8 +59,8 @@ class AuthenticationService {
         // Navigate to SigninPage for new users
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SigninPage(onTap: () {})),
-        );
+          MaterialPageRoute(builder: (context) => LoginPage(),
+        ));
       }
 
       return userCredential.user;

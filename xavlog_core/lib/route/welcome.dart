@@ -13,13 +13,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Auto navigate after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomeWrapper(initialTab: 0),
+    // Auto navigate after 2 seconds with a fade transition
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 700),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const HomeWrapper(initialTab: 0),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final tween = Tween(begin: 0.0, end: 1.0)
+                .chain(CurveTween(curve: Curves.easeInOut));
+            return FadeTransition(
+              opacity: animation.drive(tween),
+              child: child,
+            );
+          },
         ),
         (route) => false,
       );

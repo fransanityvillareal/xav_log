@@ -1,30 +1,12 @@
-/// Home Page Dashboard
-///
-/// Purpose: Main dashboard displaying student information, analytics, calendar,
-/// navigation options, and upcoming activities.
-///
-/// Flow:
-/// 1. User logs in and is directed to this dashboard
-/// 2. User can view their profile information and analytics
-/// 3. User can navigate to different features of the app
-/// 4. User can manage their calendar and upcoming activities
-/// 5. User can access notifications and settings
-///
-/// Backend Implementation Needed:
-/// - User profile data retrieval from database
-/// - Analytics data calculation and retrieval
-/// - Calendar events synchronization with backend
-/// - Activities storage and retrieval
-/// - Real-time notifications system
 library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'profile.dart';
-import '../login/login_page.dart';
 import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -867,10 +849,17 @@ class _HomepageState extends State<Homepage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Center(
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 30,
-                      backgroundColor: Color(0xFFD7A61F),
-                      child: Icon(Icons.person, size: 40, color: Colors.white),
+                      backgroundColor: const Color(0xFFD7A61F),
+                      backgroundImage: _profileImageUrl.isNotEmpty
+                          ? NetworkImage(_profileImageUrl)
+                          : null,
+                      child: _profileImageUrl.isEmpty
+                          ? const Icon(Icons.person,
+                              size: 40, color: Colors.white)
+                          : null,
+                      onBackgroundImageError: (_, __) {},
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -887,7 +876,7 @@ class _HomepageState extends State<Homepage> {
                   Center(
                     child: Text(
                       _description,
-                      style: TextStyle(fontSize: 12, fontFamily: 'Inter'),
+                      style: const TextStyle(fontSize: 12, fontFamily: 'Inter'),
                     ),
                   ),
                 ],
@@ -950,10 +939,10 @@ class _HomepageState extends State<Homepage> {
               title: const Text('Logout'),
               onTap: () {
                 showDialog(
-                  //logout dialog
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      backgroundColor: Colors.white,
                       title: const Text('Logout'),
                       content: const Text('Are you sure you want to logout?'),
                       actions: [
@@ -963,20 +952,16 @@ class _HomepageState extends State<Homepage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Handle logout
                             Navigator.pop(context); // Close dialog
                             Navigator.pop(context); // Close drawer
-                            Navigator.of(context).push(
+                            FirebaseAuth.instance.signOut();
+                            // Remove all previous routes and go to LoginPage
+                            Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                builder: (context) => LoginPage(
-                                  onTap: () {
-                                    // You can put what should happen when the user taps "Log-in"
-                                    // For example, nothing yet because you want them to log in manually first
-                                    // or you could just Navigator.pop(context); etc.
-                                  },
-                                ),
+                                builder: (context) => LoginPage(),
                               ),
-                            ); // Redirect to login page
+                              (Route<dynamic> route) => false,
+                            );
                           },
                           child: const Text('Logout'),
                         ),

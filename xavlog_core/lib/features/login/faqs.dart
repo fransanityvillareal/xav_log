@@ -74,7 +74,6 @@ class FAQs extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             
-            // FAQ sections - BACKEND TODO: Load these dynamically from database
             _buildFaqSection('General Questions', [
               {
                 'Q': 'What is xavLOG?',

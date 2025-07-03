@@ -8,7 +8,7 @@ class MainScaffold extends StatefulWidget {
   const MainScaffold({
     super.key,
     required this.screens,
-    this.initialIndex = 0,
+    this.initialIndex = 2,
   });
 
   @override
@@ -41,9 +41,9 @@ class _MainScaffoldState extends State<MainScaffold> {
         buttonBackgroundColor: softGold,
         animationDuration: const Duration(milliseconds: 350),
         items: const [
-          Icon(Icons.home_sharp, size: 25, color: Colors.white),
           Icon(Icons.bar_chart_sharp, size: 25, color: Colors.white),
-          Icon(Icons.event_sharp, size: 25, color: Colors.white),
+          Icon(Icons.chat_sharp, size: 25, color: Colors.white),
+          Icon(Icons.home_sharp, size: 25, color: Colors.white),
           Icon(Icons.storefront_sharp, size: 25, color: Colors.white),
           Icon(Icons.account_circle_sharp, size: 25, color: Colors.white),
         ],

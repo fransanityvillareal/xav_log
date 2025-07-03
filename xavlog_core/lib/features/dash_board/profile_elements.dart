@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/login/login_page.dart';
-import 'package:xavlog_core/route/welcome.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
+import 'package:xavlog_core/onboarding/main_onboarding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -228,7 +228,7 @@ class _ProfileFormState extends State<_ProfileForm> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const WelcomeScreen(),
+                          builder: (_) => const OnboardingPageStart(),
                         ),
                         (Route<dynamic> route) => false,
                       );
@@ -377,7 +377,7 @@ class _ProfileFormState extends State<_ProfileForm> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginPage(onTap: () {}),
+                          builder: (context) => LoginPage(),
                         ),
                       );
                     },

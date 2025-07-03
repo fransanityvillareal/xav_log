@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:xavlog_core/route/welcome.dart';
 
 import 'clipper.dart';
 
@@ -290,7 +291,10 @@ class _ButtonState extends State<_Button> {
     await Future.delayed(const Duration(milliseconds: 2900));
     if (mounted) {
       Navigator.of(context, rootNavigator: true).pop();
-      Navigator.of(context).pushReplacementNamed('/signin');
+      // Navigate directly to the WelcomeScreen widget
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
     }
   }
 

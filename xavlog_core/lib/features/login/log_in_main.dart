@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/features/login/sign_in_main.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'account_choose.dart';
 import 'terms_and_conditions.dart';
@@ -8,15 +8,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication_service.dart';
 
-class SigninPage extends StatefulWidget {
-  const SigninPage({super.key, required Null Function() onTap});
+class LoginPage extends StatefulWidget {  // Renamed from SigninPage to LoginPage
+  const LoginPage({super.key});  // Removed unused onTap parameter
   @override
-  State<SigninPage> createState() => _SigninPageState();
+  State<LoginPage> createState() => _LoginPageState();  // Updated state class
 }
 
-class _SigninPageState extends State<SigninPage>
+class _LoginPageState extends State<LoginPage>  // Renamed state class
     with SingleTickerProviderStateMixin {
-  // final _storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -51,7 +50,7 @@ class _SigninPageState extends State<SigninPage>
       parent: _entranceController,
       curve: Curves.easeOutCubic,
     ));
-    // Ensure the animation starts after the first frame
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _entranceController.forward();
     });
@@ -102,17 +101,16 @@ class _SigninPageState extends State<SigninPage>
                   ],
                 ),
 
-                // Sign-in card
+                // Login card (updated comment)
                 SlideTransition(
                   position: _cardOffsetAnim,
                   child: AnimatedSlide(
                     offset: _isLoading ? const Offset(0, 0.04) : Offset.zero,
-                    duration: const Duration(milliseconds: 2500), // much longer
+                    duration: const Duration(milliseconds: 2500),
                     curve: Curves.easeInOutCubic,
                     child: AnimatedScale(
                       scale: _isLoading ? 0.98 : 1.0,
-                      duration:
-                          const Duration(milliseconds: 1800), // much longer
+                      duration: const Duration(milliseconds: 1800),
                       curve: Curves.easeInOutCubic,
                       child: Container(
                         width: size.width,
@@ -141,15 +139,13 @@ class _SigninPageState extends State<SigninPage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Sign In',
+                                  'Log In',
                                   style: TextStyle(
-                                    // Button Text
                                     fontFamily: 'Jost',
                                     fontWeight: FontWeight.w600,
                                     fontSize: 32,
                                     letterSpacing: 1.1,
-                                    color: const Color.fromARGB(255, 0, 0,
-                                        0), // or Theme.of(context).primaryColor
+                                    color: Colors.black,
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -241,7 +237,7 @@ class _SigninPageState extends State<SigninPage>
                                           });
                                         },
                                         activeColor:
-                                            const Color(0xFFBFA547), // Gold
+                                            const Color(0xFFBFA547),
                                         checkColor: Colors.white,
                                         side:
                                             MaterialStateBorderSide.resolveWith(
@@ -250,8 +246,7 @@ class _SigninPageState extends State<SigninPage>
                                               MaterialState.selected)) {
                                             return const BorderSide(
                                                 color: Color(0xFF003A70),
-                                                width:
-                                                    2); // Blue border when checked
+                                                width: 2);
                                           }
                                           return const BorderSide(
                                               color: Colors.grey, width: 1.5);
@@ -266,7 +261,7 @@ class _SigninPageState extends State<SigninPage>
                                     const Spacer(),
                                     TextButton(
                                       onPressed: () {
-                                        // Add forgot password functionality
+                                        // Forgot password functionality
                                       },
                                       child: const Text('Forgot Password?'),
                                     ),
@@ -274,7 +269,7 @@ class _SigninPageState extends State<SigninPage>
                                 ),
                                 const SizedBox(height: 24),
 
-                                // Sign in button
+                                // Login button
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton(
@@ -283,7 +278,6 @@ class _SigninPageState extends State<SigninPage>
                                         : () async {
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              // Validate email domain before setting loading state
                                               if (!_emailController.text
                                                   .trim()
                                                   .endsWith(
@@ -335,7 +329,7 @@ class _SigninPageState extends State<SigninPage>
                                             strokeWidth: 2,
                                           )
                                         : const Text(
-                                            'Sign In',
+                                            'Log In',
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -354,14 +348,14 @@ class _SigninPageState extends State<SigninPage>
                                 ),
                                 const SizedBox(height: 24),
 
-                                // Login link
+                                // Create account link
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            LoginPage(onTap: () {}),
+                                            RegistrationPage(onTap: () {}),
                                       ),
                                     );
                                   },
@@ -439,4 +433,3 @@ class _SigninPageState extends State<SigninPage>
     );
   }
 }
-//debug me

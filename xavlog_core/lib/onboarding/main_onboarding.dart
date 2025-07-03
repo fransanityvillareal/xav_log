@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:xavlog_core/features/login/signin_page.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/firebase_options.dart';
 import 'package:xavlog_core/onboarding/onboarding_materials/page_route.dart';
 import 'package:xavlog_core/onboarding/onboarding_materials/page_view.dart';
+import 'package:xavlog_core/route/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Needed before async stuff
@@ -78,7 +78,7 @@ final pages = [
   const PageData(
     imageAssetPath: 'assets/lottie/login_life.json',
     title: "Ready to Explore?",
-    description: "Sign up or log in to start your xavLog journey.",
+    description: "Login everywhere with your Ateneo account.",
     bgColor: Color(0xFFEB202C),
     textColor: Colors.white,
     lottieSize: 300,
@@ -131,9 +131,8 @@ class OnboardingPageStart extends StatelessWidget {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('onboardingCompleted', true);
 
-          // Use ConcentricPageRoute for navigation to SigninPage
           Navigator.of(context).pushReplacement(
-            ConcentricPageRoute(builder: (context) => SigninPage(onTap: () {})),
+            ConcentricPageRoute(builder: (context) => WelcomeScreen()),
           );
         },
       ),
@@ -159,12 +158,37 @@ class PageData {
   });
 }
 
-class _Page extends StatelessWidget {
+class _Page extends StatefulWidget {
   final PageData page;
   const _Page({required this.page});
 
   @override
+  State<_Page> createState() => _PageState();
+}
+
+class _PageState extends State<_Page> {
+  bool _navigated = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isLast = widget.page.title == "Ready to Explore?";
+    if (isLast && !_navigated) {
+      _navigated = true;
+      Future.delayed(const Duration(milliseconds: 1200), () async {
+        if (!mounted) return;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('onboardingCompleted', true);
+        Navigator.of(context).pushReplacement(
+          ConcentricPageRoute(builder: (context) => WelcomeScreen()),
+        );
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final page = widget.page;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 48.0),
       child: Column(

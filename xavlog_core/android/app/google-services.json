@@ -9,10 +9,23 @@
       "client_info": {
         "mobilesdk_app_id": "1:511714298489:android:911fe62eff54df9bc6e2a8",
         "android_client_info": {
-          "package_name": "com.example.xavlog_core"
+          "package_name": "com.example.xavlog_market_place"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "511714298489-hfhs78l91tksm8v5sg2sm5ib0m0icguc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.xavlog_market_place",
+            "certificate_hash": "f0bd0aebb0aa48a1b971ff04fb67253d55f9ba67"
+          }
+        },
+        {
+          "client_id": "511714298489-gj0v90o7dqjh23ufojrp8711b4lic583.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDhRhu09Mc1K_R-i-uBriPr_JPIq-cGnzI"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "511714298489-gj0v90o7dqjh23ufojrp8711b4lic583.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "511714298489-tjlhrmvd4r6c5thg26afkgkvsoc6qk1q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.xavlogMarketPlace"
+              }
+            }
+          ]
         }
       }
     }

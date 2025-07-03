@@ -116,26 +116,26 @@ class LoginPageMarketPlace extends StatelessWidget {
                     paddingVertical: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have a GBox account?",
-                        style: TextStyle(color: Colors.grey.shade600),
-                      ),
-                      const SizedBox(width: 6),
-                      GestureDetector(
-                        onTap: onTap,
-                        child: Text(
-                          "Register now",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: goldAccent,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(
+                  //       "Don't have a GBox account?",
+                  //       style: TextStyle(color: Colors.grey.shade600),
+                  //     ),
+                  //     const SizedBox(width: 6),
+                  //     GestureDetector(
+                  //       onTap: onTap,
+                  //       child: Text(
+                  //         "Register now",
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.bold,
+                  //           color: goldAccent,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // )
                 ],
               ),
             ),

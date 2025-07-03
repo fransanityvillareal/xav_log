@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:xavlog_core/features/dash_board/profile_image_uploader.dart';
-import 'package:xavlog_core/features/login/login_page.dart';
+import 'package:xavlog_core/features/login/log_in_main.dart';
+import 'package:xavlog_core/features/login/sign_in_main.dart';
+import 'package:xavlog_core/onboarding/main_onboarding.dart';
 import 'package:xavlog_core/route/welcome.dart';
 
 class ProfileElementsPage extends StatefulWidget {
@@ -205,11 +207,6 @@ class _ProfileFormState extends State<_ProfileForm> {
             const SizedBox(height: 24),
 
             // Profile Image Uploader
-            const Center(
-              child: ProfileImageUploader(),
-            ),
-            const SizedBox(height: 24),
-
             // First Name
             _buildFormField(
               label: 'First Name',
@@ -262,7 +259,7 @@ class _ProfileFormState extends State<_ProfileForm> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const WelcomeScreen(),
+                          builder: (_) => const OnboardingPageStart(),
                         ),
                         (Route<dynamic> route) => false,
                       );
@@ -428,7 +425,7 @@ class _ProfileFormState extends State<_ProfileForm> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LoginPage(onTap: () {}),
+                            builder: (context) => LoginPage(),
                           ),
                         );
                       },
