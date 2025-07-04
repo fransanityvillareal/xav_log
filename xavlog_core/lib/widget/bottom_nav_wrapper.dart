@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
-import 'package:xavlog_core/features/dash_board/profile.dart';
-import 'package:xavlog_core/features/grades_tracker/initial_page.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/features/dash_board/profile.dart';import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/features/new_grade_tracker/subjects.dart';
 import 'package:xavlog_core/route/general_navigation.dart';
 
 import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
@@ -18,7 +17,7 @@ class HomeWrapper extends StatelessWidget {
       child: MainScaffold(
         initialIndex: 2,
         screens: const [
-          InitialPage(),
+          SubjectScreen(),
           AuthenticationGate(),
           Homepage(), // index 2 (default)
           HomeWidget(),

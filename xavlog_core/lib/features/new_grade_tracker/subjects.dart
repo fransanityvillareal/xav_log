@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/new_grade_tracker/partitions.dart';
-import 'package:my_app/services/database_services.dart';
+import 'package:xavlog_core/features/new_grade_tracker/partitions.dart';
+import 'package:xavlog_core/services/database_services.dart';
 class SubjectScreen extends StatefulWidget {
   const SubjectScreen({super.key});
   

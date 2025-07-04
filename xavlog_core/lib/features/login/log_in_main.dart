@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/login/sign_in_main.dart';
-import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
-import 'account_choose.dart';
+
 import 'terms_and_conditions.dart';
 import 'faqs.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'authentication_service.dart';
 
-class LoginPage extends StatefulWidget {  // Renamed from SigninPage to LoginPage
-  const LoginPage({super.key});  // Removed unused onTap parameter
+class LoginPage extends StatefulWidget {  
+  const LoginPage({super.key}); 
   @override
-  State<LoginPage> createState() => _LoginPageState();  // Updated state class
+  State<LoginPage> createState() => _LoginPageState();  
 }
 
 class _LoginPageState extends State<LoginPage>  // Renamed state class

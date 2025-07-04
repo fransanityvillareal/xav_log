@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
+import 'package:xavlog_core/services/database_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:my_app/services/database_services.dart';
 
 class PartitionScreen extends StatefulWidget {
   final String subjectTitle;

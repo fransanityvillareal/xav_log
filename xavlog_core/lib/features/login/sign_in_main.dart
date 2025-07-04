@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:xavlog_core/features/login/account_choose.dart';
 import 'package:xavlog_core/features/login/faqs.dart';
 import 'package:xavlog_core/features/login/terms_and_conditions.dart';
-import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
