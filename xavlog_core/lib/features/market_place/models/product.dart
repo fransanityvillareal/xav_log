@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:io';
 
 class Product {
   final String image, title, description, condition, category;
   final int price, id;
   final Color color;
+  final String sellerEmail;
+  final String sellerProfileImageUrl;
 
   Product({
     required this.id,
@@ -14,158 +21,105 @@ class Product {
     required this.condition,
     required this.color,
     required this.category,
+    required this.sellerEmail,
+    required this.sellerProfileImageUrl,
   });
+
+  // Convert a Firestore document to a Product instance
+  factory Product.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Product(
+      id: doc.id.hashCode, // Use hashCode as a unique ID
+      image: data['image'] ?? '',
+      title: data['title'] ?? '',
+      price: data['price'] ?? 0,
+      description: data['description'] ?? '',
+      condition: data['condition'] ?? '',
+      color: Color(int.parse(data['color'] ?? '0xFFB0BEC5')),
+      category: data['category'] ?? '',
+      sellerEmail: data['sellerEmail'] ?? '',
+      sellerProfileImageUrl: data['sellerProfileImageUrl'] ?? '',
+    );
+  }
+
+  // Convert a Product instance to a Firestore document
+  Map<String, dynamic> toFirestore() {
+    return {
+      'image': image,
+      'title': title,
+      'price': price,
+      'description': description,
+      'condition': condition,
+      'color': color.value.toString(),
+      'category': category,
+      'sellerEmail': sellerEmail,
+      'sellerProfileImageUrl': sellerProfileImageUrl,
+    };
+  }
 }
 
-List<Product> products = [
-  Product(
-      id: 1,
-      title: "Cost Accounting Book",
-      price: 10000,
-      condition: "Like New",
-      description: "Almost new, no damage.",
-      image: "assets/images/item_1.png",
-      color: const Color(0xFFB0BEC5),
-      category: "Books"),
-  Product(
-      id: 2,
-      title: "C++ Book",
-      price: 234,
-      condition: "Used",
-      description: "A comprehensive guide to C++ programming.",
-      image: "assets/images/item_2.png",
-      color: const Color(0xFFA1887F),
-      category: "Books"),
-  Product(
-      id: 3,
-      title: "Foundation of Nursing",
-      price: 234,
-      condition: "Used",
-      description: "Noticeable wear but fully functional.",
-      image: "assets/images/item_3.png",
-      color: const Color(0xFF8D6E63),
-      category: "Books"),
-  Product(
-      id: 4,
-      title: "Basketball",
-      price: 500,
-      condition: "New",
-      description:
-          "Official size and weight basketball, only used once in PE class.",
-      image: "assets/images/item_14.png",
-      color: const Color(0xFF757575),
-      category: "PE Equipment"),
-  Product(
-      id: 5,
-      title: "Lebron 19",
-      price: 1500,
-      condition: "Used",
-      description: "Damaged sole",
-      image: "assets/images/item_13.png",
-      color: const Color(0xFF546E7A),
-      category: "PE Equipment"),
-  Product(
-    id: 6,
-    title: "Flutter for Dummies",
-    price: 234,
-    condition: "Sold for Repair",
-    description: "Not functional, for parts or repair only.",
-    image: "assets/images/item_6.png",
-    color: const Color(0xFF37474F),
-    category: "Books",
-  ),
-  Product(
-    id: 9,
-    title: "Smartwatch",
-    price: 1200,
-    condition: "Like New",
-    description: "No scratches, fully functional.",
-    image: "assets/images/item_7.png",
-    color: const Color(0xFFB0BEC5),
-    category: "Accessories",
-  ),
-  Product(
-    id: 10,
-    title: "Echo Dot",
-    price: 2200,
-    condition: "Used",
-    description: "Buttons are fading, but still works.",
-    image: "assets/images/item_8.png",
-    color: const Color.fromARGB(255, 140, 196, 184),
-    category: "Tech",
-  ),
-  Product(
-    id: 11,
-    title: "Luka's Shirt",
-    price: 890,
-    condition: "Used",
-    description: "Selling because the size is too large.",
-    image: "assets/images/item_9.png",
-    color: const Color.fromARGB(255, 140, 47, 247),
-    category: "Shirt",
-  ),
-  Product(
-    id: 12,
-    title: "HS PE Shirt",
-    price: 140,
-    condition: "Used",
-    description: "Good and confortable.",
-    image: "assets/images/item_10.png",
-    color: const Color(0xFFB0BEC5),
-    category: "PE Equipment",
-  ),
-  Product(
-    id: 13,
-    title: "Volleyball",
-    price: 200,
-    condition: "Used",
-    description: "Bouncy good for training.",
-    image: "assets/images/item_11.png",
-    color: const Color(0xFFB0BEC5),
-    category: "PE Equipment",
-  ),
-  Product(
-    id: 14,
-    title: "Yantok",
-    price: 150,
-    condition: "Used",
-    description:
-        "SSR Quality Yantok good for injuring bad guys, with demonic lifesteal enchantment",
-    image: "assets/images/item_12.png",
-    color: const Color(0xFFB0BEC5),
-    category: "PE Equipment",
-  ),
-  Product(
-    id: 13,
-    title: "Aquaflask",
-    price: 200,
-    condition: "Used",
-    description: "Small dent but usable",
-    image: "assets/images/item_15.png",
-    color: const Color(0xFFB0BEC5),
-    category: "Others",
-  ),
-  Product(
-    id: 14,
-    title: "Siamese",
-    price: 5000,
-    condition: "Kitten",
-    description: "Affectionate but deadly",
-    image: "assets/images/item_16.png",
-    color: const Color(0xFFB0BEC5),
-    category: "Others",
-  ),
-  Product(
-    id: 15,
-    title: "Mechanical Mouse",
-    price: 100,
-    condition: "Used",
-    description: "No battery",
-    image: "assets/images/item_17.png",
-    color: const Color(0xFFB0BEC5),
-    category: "Tech",
-  ),
-];
+Stream<List<Product>> fetchProductsFromDatabase() {
+  return FirebaseFirestore.instance.collection('products').snapshots().map(
+        (snapshot) =>
+            snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList(),
+      );
+}
+
+Stream<List<Product>> fetchProductsWithImages() {
+  return FirebaseFirestore.instance.collection('products').snapshots().map(
+        (snapshot) => snapshot.docs.map((doc) {
+          final data = doc.data();
+          return Product(
+            id: doc.id.hashCode,
+            image: data['image'] ?? '',
+            title: data['title'] ?? '',
+            price: data['price'] ?? 0,
+            description: data['description'] ?? '',
+            condition: data['condition'] ?? '',
+            color: Color(int.parse(data['color'] ?? '0xFFB0BEC5')),
+            category: data['category'] ?? '',
+            sellerEmail: data['sellerEmail'] ?? '',
+            sellerProfileImageUrl: data['sellerProfileImageUrl'] ?? '',
+          );
+        }).toList(),
+      );
+}
+
+Future<void> uploadProfileImageAndStoreUserData() async {
+  final firebaseUser = FirebaseAuth.instance.currentUser;
+  final supabaseUser = Supabase.instance.client.auth.currentUser;
+
+  if (firebaseUser == null || supabaseUser == null) {
+    throw Exception('User not authenticated');
+  }
+
+  final result = await FilePicker.platform.pickFiles(type: FileType.image);
+  if (result == null || result.files.single.path == null) {
+    throw Exception('No file selected');
+  }
+
+  final file = File(result.files.single.path!);
+  final fileExt = file.path.split('.').last;
+  final fileName =
+      '${firebaseUser.uid}_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+
+  await Supabase.instance.client.storage
+      .from('xavlog-profile')
+      .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
+
+  final publicUrl = Supabase.instance.client.storage
+      .from('xavlog-profile')
+      .getPublicUrl(fileName);
+
+  await FirebaseFirestore.instance
+      .collection('Users')
+      .doc(firebaseUser.uid)
+      .set({'profileImageUrl': publicUrl, 'email': firebaseUser.email},
+          SetOptions(merge: true));
+}
+
+// Remove the hardcoded products list
+// List<Product> products = [];
 
 // Make sure to import this file in your main copy.dart
 // and use `ProductProvider(products)` for your provider initialization.

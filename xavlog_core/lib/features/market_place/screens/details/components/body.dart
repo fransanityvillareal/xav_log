@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xavlog_core/constants.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
-import 'package:xavlog_core/main_chat.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
@@ -110,7 +110,7 @@ class Body extends StatelessWidget {
                             ),
                             Expanded(
                               flex: 2,
-                              child: Image.asset(
+                              child: Image.network(
                                 product.image,
                                 height: 200,
                                 fit: BoxFit.contain,
@@ -138,6 +138,25 @@ class Body extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: kDefaultPaddin),
+                        const Text(
+                          "Seller Email",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontFamily: 'Jost',
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          product.sellerEmail,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                        const SizedBox(height: kDefaultPaddin),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -147,7 +166,10 @@ class Body extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => MyAppChat(),
+                                      builder: (context) => ChatHomePage(
+                                        initialSearchQuery: product
+                                            .sellerEmail, // Pass seller's email as initial search query
+                                      ),
                                     ),
                                   );
                                 },

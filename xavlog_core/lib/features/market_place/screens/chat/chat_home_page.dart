@@ -6,18 +6,28 @@ import 'package:xavlog_core/features/market_place/services/chat/chat_services.da
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
 
 class ChatHomePage extends StatefulWidget {
-  const ChatHomePage({super.key});
+  final String? initialSearchQuery; // Add initialSearchQuery parameter
+
+  const ChatHomePage({super.key, this.initialSearchQuery});
 
   @override
-  State<ChatHomePage> createState() => _ChatHomePageState();
+  State<ChatHomePage> createState() => ChatHomePageState();
 }
 
-class _ChatHomePageState extends State<ChatHomePage> {
+class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
   final ChatService _chatService = ChatService();
   final AuthenticationService _authenticationService = AuthenticationService();
-  final TextEditingController _searchController = TextEditingController();
+  late TextEditingController _searchController;
   bool _showSearch = false;
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchQuery =
+        widget.initialSearchQuery ?? ''; // Use initialSearchQuery if provided
+    _searchController = TextEditingController(text: _searchQuery);
+  }
 
   Future<String> _getProfileImageUrl(String uid, String? fallbackUrl) async {
     try {
@@ -106,6 +116,53 @@ class _ChatHomePageState extends State<ChatHomePage> {
         ),
       ),
     );
+  }
+
+  void _ensureContactExists(String email) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final userDoc = querySnapshot.docs.first;
+        final userData = userDoc.data();
+        final uid = userDoc.id;
+
+        // Add the user to the contacts list temporarily
+        setState(() {
+          _searchQuery = email;
+          _searchController.text = email;
+        });
+
+        // Navigate to the ChatPage
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              receiverEmail: email,
+              receiverID: uid,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User not found.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   @override

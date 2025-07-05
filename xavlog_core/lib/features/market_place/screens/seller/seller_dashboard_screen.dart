@@ -41,7 +41,7 @@ class SellerDashboardScreen extends StatelessWidget {
                           final product = sellerProducts[index];
                           return ListTile(
                             leading: product.image.isNotEmpty
-                                ? Image.asset(product.image,
+                                ? Image.network(product.image,
                                     width: 50, height: 50, fit: BoxFit.cover)
                                 : const Icon(Icons.image_not_supported),
                             title: Text(product.title),

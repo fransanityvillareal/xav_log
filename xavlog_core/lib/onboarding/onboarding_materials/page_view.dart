@@ -329,8 +329,8 @@ class _ButtonState extends State<_Button> {
           final int currentPage = widget.pageController.page?.round() ?? 0;
           final bool isFinal = currentPage == widget.widget.colors.length - 1;
           if (isFinal) {
-            Navigator.of(context, rootNavigator: true)
-                .pushReplacementNamed('/signin');
+            Navigator.of(context, rootNavigator: true).pushReplacementNamed(
+                '/welcome'); // Updated to use the WelcomeScreen route
           } else {
             widget.pageController.nextPage(
               duration: widget.widget.duration,

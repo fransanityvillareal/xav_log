@@ -1,14 +1,14 @@
 /// Notifications Page
-/// 
+///
 /// Purpose: Displays and manages user notifications, allowing users to view,
 /// filter, and interact with different types of notifications.
-/// 
+///
 /// Flow:
 /// 1. User navigates to the notifications page
 /// 2. User can view all notifications categorized by type
 /// 3. User can mark notifications as read or delete them
 /// 4. User can filter notifications by category
-/// 
+///
 /// Backend Implementation Needed:
 /// - Real-time notification fetching from server
 /// - Notification read status tracking
@@ -86,57 +86,10 @@ class _NotificationsPageState extends State<NotificationsPage>
     final random = Random();
     final List<Notification> notifications = [];
 
-    final List<String> orgTitles = [
-      "Meeting Reminder",
-      "Event Update",
-      "Budget Approval",
-      "New Member Request",
-      "Announcement",
-      "Event Cancelled",
-      "Deadline Approaching",
-      "Feedback Required",
-      "Document Shared",
-      "Task Assignment"
-    ];
-
-    final List<String> orgContents = [
-      "Don't forget about our upcoming general meeting tomorrow at 5 PM. Your attendance is required.",
-      "The venue for the annual gala has been changed. Please check the updated location.",
-      "The budget for the next quarter has been approved. Review the allocation details.",
-      "3 new member requests are awaiting your approval. Please review their applications.",
-      "Important announcement: Campus will be closed this Friday for maintenance.",
-      "The workshop scheduled for Saturday has been cancelled due to low registration.",
-      "Reminder: The deadline for submitting event proposals is next Monday.",
-      "Please provide feedback on last week's event by completing the survey.",
-      "New resources have been added to the shared drive. Check them out!",
-      "You've been assigned to lead the fundraising committee. Details in your email."
-    ];
-
-    final List<String> studentTitles = [
-      "Class Cancelled",
-      "Grade Posted",
-      "Scholarship Opportunity",
-      "New Event",
-      "Application Status",
-      "Deadline Reminder",
-      "Campus Announcement",
-      "Meeting Invitation",
-      "Assignment Update",
-      "Survey Request"
-    ];
-
-    final List<String> studentContents = [
-      "Your class tomorrow has been cancelled. The professor will send makeup details.",
-      "Grades for your recent exam have been posted. Check your portal.",
-      "New scholarship opportunity available. Application deadline is in two weeks.",
-      "Computer Science Society is hosting a networking event this Thursday.",
-      "Your application for the internship program has been received.",
-      "Reminder: Your project submission is due this Friday at midnight.",
-      "Campus library will have extended hours during finals week.",
-      "You've been invited to join the student leadership forum.",
-      "Changes to your assignment requirements have been posted.",
-      "Please complete the student satisfaction survey by the end of the week."
-    ];
+    final List<String> orgTitles = [];
+    final List<String> orgContents = [];
+    final List<String> studentTitles = [];
+    final List<String> studentContents = [];
 
     final now = DateTime.now();
 
@@ -146,20 +99,20 @@ class _NotificationsPageState extends State<NotificationsPage>
       final titles = isOrgNotification ? orgTitles : studentTitles;
       final contents = isOrgNotification ? orgContents : studentContents;
       final titleIndex = random.nextInt(titles.length);
-      
+
       final daysAgo = random.nextInt(30);
       final hoursAgo = random.nextInt(24);
       final minutesAgo = random.nextInt(60);
-      
+
       final date = now.subtract(Duration(
         days: daysAgo,
         hours: hoursAgo,
         minutes: minutesAgo,
       ));
-      
+
       final isUnread = daysAgo < 7 && random.nextBool();
       final isImportant = random.nextBool() && (daysAgo < 14 || isUnread);
-      
+
       notifications.add(Notification(
         id: i.toString(),
         title: titles[titleIndex],
@@ -168,8 +121,8 @@ class _NotificationsPageState extends State<NotificationsPage>
         isRead: !isUnread,
         isImportant: isImportant,
         type: isOrgNotification ? "Organization" : "Academic",
-        sender: isOrgNotification 
-            ? widget.orgName ?? "Computer Science Society" 
+        sender: isOrgNotification
+            ? widget.orgName ?? "Computer Science Society"
             : "Xavier University",
       ));
     }
@@ -221,7 +174,8 @@ class _NotificationsPageState extends State<NotificationsPage>
     setState(() {
       final index = _allNotifications.indexWhere((n) => n.id == id);
       if (index != -1) {
-        _allNotifications[index] = _allNotifications[index].copyWith(isRead: true);
+        _allNotifications[index] =
+            _allNotifications[index].copyWith(isRead: true);
         _filterNotifications();
       }
     });
@@ -324,7 +278,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               ),
             ),
             const Divider(height: 1),
-            
+
             // Notification details
             Expanded(
               child: SingleChildScrollView(
@@ -349,8 +303,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
-                              notification.type == "Organization" 
-                                  ? Icons.groups 
+                              notification.type == "Organization"
+                                  ? Icons.groups
                                   : Icons.school,
                               color: const Color(0xFF071D99),
                               size: 20,
@@ -367,7 +321,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                           ),
                           const Spacer(),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
                               color: const Color(0xFF071D99).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(16),
@@ -386,7 +341,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Content
                     Text(
                       notification.content,
@@ -397,7 +352,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                         color: Colors.black87,
                       ),
                     ),
-                    
+
                     // Additional placeholder content to make it look realistic
                     const SizedBox(height: 24),
                     if (notification.type == "Organization")
@@ -408,7 +363,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 ),
               ),
             ),
-            
+
             // Actions
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -446,12 +401,10 @@ class _NotificationsPageState extends State<NotificationsPage>
                     },
                   ),
                   _buildActionButton(
-                    icon: notification.isImportant 
-                        ? Icons.star 
+                    icon: notification.isImportant
+                        ? Icons.star
                         : Icons.star_border,
-                    label: notification.isImportant 
-                        ? "Unmark" 
-                        : "Important",
+                    label: notification.isImportant ? "Unmark" : "Important",
                     color: const Color(0xFFD7A61F),
                     onTap: () {
                       _toggleImportant(notification.id);
@@ -490,165 +443,166 @@ class _NotificationsPageState extends State<NotificationsPage>
   List<Widget> _buildOrganizationContent(Notification notification) {
     // Sample additional content for organization notifications
     return [
-      if (notification.title.contains("Meeting"))
-        ...[
-          _buildSectionTitle("Meeting Details"),
-          _buildDetailItem(Icons.calendar_today, "Date", "April 21, 2025"),
-          _buildDetailItem(Icons.access_time, "Time", "5:00 PM - 6:30 PM"),
-          _buildDetailItem(Icons.location_on, "Location", "Xavier Hall, Room 305"),
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            icon: const Icon(Icons.event_available),
-            label: const Text("Add to Calendar"),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF071D99),
-            ),
-            onPressed: () {
-              // Calendar functionality would go here
-            },
+      if (notification.title.contains("Meeting")) ...[
+        _buildSectionTitle("Meeting Details"),
+        _buildDetailItem(Icons.calendar_today, "Date", "April 21, 2025"),
+        _buildDetailItem(Icons.access_time, "Time", "5:00 PM - 6:30 PM"),
+        _buildDetailItem(
+            Icons.location_on, "Location", "Xavier Hall, Room 305"),
+        const SizedBox(height: 16),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.event_available),
+          label: const Text("Add to Calendar"),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xFF071D99),
           ),
-        ]
-      else if (notification.title.contains("Event"))
-        ...[
-          _buildSectionTitle("Event Information"),
-          _buildDetailItem(Icons.event, "Event", "Annual Networking Event"),
-          _buildDetailItem(Icons.calendar_today, "Date", "April 25, 2025"),
-          _buildDetailItem(Icons.location_on, "Venue", "Xavier University Grand Hall"),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.how_to_reg, color: Colors.white),
-            label: const Text("Register Now", style: TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF071D99),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            ),
-            onPressed: () {
-              // Registration functionality would go here
-            },
+          onPressed: () {
+            // Calendar functionality would go here
+          },
+        ),
+      ] else if (notification.title.contains("Event")) ...[
+        _buildSectionTitle("Event Information"),
+        _buildDetailItem(Icons.event, "Event", "Annual Networking Event"),
+        _buildDetailItem(Icons.calendar_today, "Date", "April 25, 2025"),
+        _buildDetailItem(
+            Icons.location_on, "Venue", "Xavier University Grand Hall"),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.how_to_reg, color: Colors.white),
+          label:
+              const Text("Register Now", style: TextStyle(color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF071D99),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
-        ]
-      else if (notification.title.contains("Budget") || notification.title.contains("Feedback"))
-        ...[
-          _buildSectionTitle("Required Action"),
-          _buildDetailItem(Icons.assignment, "Task", "Review and approve budget allocation"),
-          _buildDetailItem(Icons.timelapse, "Deadline", "April 24, 2025"),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.check_circle, color: Colors.white),
-            label: const Text("Take Action", style: TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF071D99),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            ),
-            onPressed: () {
-              // Action functionality would go here
-            },
+          onPressed: () {
+            // Registration functionality would go here
+          },
+        ),
+      ] else if (notification.title.contains("Budget") ||
+          notification.title.contains("Feedback")) ...[
+        _buildSectionTitle("Required Action"),
+        _buildDetailItem(
+            Icons.assignment, "Task", "Review and approve budget allocation"),
+        _buildDetailItem(Icons.timelapse, "Deadline", "April 24, 2025"),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.check_circle, color: Colors.white),
+          label:
+              const Text("Take Action", style: TextStyle(color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF071D99),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
-        ]
-      else
-        ...[
-          const SizedBox(height: 16),
-          Text(
-            "For more information, please contact the organization administrator.",
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey[600],
-              fontFamily: 'Jost',
-            ),
+          onPressed: () {
+            // Action functionality would go here
+          },
+        ),
+      ] else ...[
+        const SizedBox(height: 16),
+        Text(
+          "For more information, please contact the organization administrator.",
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[600],
+            fontFamily: 'Jost',
           ),
-        ],
+        ),
+      ],
     ];
   }
 
   List<Widget> _buildAcademicContent(Notification notification) {
     // Sample additional content for academic notifications
     return [
-      if (notification.title.contains("Class") || notification.title.contains("Grade"))
-        ...[
-          _buildSectionTitle("Course Information"),
-          _buildDetailItem(Icons.book, "Course", "CS 301 - Advanced Programming"),
-          _buildDetailItem(Icons.person, "Professor", "Dr. Emily Chen"),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.launch, color: Colors.white),
-            label: const Text("View Course Portal", style: TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF071D99),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            ),
-            onPressed: () {
-              // Course portal navigation would go here
-            },
+      if (notification.title.contains("Class") ||
+          notification.title.contains("Grade")) ...[
+        _buildSectionTitle("Course Information"),
+        _buildDetailItem(Icons.book, "Course", "CS 301 - Advanced Programming"),
+        _buildDetailItem(Icons.person, "Professor", "Dr. Emily Chen"),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.launch, color: Colors.white),
+          label: const Text("View Course Portal",
+              style: TextStyle(color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF071D99),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
-        ]
-      else if (notification.title.contains("Scholarship") || notification.title.contains("Application"))
-        ...[
-          _buildSectionTitle("Opportunity Details"),
-          _buildDetailItem(Icons.school, "Program", "Merit Scholarship 2025"),
-          _buildDetailItem(Icons.attach_money, "Award", "Up to \$5,000 per semester"),
-          _buildDetailItem(Icons.date_range, "Deadline", "May 15, 2025"),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.edit_document, color: Colors.white),
-            label: const Text("Apply Now", style: TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF071D99),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            ),
-            onPressed: () {
-              // Application functionality would go here
-            },
+          onPressed: () {
+            // Course portal navigation would go here
+          },
+        ),
+      ] else if (notification.title.contains("Scholarship") ||
+          notification.title.contains("Application")) ...[
+        _buildSectionTitle("Opportunity Details"),
+        _buildDetailItem(Icons.school, "Program", "Merit Scholarship 2025"),
+        _buildDetailItem(
+            Icons.attach_money, "Award", "Up to \$5,000 per semester"),
+        _buildDetailItem(Icons.date_range, "Deadline", "May 15, 2025"),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.edit_document, color: Colors.white),
+          label: const Text("Apply Now", style: TextStyle(color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF071D99),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
-        ]
-      else if (notification.title.contains("Deadline") || notification.title.contains("Assignment"))
-        ...[
-          _buildSectionTitle("Assignment Details"),
-          _buildDetailItem(Icons.assignment, "Assignment", "Final Project Submission"),
-          _buildDetailItem(Icons.calendar_today, "Due Date", "April 28, 2025 at 11:59 PM"),
-          _buildDetailItem(Icons.grading, "Points", "150 points (15% of final grade)"),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.remove_red_eye),
-                  label: const Text("View Instructions"),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF071D99),
-                  ),
-                  onPressed: () {
-                    // View instructions functionality would go here
-                  },
+          onPressed: () {
+            // Application functionality would go here
+          },
+        ),
+      ] else if (notification.title.contains("Deadline") ||
+          notification.title.contains("Assignment")) ...[
+        _buildSectionTitle("Assignment Details"),
+        _buildDetailItem(
+            Icons.assignment, "Assignment", "Final Project Submission"),
+        _buildDetailItem(
+            Icons.calendar_today, "Due Date", "April 28, 2025 at 11:59 PM"),
+        _buildDetailItem(
+            Icons.grading, "Points", "150 points (15% of final grade)"),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.remove_red_eye),
+                label: const Text("View Instructions"),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF071D99),
                 ),
+                onPressed: () {
+                  // View instructions functionality would go here
+                },
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.upload_file, color: Colors.white),
-                  label: const Text("Submit", style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF071D99),
-                  ),
-                  onPressed: () {
-                    // Submission functionality would go here
-                  },
-                ),
-              ),
-            ],
-          ),
-        ]
-      else
-        ...[
-          const SizedBox(height: 16),
-          Text(
-            "For more information, please check your student portal or contact student services.",
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey[600],
-              fontFamily: 'Jost',
             ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.upload_file, color: Colors.white),
+                label:
+                    const Text("Submit", style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF071D99),
+                ),
+                onPressed: () {
+                  // Submission functionality would go here
+                },
+              ),
+            ),
+          ],
+        ),
+      ] else ...[
+        const SizedBox(height: 16),
+        Text(
+          "For more information, please check your student portal or contact student services.",
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[600],
+            fontFamily: 'Jost',
           ),
-        ],
+        ),
+      ],
     ];
   }
 
@@ -937,7 +891,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 behavior: SnackBarBehavior.floating,
                                 margin: EdgeInsets.all(16),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
                                 ),
                               ),
                             );
@@ -999,7 +954,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF071D99),
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -1024,7 +980,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: _filteredNotifications.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final notification = _filteredNotifications[index];
                       return _buildNotificationCard(notification);
@@ -1044,21 +1001,24 @@ class _NotificationsPageState extends State<NotificationsPage>
   }
 
   Widget _buildNotificationCard(Notification notification) {
-    final bool isToday = DateTime.now().difference(notification.timestamp).inHours < 24;
-    
+    final bool isToday =
+        DateTime.now().difference(notification.timestamp).inHours < 24;
+
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: notification.isRead 
-              ? Colors.grey.withOpacity(0.15) 
+          color: notification.isRead
+              ? Colors.grey.withOpacity(0.15)
               : const Color(0xFF071D99).withOpacity(0.5),
           width: notification.isRead ? 1 : 1.5,
         ),
       ),
-      color: notification.isRead ? Colors.white : const Color(0xFF071D99).withOpacity(0.05),
+      color: notification.isRead
+          ? Colors.white
+          : const Color(0xFF071D99).withOpacity(0.05),
       child: InkWell(
         onTap: () => _showNotificationDetails(notification),
         borderRadius: BorderRadius.circular(16),
@@ -1077,13 +1037,17 @@ class _NotificationsPageState extends State<NotificationsPage>
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  notification.type == "Organization" ? Icons.groups : Icons.school,
-                  color: notification.isRead ? Colors.grey : const Color(0xFF071D99),
+                  notification.type == "Organization"
+                      ? Icons.groups
+                      : Icons.school,
+                  color: notification.isRead
+                      ? Colors.grey
+                      : const Color(0xFF071D99),
                   size: 24,
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Center: notification content
               Expanded(
                 child: Column(
@@ -1096,10 +1060,14 @@ class _NotificationsPageState extends State<NotificationsPage>
                           child: Text(
                             notification.title,
                             style: TextStyle(
-                              fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.bold,
+                              fontWeight: notification.isRead
+                                  ? FontWeight.w500
+                                  : FontWeight.bold,
                               fontSize: 16,
                               fontFamily: 'Jost',
-                              color: notification.isRead ? Colors.black87 : const Color(0xFF071D99),
+                              color: notification.isRead
+                                  ? Colors.black87
+                                  : const Color(0xFF071D99),
                             ),
                           ),
                         ),
@@ -1122,7 +1090,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                     Row(
                       children: [
                         Icon(
-                          notification.type == "Organization" ? Icons.business : Icons.school,
+                          notification.type == "Organization"
+                              ? Icons.business
+                              : Icons.school,
                           size: 14,
                           color: Colors.grey[600],
                         ),
@@ -1211,15 +1181,15 @@ class _NotificationsPageState extends State<NotificationsPage>
 // Model classes
 /// Notification model representing a single notification
 class Notification {
-  final String id;          // Unique identifier
-  final String title;       // Notification title
-  final String content;     // Detailed notification message
+  final String id; // Unique identifier
+  final String title; // Notification title
+  final String content; // Detailed notification message
   final DateTime timestamp; // When the notification was sent
-  final String type;        // Category for filtering (Academic, Event, etc.)
-  final bool isImportant;   // Whether the notification is marked as important
-  bool isRead;              // Whether the user has read this notification
-  final String sender;      // Sender of the notification
-  
+  final String type; // Category for filtering (Academic, Event, etc.)
+  final bool isImportant; // Whether the notification is marked as important
+  bool isRead; // Whether the user has read this notification
+  final String sender; // Sender of the notification
+
   // BACKEND: This constructor should be used when deserializing from API
   Notification({
     required this.id,
@@ -1231,7 +1201,7 @@ class Notification {
     this.isRead = false,
     required this.sender,
   });
-  
+
   // BACKEND: Add a factory constructor to create from JSON
   Notification copyWith({
     String? id,

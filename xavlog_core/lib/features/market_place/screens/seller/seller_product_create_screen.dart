@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/product.dart';
-import '../../providers/product_provider.dart';
 
 class SellerProductCreateScreen extends StatefulWidget {
   const SellerProductCreateScreen({super.key});
@@ -21,43 +24,200 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
   String _category = '';
 
   // Submit the form and add the product
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      // Ensure an image URL is available
+      if (_image.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Please upload an image before submitting!'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      // Fetch the current user's email
+      final user = FirebaseAuth.instance.currentUser;
+      final sellerEmail = user?.email ?? 'Unknown';
 
       // Creating a new product object
       final newProduct = Product(
         id: DateTime.now().millisecondsSinceEpoch, // Simple unique id
-        image: _image.isNotEmpty ? _image : 'assets/images/item_1.png',
+        image: _image,
         title: _title,
         price: _price,
         description: _description,
         condition: _condition.isNotEmpty ? _condition : 'Used',
         color: Colors.grey, // Default color
         category: _category.isNotEmpty ? _category : 'Others',
+        sellerEmail: sellerEmail, // Use the authenticated user's email
+        sellerProfileImageUrl: '', // Placeholder, can be updated later
       );
 
-      // Add product to the provider
-      Provider.of<ProductProvider>(context, listen: false)
-          .addProduct(newProduct);
+      try {
+        // Save product to Firestore
+        await FirebaseFirestore.instance
+            .collection('products')
+            .add(newProduct.toFirestore());
 
-      // Show Snackbar for successful product addition
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Product Added Successfully!'),
-          backgroundColor: Colors.green, // Success color
-          duration: const Duration(seconds: 2),
-        ),
-      );
+        // Removed manual addition to ProductProvider to avoid duplication
 
-      // Pop the screen to go back to the previous one
-      Navigator.pop(context);
+        // Show Snackbar for successful product addition
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Product Added Successfully!'),
+            backgroundColor: Colors.green, // Success color
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // Pop the screen to go back to the previous one
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add product: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
     } else {
       // If form is invalid, show an error message in Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Please fill in all fields correctly!'),
           backgroundColor: Colors.red, // Error color
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _pickImage() async {
+    // Open file picker for image selection
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+    if (result == null || result.files.single.path == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('No image selected!'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    final filePath = result.files.single.path!;
+    final file = File(filePath);
+
+    // Validate if the file exists
+    if (!file.existsSync()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Selected image file does not exist!'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    final fileExt = file.path.split('.').last;
+    final fileName =
+        'product_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+
+    try {
+      // Upload image to Supabase bucket
+      await Supabase.instance.client.storage.from('xavlog-profile').upload(
+            fileName,
+            file,
+            fileOptions: const FileOptions(upsert: true),
+          );
+
+      // Get public URL of the uploaded image
+      final publicUrl = Supabase.instance.client.storage
+          .from('xavlog-profile')
+          .getPublicUrl(fileName);
+
+      // Update UI with the new image URL
+      setState(() {
+        _image = '$publicUrl?ts=${DateTime.now().millisecondsSinceEpoch}';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Image uploaded successfully!'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Image upload failed: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _chatNow(String sellerEmail) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('You need to be logged in to chat!'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    final currentUserEmail = currentUser.email;
+
+    try {
+      // Check if a chat room already exists
+      final chatRoomQuery = await FirebaseFirestore.instance
+          .collection('chat_rooms')
+          .where('participants', arrayContains: currentUserEmail)
+          .get();
+
+      DocumentSnapshot? existingChatRoom;
+      for (var doc in chatRoomQuery.docs) {
+        final participants = List<String>.from(doc['participants']);
+        if (participants.contains(sellerEmail)) {
+          existingChatRoom = doc;
+          break;
+        }
+      }
+
+      if (existingChatRoom != null) {
+        // Navigate to the existing chat room
+        Navigator.pushNamed(context, '/chat', arguments: existingChatRoom.id);
+      } else {
+        // Create a new chat room
+        final newChatRoom =
+            await FirebaseFirestore.instance.collection('chat_rooms').add({
+          'participants': [currentUserEmail, sellerEmail],
+          'lastMessage': '',
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        // Navigate to the new chat room
+        Navigator.pushNamed(context, '/chat', arguments: newChatRoom.id);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to start chat: $e'),
+          backgroundColor: Colors.red,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -110,13 +270,6 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                   return null;
                 },
                 onSaved: (value) => _price = int.parse(value!),
-              ),
-
-              // a place holder for image
-              _buildTextFormField(
-                label: 'Image Asset Path (optional)',
-                icon: Icons.image,
-                onSaved: (value) => _image = value ?? '',
               ),
 
               // Condition
@@ -172,6 +325,36 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                       ? 'Category is required'
                       : null,
                   onSaved: (value) => _category = value ?? '',
+                ),
+              ),
+
+              // Image Picker Button
+              ElevatedButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image),
+                label: const Text('Pick Image'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              // Chat Now Button
+              ElevatedButton.icon(
+                onPressed: () {
+                  final user = FirebaseAuth.instance.currentUser;
+                  final sellerEmail = user?.email ?? 'Unknown';
+                  _chatNow(sellerEmail);
+                },
+                icon: const Icon(Icons.chat),
+                label: const Text('Chat Now'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
 

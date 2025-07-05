@@ -1,38 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:xavlog_core/features/market_place/models/product.dart';
-import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
-import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
-import 'package:xavlog_core/firebase_options.dart';
+
 import 'package:xavlog_core/onboarding/onboarding_materials/page_view.dart';
-import 'package:xavlog_core/route/welcome.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Needed before async stuff
-  await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform); // Initialize Firebase
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (context) => CartProvider()), // Add your providers here
-        ChangeNotifierProvider(create: (context) => ProductProvider(products)),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: const OnboardingPageStart(),
-        routes: {
-          '/signin': (context) => const WelcomeScreen(),
-          '/welcome': (context) => const WelcomeScreen(),
-        },
-      ),
-    ),
-  );
-}
 
 final pages = [
   const PageData(

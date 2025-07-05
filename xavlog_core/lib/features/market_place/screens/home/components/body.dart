@@ -119,7 +119,12 @@ class ItemCard extends StatelessWidget {
               color: product.color,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Image.asset(product.image),
+            child: product.image.isNotEmpty
+                ? Image.network(
+                    product.image,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.image, size: 50),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),

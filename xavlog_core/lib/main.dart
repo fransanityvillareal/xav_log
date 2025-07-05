@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'package:xavlog_core/features/login/account_choose.dart';
-import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:xavlog_core/route/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +22,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(create: (context) => ProductProvider(products)),
+        ChangeNotifierProvider(
+            create: (context) =>
+                ProductProvider()), // Updated to use Firestore-backed ProductProvider
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -36,6 +37,8 @@ void main() async {
         home: LoginPage(),
         routes: {
           '/choose_account': (context) => const AccountChoosePage(),
+          '/welcome': (context) =>
+              const WelcomeScreen(), // Ensure the route is initialized
         },
       ),
     ),
