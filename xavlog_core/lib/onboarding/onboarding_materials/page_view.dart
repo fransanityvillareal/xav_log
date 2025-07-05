@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -48,7 +50,7 @@ class ConcentricPageView extends StatefulWidget {
     this.verticalPosition = 0.75,
     this.direction = Axis.horizontal,
     this.physics = const ClampingScrollPhysics(),
-    this.duration = const Duration(milliseconds: 1400),
+    this.duration = const Duration(milliseconds: 1200),
     this.curve = Curves.easeInOutSine, // const Cubic(0.7, 0.5, 0.5, 0.1),
     this.nextButtonBuilder,
   }) : assert(colors.length >= 2);
@@ -114,18 +116,10 @@ class _ConcentricPageViewState extends State<ConcentricPageView> {
       scrollDirection: widget.direction,
       controller: _pageController,
       reverse: widget.reverse,
-      physics: widget.physics,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: widget.itemCount,
       pageSnapping: widget.pageSnapping,
-      onPageChanged: (int page) {
-        if (widget.onChange != null) {
-          widget.onChange!(page);
-        }
-        // If this is the last page, call onFinish if provided
-        if (page == (widget.itemCount ?? 0) - 1 && widget.onFinish != null) {
-          widget.onFinish!();
-        }
-      },
+      // Remove onPageChanged to prevent auto navigation
       itemBuilder: (context, index) {
         final child = widget.itemBuilder(index);
         if (!_pageController.position.hasContentDimensions) {

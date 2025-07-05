@@ -7,7 +7,6 @@ import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/firebase_options.dart';
-import 'package:xavlog_core/onboarding/onboarding_materials/page_route.dart';
 import 'package:xavlog_core/onboarding/onboarding_materials/page_view.dart';
 import 'package:xavlog_core/route/welcome.dart';
 
@@ -26,6 +25,10 @@ void main() async {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: const OnboardingPageStart(),
+        routes: {
+          '/signin': (context) => const WelcomeScreen(),
+          '/welcome': (context) => const WelcomeScreen(),
+        },
       ),
     ),
   );
@@ -131,9 +134,7 @@ class OnboardingPageStart extends StatelessWidget {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('onboardingCompleted', true);
 
-          Navigator.of(context).pushReplacement(
-            ConcentricPageRoute(builder: (context) => WelcomeScreen()),
-          );
+          Navigator.of(context).pushReplacementNamed('/welcome');
         },
       ),
     );
@@ -167,23 +168,10 @@ class _Page extends StatefulWidget {
 }
 
 class _PageState extends State<_Page> {
-  bool _navigated = false;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final isLast = widget.page.title == "Ready to Explore?";
-    if (isLast && !_navigated) {
-      _navigated = true;
-      Future.delayed(const Duration(milliseconds: 1200), () async {
-        if (!mounted) return;
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('onboardingCompleted', true);
-        Navigator.of(context).pushReplacement(
-          ConcentricPageRoute(builder: (context) => WelcomeScreen()),
-        );
-      });
-    }
+    // Removed auto-navigation on last page. Navigation is now only via button.
   }
 
   @override
