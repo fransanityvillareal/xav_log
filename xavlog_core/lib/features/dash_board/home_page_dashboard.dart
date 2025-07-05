@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
-import 'package:xavlog_core/features/market_place/screens/welcome/intro_screen.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'profile.dart';
 import '../login/faqs.dart';
@@ -264,7 +263,7 @@ class _HomepageState extends State<Homepage> {
     final width = screenSize.width;
     final fontSize = width * 0.03;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Container(
         decoration: BoxDecoration(
@@ -1416,32 +1415,6 @@ class _HomepageState extends State<Homepage> {
 
 // Bottom Navigation Bar
 
-  Widget _getPageForItem(String title) {
-    switch (title) {
-      case 'Attendance Tracker':
-      // return const AttendanceTrackerPage(); // Uncomment and implement this when ready
-      case 'Event Finder':
-        return const HomeWrapper(
-          initialTab: 2,
-        ); // Redirect to EventFinderPage
-      case 'Calendar':
-      // return const CalendarPage();
-      case 'Marketplace':
-        // return const MarketplacePage(); // Uncomment and implement this when ready
-        return IntroScreen(); // Redirect to MarketplacePage
-
-      case 'Grades Tracker':
-        // return const GradesTrackerPage(); // Uncomment and implement this when ready
-        return const HomeWrapper(
-            initialTab: 1); // Redirect to GradesTrackerPage
-      case 'Social Collaboration':
-      // return const SocialCollaborationPage(); // Uncomment and implement this when ready
-      case 'Schedule Manager':
-      // return const ScheduleManagerPage(); // Uncomment and implement this when ready
-      default:
-        return const SizedBox(); // Return an empty widget as fallback
-    }
-  }
 
   @override
   void dispose() {
@@ -1631,7 +1604,7 @@ class _HomepageState extends State<Homepage> {
 }
 
 class ScheduleManagerPage extends StatelessWidget {
-  const ScheduleManagerPage({Key? key}) : super(key: key);
+  const ScheduleManagerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1647,7 +1620,7 @@ class ScheduleManagerPage extends StatelessWidget {
 }
 
 class CalendarPage extends StatelessWidget {
-  const CalendarPage({Key? key}) : super(key: key);
+  const CalendarPage({super.key});
 
   @override
   Widget build(BuildContext context) {

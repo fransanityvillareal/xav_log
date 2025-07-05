@@ -97,7 +97,6 @@ class _ProfilePageState extends State<ProfilePage> {
     if (result != null && result.files.single.bytes != null) {
       final fileBytes = result.files.single.bytes!;
       final fileName = result.files.single.name;
-      final fileExt = fileName.split('.').last;
       final tempFile = File('${Directory.systemTemp.path}/$fileName');
       await tempFile.writeAsBytes(fileBytes);
 

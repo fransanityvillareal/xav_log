@@ -204,7 +204,6 @@ class _EventFinderPageState extends State<EventFinderPage> {
     final width = screenSize.width;
     final height = screenSize.height;
 
-    final logoSize = width * 0.15;
     final fontSize = width * 0.03;
     final contentPadding = width * 0.02;
 

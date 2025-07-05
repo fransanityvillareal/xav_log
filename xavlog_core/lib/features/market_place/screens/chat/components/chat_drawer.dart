@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:xavlog_core/constants.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
 import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
 

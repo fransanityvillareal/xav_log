@@ -86,7 +86,7 @@ class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
             ElevatedButton(
               onPressed: () async {
                 final groupName = _groupNameController.text.trim();
-                final groupDesc = _groupDescController.text.trim();
+                _groupDescController.text.trim();
                 if (groupName.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Group name is required.')),
@@ -96,15 +96,6 @@ class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
                 final currentUser = _authenticationService.getCurrentUser;
                 if (currentUser == null) return;
                 // Create group in Firestore
-                final groupDoc =
-                    await FirebaseFirestore.instance.collection('Groups').add({
-                  'name': groupName,
-                  'description': groupDesc,
-                  'createdBy': currentUser.uid,
-                  'createdAt': FieldValue.serverTimestamp(),
-                  'members': [currentUser.uid],
-                  'type': 'group',
-                });
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Group "$groupName" created!')),
@@ -118,52 +109,6 @@ class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
     );
   }
 
-  void _ensureContactExists(String email) async {
-    try {
-      final querySnapshot = await FirebaseFirestore.instance
-          .collection('Users')
-          .where('email', isEqualTo: email)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        final userDoc = querySnapshot.docs.first;
-        final userData = userDoc.data();
-        final uid = userDoc.id;
-
-        // Add the user to the contacts list temporarily
-        setState(() {
-          _searchQuery = email;
-          _searchController.text = email;
-        });
-
-        // Navigate to the ChatPage
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatPage(
-              receiverEmail: email,
-              receiverID: uid,
-            ),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User not found.'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +376,7 @@ class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
                       .collection('Users')
                       .get();
                   final allUsers = usersSnapshot.docs
-                      .map((doc) => doc.data() as Map<String, dynamic>)
+                      .map((doc) => doc.data())
                       .where(
                           (u) => !(data['members'] as List).contains(u['uid']))
                       .toList();

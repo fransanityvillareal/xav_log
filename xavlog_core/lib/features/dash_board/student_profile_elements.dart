@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:xavlog_core/features/dash_board/profile_image_uploader.dart';
 import 'package:xavlog_core/features/login/log_in_main.dart';
-import 'package:xavlog_core/features/login/sign_in_main.dart';
 import 'package:xavlog_core/onboarding/main_onboarding.dart';
-import 'package:xavlog_core/route/welcome.dart';
 
 class ProfileElementsPage extends StatefulWidget {
   const ProfileElementsPage({super.key});
