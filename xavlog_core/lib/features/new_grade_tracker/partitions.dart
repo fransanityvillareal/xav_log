@@ -310,14 +310,9 @@ class _PartitionScreenState extends State<PartitionScreen> {
                     'maxScore': double.tryParse(classworkMaxScoreController.text) ?? 0.0,
                   },
                 );
-                setState(() {
-                  components[index]['name'] = classworkNameController.text;
-                  components[index]['score'] = double.tryParse(classworkScoreController.text) ?? 0.0;
-                  components[index]['maxScore'] = double.tryParse(classworkMaxScoreController.text) ?? 0.0;
-                });
-              await _loadComponents();
-              await _updateDisplayGrade();
               Navigator.of(dialogContext).pop(); 
+              await _updateDisplayGrade();
+              await _loadComponents(); // Reload components to reflect changes
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -521,16 +516,16 @@ class _PartitionScreenState extends State<PartitionScreen> {
     });
   }
 
-  Widget buildInputField(String label, {required TextEditingController controller}) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(),
-      ),
-      keyboardType: label.contains('Percentage') || label.contains('Score') || label.contains('Max Score') ? TextInputType.number : TextInputType.text,
-    );
-  }
+  // Widget buildInputField(String label, {required TextEditingController controller}) {
+  //   return TextField(
+  //     controller: controller,
+  //     decoration: InputDecoration(
+  //       labelText: label,
+  //       border: OutlineInputBorder(),
+  //     ),
+  //     keyboardType: label.contains('Percentage') || label.contains('Score') || label.contains('Max Score') ? TextInputType.number : TextInputType.text,
+  //   );
+  // }
 
 
 //DELETE functions
@@ -665,7 +660,7 @@ class _PartitionScreenState extends State<PartitionScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: GestureDetector(
-                      onLongPress: () {
+                      onTap: () {
                         if (widget.type == 'partition') {
                           _updatePartitionById(widget.id);
                         } else if (widget.type == 'subject') {

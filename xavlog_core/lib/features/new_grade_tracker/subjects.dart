@@ -58,6 +58,79 @@ class _SubjectScreenState extends State<SubjectScreen> {
     }
   }
 
+  void _AddSubjectDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          'Add New Subject',
+          style: TextStyle(
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w600,
+            fontSize: 18.0,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Container(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildInputField("Subject Code*", controller: subjectCodeController),
+                SizedBox(height: 16),
+                buildInputField("Subject Title*", controller: subjectTitleController),
+                SizedBox(height: 16),
+                buildInputField("Units*", controller: unitsController),
+                SizedBox(height: 16),
+                buildInputField("Description", isLarge: true, controller: descriptionController),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Clear controllers and close dialog
+              subjectCodeController.clear();
+              subjectTitleController.clear();
+              unitsController.clear();
+              descriptionController.clear();
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (subjectCodeController.text.isNotEmpty &&
+                  subjectTitleController.text.isNotEmpty &&
+                  unitsController.text.isNotEmpty) {
+                _addSubject();
+                Navigator.of(context).pop();
+              } else {
+                // Show validation message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please fill in all required fields'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF283AA3),
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Add Subject'),
+          ),
+        ],
+      );
+    },
+  );
+}
   // Load subjects from SQLite
   Future<void> _loadSubjects() async {
     List<Map<String, dynamic>> loadedSubjects = await DatabaseService.instance.getSubjects();
@@ -138,7 +211,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 24.0),
                             child: Text(
-                              'Average QPI',
+                              'QPI',
                               style: TextStyle(
                                 fontFamily: 'Jost',
                                 fontWeight: FontWeight.w600,
@@ -241,7 +314,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
           onPressed: () {
             // Action to add a new subject
             setState(() {
-                showOverlay = true;
+                _AddSubjectDialog();
             });
           },
           backgroundColor: const Color(0xFF283AA3),
@@ -249,66 +322,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
         ),
       ),
     ),
-    if (showOverlay)
-    Positioned.fill(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            showOverlay = false;
-          });
-        },
-        child: Container(
-          color: Colors.black.withOpacity(0.5),
-          child: Center(
-            child: Stack(
-              children: [
-                Container(
-                  width: 375,
-                  height: 380,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 30.0, horizontal: 16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        buildInputField("Subject Code*", controller: subjectCodeController),
-                        SizedBox(height: 18),
-                        buildInputField("Subject Title", controller: subjectTitleController),
-                        SizedBox(height: 18),
-                        buildInputField("Units*", controller: unitsController),
-                        SizedBox(height: 18),
-                        buildInputField("Description", isLarge: true, controller: descriptionController),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 20.0,
-                  right: 17.0,
-                  child: GestureDetector(
-                    onTap: () {
-                      _addSubject();
-                      setState(() {
-                        showOverlay = false;
-                      });
-                    },
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 21.0,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
+  
     ], 
     );
   }

@@ -36,16 +36,17 @@ void main() async {
         ),
         home: AuthWrapper(),
         routes: {
+          '/login': (context) => LoginPage(),
           '/choose_account': (context) => const AccountChoosePage(),
-          '/welcome': (context) =>
-              const WelcomeScreen(), // Ensure the route is initialized
+          '/welcome': (context) => const WelcomeScreen(),
+          '/home': (context) => const HomeWrapper(initialTab: 2),
         },
       ),
     ),
   );
 }
 
-// Add this AuthWrapper class
+// Just checks if user is logged in or not
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
