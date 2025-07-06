@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
+
 
 class ChatDrawer extends StatelessWidget {
   const ChatDrawer({super.key});
 
   void logout(BuildContext context) async {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const AuthenticationGate()),
+      MaterialPageRoute(builder: (_) => const ChatHomePage()),
       (route) => false,
     );
   }

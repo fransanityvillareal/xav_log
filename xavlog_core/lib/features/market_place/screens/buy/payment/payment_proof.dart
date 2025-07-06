@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:xavlog_core/features/market_place/models/product.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 
 void navigateToPaymentProof(BuildContext context, Product product,
     String method, String qrCodeAsset, double qrSize) {
@@ -134,7 +134,7 @@ class _PaymentProofPageState extends State<PaymentProofPage> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        AuthenticationGate();
+                        ChatHomePage();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Navigate to Chat!')),
                         );

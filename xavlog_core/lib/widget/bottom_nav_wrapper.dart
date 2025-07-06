@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/dash_board/home_page_dashboard.dart';
-import 'package:xavlog_core/features/dash_board/profile.dart';import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/features/dash_board/profile.dart';
 import 'package:xavlog_core/features/new_grade_tracker/subjects.dart';
 import 'package:xavlog_core/route/general_navigation.dart';
-
+import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 import 'package:xavlog_core/features/market_place/screens/dashboard/dashboard_page.dart';
 
 class HomeWrapper extends StatelessWidget {
@@ -18,7 +18,7 @@ class HomeWrapper extends StatelessWidget {
         initialIndex: 2,
         screens: const [
           SubjectScreen(),
-          AuthenticationGate(),
+          ChatHomePage(),
           Homepage(), // index 2 (default)
           HomeWidget(),
           ProfilePage(),

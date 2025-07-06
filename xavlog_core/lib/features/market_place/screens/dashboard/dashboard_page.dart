@@ -3,7 +3,8 @@ import 'package:xavlog_core/features/market_place/screens/home/home_screen.dart'
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xavlog_core/features/market_place/screens/seller/seller_dashboard_screen.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_gate.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
+
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -48,7 +49,7 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
   final List<Widget> screens = [
     SellerDashboardScreen(),
     HomeScreen(),
-    AuthenticationGate(),
+    ChatHomePage(),
   ];
 
   @override
