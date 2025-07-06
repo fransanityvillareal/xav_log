@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'package:xavlog_core/features/login/account_choose.dart';
 import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
 import 'package:xavlog_core/firebase_options.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:xavlog_core/route/welcome.dart';
 
 void main() async {
