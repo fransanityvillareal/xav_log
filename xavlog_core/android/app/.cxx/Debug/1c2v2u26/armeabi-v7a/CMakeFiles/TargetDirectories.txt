@@ -1,0 +1,2 @@
+D:/GRRS Files/Source Codes/Flutter/xav_log/xavlog_core/android/app/.cxx/Debug/1c2v2u26/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/GRRS Files/Source Codes/Flutter/xav_log/xavlog_core/android/app/.cxx/Debug/1c2v2u26/armeabi-v7a/CMakeFiles/rebuild_cache.dir
