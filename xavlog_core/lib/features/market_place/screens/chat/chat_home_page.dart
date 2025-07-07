@@ -118,7 +118,9 @@ void _createGroup() {
                         'createdBy': currentUser.uid,
                         'createdAt': FieldValue.serverTimestamp(),
                         'members': [currentUser.uid],
-                        'admins': [currentUser.uid],
+                        'type': 'group',
+                        //add admin
+                        //add profile
                       });
 
                       // Close dialog
