@@ -263,7 +263,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.fromLTRB(16, 16, 0, 0),
+        margin: EdgeInsets.fromLTRB(16, 16, 0, 4),
         child: Text(
           title,
           style: TextStyle(
