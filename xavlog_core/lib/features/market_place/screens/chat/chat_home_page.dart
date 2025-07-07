@@ -57,57 +57,105 @@ class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
     });
   }
 
-  void _createGroup() {
-    final TextEditingController _groupNameController = TextEditingController();
-    final TextEditingController _groupDescController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+void _createGroup() {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      final TextEditingController groupNameController = TextEditingController();
+      final TextEditingController groupDescController = TextEditingController();
+      
+      return AlertDialog(
         title: const Text('Create New Group'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _groupNameController,
-              decoration: const InputDecoration(
-                labelText: 'Group Name',
-                border: OutlineInputBorder(),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: groupNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Group Name',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _groupDescController,
-              decoration: const InputDecoration(
-                labelText: 'Description (optional)',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 12),
+              TextField(
+                controller: groupDescController,
+                decoration: const InputDecoration(
+                  labelText: 'Description (optional)',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final groupName = _groupNameController.text.trim();
-                _groupDescController.text.trim();
-                if (groupName.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Group name is required.')),
-                  );
-                  return;
-                }
-                final currentUser = _authenticationService.getCurrentUser;
-                if (currentUser == null) return;
-                // Create group in Firestore
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Group "$groupName" created!')),
-                );
-              },
-              child: const Text('Create Group'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final groupName = groupNameController.text.trim();
+                    final groupDesc = groupDescController.text.trim();
+                    
+                    if (groupName.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Group name is required.')),
+                      );
+                      return;
+                    }
+                    
+                    final currentUser = _authenticationService.getCurrentUser;
+                    if (currentUser == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('You must be logged in to create a group.')),
+                      );
+                      return;
+                    }
+
+                    try {
+                      // Create the group document in Firestore
+                      await FirebaseFirestore.instance.collection('Groups').add({
+                        'name': groupName,
+                        'description': groupDesc.isNotEmpty ? groupDesc : null,
+                        'createdBy': currentUser.uid,
+                        'createdAt': FieldValue.serverTimestamp(),
+                        'members': [currentUser.uid],
+                        'admins': [currentUser.uid],
+                      });
+
+                      // Close dialog
+                      Navigator.pop(context);
+                      
+                      // Show success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Group "$groupName" created successfully!'),
+                          backgroundColor: const Color(0xFF52B788),
+                        ),
+                      );
+                      
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error creating group: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF003A70),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text('Create Group'),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
+    },
+  );
+}
 
 
   @override
