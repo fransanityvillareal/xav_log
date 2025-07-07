@@ -166,82 +166,98 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            alignment: AlignmentDirectional(1, -1),
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Column(
-                  children: [
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            // _buildHeader(),
+  return Scaffold(
+    backgroundColor: Colors.white,
+    body: SafeArea(
+      child: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: Stack(
+          alignment: AlignmentDirectional(1, -1),
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Column(
+                children: [
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoScrollHeader(),
 
-                            AutoScrollHeader(),
-                            _buildSectionTitle('Categories'),
-                            _buildMainCategoryButtons(),
-                            _buildSecondaryCategoryButtons(),
-                            _buildSectionTitle('Place'),
-                            _buildFeaturedContent(
-                                'assets/images/place.jpg',
-                                'Ateneo De Naga',
-                                Text(
-                                    'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.',
-                                    style: TextStyle(
-                                      fontSize: 18, // Increased font size
-                                      fontFamily: 'Jost',
-                                    )),
-                                index: 0),
-                            _buildSectionTitle('Transactions'),
-                            _buildFeaturedContent(
-                                'assets/images/transactions.jpg',
-                                'Flexible Transactions',
-                                Text(
-                                    'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.',
-                                    style: TextStyle(
-                                      fontSize: 18, // Increased font size
-                                      fontFamily: 'Jost',
-                                    )),
-                                index: 1),
-                            _buildSectionTitle('Buy and Sell'),
+                          SizedBox(height: 12),
 
-                            _buildFeaturedContent(
-                                'assets/images/buying.jpg',
-                                'Sell and Buy Items from Ateneans',
-                                Text(
-                                    'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.',
-                                    style: TextStyle(
-                                      fontSize: 18, // Increased font size
-                                      fontFamily: 'Jost',
-                                    )),
-                                index: 3),
-                          ]
-                              .map((widget) => Padding(
-                                    padding: EdgeInsets.only(bottom: 24),
-                                    child: widget,
-                                  ))
-                              .toList(),
-                        ),
+                          _buildSectionTitle('Categories'),
+                          
+                          _buildCategoryBar(),
+
+                          SizedBox(height: 24), // Space between sections
+
+                          _buildSectionTitle('Ateneo de Naga University'),
+                          SizedBox(height: 8), // Space between title and content
+                          _buildFeaturedContent(
+                            'assets/images/place.jpg',
+                            null,
+                            Text(
+                              'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Jost',
+                              ),
+                            ),
+                            index: 0,
+                          ),
+
+                          SizedBox(height: 24),
+
+                          _buildSectionTitle('Flexible Transactions'),
+                          SizedBox(height: 8),
+                          _buildFeaturedContent(
+                            'assets/images/transactions.jpg',
+                            null,
+                            Text(
+                              'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Jost',
+                              ),
+                            ),
+                            index: 1,
+                          ),
+
+                          SizedBox(height: 24),
+
+                          _buildSectionTitle('Ateneans Buy and Sell'),
+                          SizedBox(height: 8),
+                          _buildFeaturedContent(
+                            'assets/images/buying.jpg',
+                            null,
+                            Text(
+                              'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Jost',
+                              ),
+                            ),
+                            index: 3,
+                          ),
+
+                          SizedBox(height: 24),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildSectionTitle(String title) {
     return Align(
