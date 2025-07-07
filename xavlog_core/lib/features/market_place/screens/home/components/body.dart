@@ -46,13 +46,20 @@ class BodyState extends State<Body> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-          child: Text(
-            'Campus\nMarketplace',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 0, 0, 0),
-                fontSize: 25),
-          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 12),
+              Text(
+                'Campus\nMarketplace',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 25),
+              ),
+            ]
+          )
+          
         ),
         const SizedBox(height: 10),
         Category(
