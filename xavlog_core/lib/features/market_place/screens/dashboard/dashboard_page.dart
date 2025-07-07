@@ -276,184 +276,122 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  Widget _buildMainCategoryButtons() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment
-            .spaceBetween, // Ensures even spacing between buttons
-        children: [
-          Expanded(
-            child: _buildCategoryButton(
-              'PE Equipment',
-              'assets/images/sport.png',
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(initialCategoryIndex: 1)),
-                );
-              },
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: _buildCategoryButton('Books', 'assets/images/book.png', () {
+  Widget _buildCategoryBar() {
+  return SizedBox(
+    height: 150, // ⬅️ Increased height to give room for shadow visibility
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: BouncingScrollPhysics(),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // optional
+          children: [
+            _buildCategoryItem('Stationery', 'assets/images/book.png', () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => HomeScreen(initialCategoryIndex: 0)),
+                  builder: (context) =>
+                      HomeScreen(initialCategoryIndex: 0),
+                ),
               );
             }),
+            _buildCategoryItem('Equipment', 'assets/images/sport.png', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HomeScreen(initialCategoryIndex: 1),
+                ),
+              );
+            }),
+            _buildCategoryItem('Clothing', 'assets/images/shirts.png', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HomeScreen(initialCategoryIndex: 2),
+                ),
+              );
+            }),
+            _buildCategoryItem('Technology', 'assets/images/tech.png', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HomeScreen(initialCategoryIndex: 3),
+                ),
+              );
+            }),
+            _buildCategoryItem('Accessories', 'assets/images/accessories.png', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HomeScreen(initialCategoryIndex: 4),
+                ),
+              );
+            }),
+            _buildCategoryItem('Others', 'assets/images/more.png', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      HomeScreen(initialCategoryIndex: 5),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+
+Widget _buildCategoryItem(String text, String assetPath, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 100,
+      height: 100,
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // 👈 vertical margin gives room for shadow
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(38, 0, 0, 0),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCategoryButton(
-      String text, String assetPath, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white, // Background color of the button
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ], // Add shadow here
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Image.asset(
-                    assetPath,
-                    width: 50,
-                    height: 45,
-                    fit: BoxFit.cover,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(text,
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSmallCategoryButton(
-      String text, String assetPath, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 65,
-            height: 65,
-            decoration: BoxDecoration(
-              color: Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Image.asset(assetPath, fit: BoxFit.contain),
-            ),
+          Image.asset(
+            assetPath,
+            width: 50,
+            height: 50,
+            fit: BoxFit.contain,
           ),
           SizedBox(height: 8),
           Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSecondaryCategoryButtons() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              SizedBox(width: 20),
-              _buildSmallCategoryButton('Shirt', 'assets/images/shirts.png',
-                  () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(initialCategoryIndex: 2),
-                  ),
-                );
-              }),
-              SizedBox(width: 20),
-              _buildSmallCategoryButton('Tech', 'assets/images/tech.png', () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(initialCategoryIndex: 3)),
-                );
-              }),
-              SizedBox(width: 20),
-              _buildSmallCategoryButton(
-                  'Accessories', 'assets/images/accessories.png', () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(initialCategoryIndex: 4)),
-                );
-              }),
-              SizedBox(width: 20),
-              _buildSmallCategoryButton('Others', 'assets/images/more.png', () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(initialCategoryIndex: 5)),
-                );
-              }),
-              SizedBox(width: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
+    ),
+  );
+}
+  
   Widget _buildFeaturedContent(
     String assetPath,
     String title,
