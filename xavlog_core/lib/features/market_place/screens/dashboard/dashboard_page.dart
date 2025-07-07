@@ -391,89 +391,87 @@ Widget _buildCategoryItem(String text, String assetPath, VoidCallback onTap) {
     ),
   );
 }
-  
-  Widget _buildFeaturedContent(
-    String assetPath,
-    String title,
-    Text description, {
-    required int index,
-  }) {
-    // Use the official working Street View link for index 0
-    final Uri streetViewUri = Uri.parse(
-      'https://www.google.com/maps/@13.630323,123.1851484,3a,90y,12.57h,89.88t/data=!3m7!1e1!3m5!1sCIHM0ogKEICAgICpzOfmkwE!2e10!6shttps:%2F%2Flh3.googleusercontent.com%2Fgpms-cs-s%2FAB8u6HYlEiHQW-0I04qkGSwIs--hqp0S9Z7mZ28O7hNCvSo3zhNipEmmyOFLk-E7CHE6OfsEFZViLtqLNz2qN8Bmqmi_31SZntJa_haa14jtc_YVSFzD8psMuvU91DSxXTgT-BIO_rZOfQ%3Dw900-h600-k-no-pi0.11886842302389766-ya12.567076750166581-ro0-fo100!7i6080!8i3040?entry=ttu&g_ep=EgoyMDI1MDUwNy4wIKXMDSoASAFQAw%3D%3D',
-    );
 
-    void handleTap(BuildContext context) async {
-      if (index == 0) {
-        // Open Street View link with robust error handling
-        try {
-          final launched = await launchUrl(
-            streetViewUri,
-            mode: LaunchMode.externalApplication,
-          );
-          if (!launched) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Could not open Street View.")),
-            );
-          }
-        } catch (e) {
+  Widget _buildFeaturedContent(
+  String assetPath,
+  String? title,
+  Text description, {
+  required int index,
+}) {
+  final Uri streetViewUri = Uri.parse(
+    'https://www.google.com/maps/@13.630323,123.1851484,3a,90y,12.57h,89.88t/data=!3m7!1e1!3m5!1sCIHM0ogKEICAgICpzOfmkwE!2e10!6shttps:%2F%2Flh3.googleusercontent.com%2Fgpms-cs-s%2FAB8u6HYlEiHQW-0I04qkGSwIs--hqp0S9Z7mZ28O7hNCvSo3zhNipEmmyOFLk-E7CHE6OfsEFZViLtqLNz2qN8Bmqmi_31SZntJa_haa14jtc_YVSFzD8psMuvU91DSxXTgT-BIO_rZOfQ%3Dw900-h600-k-no-pi0.11886842302389766-ya12.567076750166581-ro0-fo100!7i6080!8i3040?entry=ttu&g_ep=EgoyMDI1MDUwNy4wIKXMDSoASAFQAw%3D%3D',
+  );
+
+  void handleTap(BuildContext context) async {
+    if (index == 0) {
+      try {
+        final launched = await launchUrl(
+          streetViewUri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (!launched) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: $e")),
+            const SnackBar(content: Text("Could not open Street View.")),
           );
         }
-      } else {
-        // Show zoomable dialog for other images
-        showDialog(
-          context: context,
-          builder: (_) => Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.all(10),
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: InteractiveViewer(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    assetPath,
-                    fit: BoxFit.contain,
-                  ),
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(10),
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: InteractiveViewer(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  assetPath,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
           ),
-        );
-      }
+        ),
+      );
     }
+  }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: () => handleTap(context),
-            child: Stack(
-              alignment: const AlignmentDirectional(1, -1),
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    assetPath,
-                    width: double.infinity,
-                    height: 155,
-                    fit: BoxFit.cover,
-                  ),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Column(
+      children: [
+        GestureDetector(
+          onTap: () => handleTap(context),
+          child: Stack(
+            alignment: const AlignmentDirectional(1, -1),
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  assetPath,
+                  width: double.infinity,
+                  height: 155,
+                  fit: BoxFit.cover,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(68),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+        ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(68),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (title != null && title.isNotEmpty)
                 Text(
                   title,
                   style: const TextStyle(
@@ -481,17 +479,18 @@ Widget _buildCategoryItem(String text, String assetPath, VoidCallback onTap) {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              if (title != null && title.isNotEmpty)
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Flexible(child: description),
-                  ],
-                ),
-              ],
-            ),
+              Row(
+                children: [
+                  Flexible(child: description),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }
