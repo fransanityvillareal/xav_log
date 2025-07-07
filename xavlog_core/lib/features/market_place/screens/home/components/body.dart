@@ -26,10 +26,10 @@ class BodyState extends State<Body> {
   }
 
   final List<String> categories = [
-    'Books',
-    'PE Equipment',
-    'Shirt',
-    'Tech',
+    'Stationery',
+    'Equipment',
+    'Clothing',
+    'Technology',
     'Accessories',
     'Others'
   ];
@@ -47,11 +47,11 @@ class BodyState extends State<Body> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
           child: Text(
-            'Marketplace',
+            'Campus\nMarketplace',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF071D99),
-                fontSize: 32),
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 25),
           ),
         ),
         const SizedBox(height: 10),
@@ -106,47 +106,54 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: press,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(kDefaultPadding),
-            height: 180,
-            width: 168,
-            decoration: BoxDecoration(
-              color: product.color,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: product.image.isNotEmpty
-                ? Image.network(
-                    product.image,
-                    fit: BoxFit.cover,
-                  )
-                : const Icon(Icons.image, size: 50),
+  return GestureDetector(
+    onTap: press,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(kDefaultPadding),
+          height: 165,
+          width: 165,
+          decoration: BoxDecoration(
+            color: product.color,
+            borderRadius: BorderRadius.circular(16),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),
-            child: Text(
-              product.title,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          Text(
-            'PHP ${product.price}',
+          child: product.image.isNotEmpty
+              ? Image.network(
+                  product.image,
+                  fit: BoxFit.cover,
+                )
+              : const Icon(Icons.image, size: 50),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),
+          child: Text(
+            product.title,
+            textAlign: TextAlign.center,
             style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF007F5F),
-                fontSize: 16),
+              color: Colors.black,
+              fontSize: 19,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8), 
+          child: Text(
+            'P ${product.price}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Color.fromARGB(255, 17, 5, 152),
+              fontSize: 17,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }
 
 class Category extends StatefulWidget {
@@ -216,33 +223,35 @@ class _CategoryState extends State<Category> {
   }
 
   Widget buildCategory(int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-      child: GestureDetector(
-        onTap: () => widget.onCategorySelected(index),
-        child: Column(
-          children: [
-            Text(
-              widget.categories[index],
-              style: TextStyle(
-                fontSize: 18, // Increased font size for navigation text
-                fontWeight: FontWeight.bold,
-                color: widget.selectedIndex == index
-                    ? const Color.fromARGB(255, 0, 0, 0)
-                    : const Color(0xFF6F6F79),
-              ),
+  final bool isSelected = widget.selectedIndex == index;
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+    child: GestureDetector(
+      onTap: () => widget.onCategorySelected(index),
+      child: Column(
+        children: [
+          Text(
+            widget.categories[index],
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: isSelected
+                  ? Color.fromARGB(255, 14, 0, 174) 
+                  : const Color.fromARGB(255, 74, 74, 74), 
             ),
-            Container(
-              margin: const EdgeInsets.only(top: kDefaultPadding / 4),
-              height: 2,
-              width: 30,
-              color: widget.selectedIndex == index
-                  ? kNavActiveColor
-                  : Colors.transparent,
-            ),
-          ],
-        ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: kDefaultPadding / 4),
+            height: 2,
+            width: 30,
+            color: isSelected
+                ? Color.fromARGB(255, 0, 0, 0) 
+                : Colors.transparent,
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
