@@ -34,7 +34,7 @@ class Category extends StatefulWidget {
 }
 
 class CategoryState extends State<Category> {
-  List<String> categories = ['Books', 'PE Equipment', 'Shirt', 'Tech', 'Accessories'];
+  List<String> categories = ['Stationnery', 'Equipment', 'Clothing', 'Technology', 'Accessories' 'Others'];
   int selectedIndex = 0;
 
   @override

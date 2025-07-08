@@ -304,12 +304,12 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                     ),
                   ),
                   items: [
-                    'Books',
-                    'PE Equipment',
+                    'Stationnery',
+                    'Equipment',
+                    'Clothing',
+                    'Technology',
                     'Accessories',
-                    'Tech',
-                    'Shirt',
-                    'Others',
+                    'Others'
                   ]
                       .map((cat) => DropdownMenuItem(
                             value: cat,
@@ -341,22 +341,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                 ),
               ),
 
-              // Chat Now Button
-              ElevatedButton.icon(
-                onPressed: () {
-                  final user = FirebaseAuth.instance.currentUser;
-                  final sellerEmail = user?.email ?? 'Unknown';
-                  _chatNow(sellerEmail);
-                },
-                icon: const Icon(Icons.chat),
-                label: const Text('Chat Now'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
+           
 
               // Add Product Button
               const SizedBox(height: 20),
