@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_page.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/components/chat_drawer.dart';
-import 'package:xavlog_core/features/market_place/services/chat/chat_services.dart';
-import 'package:xavlog_core/features/market_place/services/login_authentication/authentication_service.dart';
+import 'package:xavlog_core/services/chat_services.dart';
+import 'package:xavlog_core/services/authentication_service.dart';
 
 class ChatHomePage extends StatefulWidget {
   final String? initialSearchQuery; // Add initialSearchQuery parameter
