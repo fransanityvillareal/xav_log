@@ -355,7 +355,7 @@ Widget _buildCategoryItem(String text, String assetPath, VoidCallback onTap) {
     child: Container(
       width: 100,
       height: 100,
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // 👈 vertical margin gives room for shadow
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // 👈 vertical margin gives room for shadow - AI ito noh - gian
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,

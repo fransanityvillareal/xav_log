@@ -10,6 +10,7 @@ import 'package:xavlog_core/firebase_options.dart';
 import 'package:xavlog_core/route/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
+// import 'package:xavlog_core/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -18,6 +19,8 @@ void main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtaHF6dHdzeXl6dWp4Z2VsdmViIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTM0NTk2OSwiZXhwIjoyMDY2OTIxOTY5fQ._w35gtuLUCtIyQ1vmExgKuVmYkHJUAJ64Gw-JupRKvE',
   );
+  // Initialize notifications
+  // await NotificationService.initialize();
   runApp(
     MultiProvider(
       providers: [
