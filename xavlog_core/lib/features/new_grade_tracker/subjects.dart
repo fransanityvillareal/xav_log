@@ -63,6 +63,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
+        backgroundColor: Colors.white,
         title: Text(
           'Add New Subject',
           style: TextStyle(
@@ -238,13 +239,13 @@ class _SubjectScreenState extends State<SubjectScreen> {
                   ),
                   // Dinamically generated subject cards
                   if (subjects.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 48.0),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6, 
                       child: Center(
                         child: Text(
                           'No Subjects',
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             color: Colors.grey,
                             fontWeight: FontWeight.w500,
                           ),
@@ -307,19 +308,13 @@ class _SubjectScreenState extends State<SubjectScreen> {
             );
           },
         )),
-      floatingActionButton: SizedBox(
-        width: 68,
-        height: 68,
-        child: FloatingActionButton(
-          onPressed: () {
-            // Action to add a new subject
-            setState(() {
-                _AddSubjectDialog();
-            });
-          },
-          backgroundColor: const Color(0xFF283AA3),
-          child: const Icon(Icons.add, size: 34.0, color: Colors.white),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _AddSubjectDialog(); // Remove setState wrapper
+        },
+        backgroundColor: const Color(0xFF283AA3),
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, size: 24.0, color: Colors.white),
       ),
     ),
   

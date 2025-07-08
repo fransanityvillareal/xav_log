@@ -51,6 +51,7 @@ class _PartitionScreenState extends State<PartitionScreen> {
     context: context,
     builder: (context) {
       return AlertDialog(
+        backgroundColor: Colors.white,
         title: Text('Add Component'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
