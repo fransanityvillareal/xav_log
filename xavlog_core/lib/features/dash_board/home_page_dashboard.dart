@@ -2,11 +2,9 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:xavlog_core/features/login/log_in_main.dart';
 import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
 import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'profile.dart';
-import '../login/faqs.dart';
 import '../event_finder/notifications_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -69,80 +67,148 @@ class _HomepageState extends State<Homepage> {
   // Activities shown on the dashboard
   // BACKEND: Should be fetched from API based on user ID and relevance
   // DYNAMIC: Should update in real-time as new activities are added
-  final List<Activity> activities = [
-    Activity(
-      title: 'Midterm Examination',
-      description: 'Comprehensive exam covering chapters 1-5',
-      date: DateTime.now()
-          .add(const Duration(days: 2)), // DYNAMIC: Calculate from current date
-      category: 'Academic', // Used for filtering and categorization
-    ),
-    Activity(
-      title: 'Project Deadline',
-      description: 'Final submission of mobile development project',
-      date: DateTime.now()
-          .add(const Duration(days: 5)), // DYNAMIC: Calculate from current date
-      category: 'Project',
-    ),
-    Activity(
-      title: 'Organization Meeting',
-      description: 'Monthly general assembly',
-      date: DateTime.now()
-          .add(const Duration(days: 7)), // DYNAMIC: Calculate from current date
-      category:
-          'Organization', // BACKEND: Missing date field should be handled gracefully
-    ),
-    /////////////////////// Add more activities as needed through add button on upcoming activities //////////////////////////
-  ];
+  // Example activities
+    // Activity(
+    //   title: 'Midterm Examination',
+    //   description: 'Comprehensive exam covering chapters 1-5',
+    //   date: DateTime.now()
+    //       .add(const Duration(days: 2)), // DYNAMIC: Calculate from current date
+    //   category: 'Academic', // Used for filtering and categorization
+    // ),
+    
+    //Add more activities as needed through add button on upcoming activities
+  List<Activity> activities = [];
+  bool _isLoadingActivities = false;
 
-  final List<String> _carouselImages = [
-    'https://i0.wp.com/dateline-ibalon.com/wp-content/uploads/2024/01/Fr-Olin-adnu-church-wally-ocampo-ritratos-ni-wally.jpg?resize=930%2C450&ssl=1',
-    'https://ol-content-api.global.ssl.fastly.net/sites/default/files/styles/scale_and_crop_center_890x320/public/2023-01/ateneodenaga-banner-1786x642.jpg?itok=oNejbYDa', // Added Ateneo de Naga University logo
-    'https://jhs.adnu.edu.ph/pluginfile.php/17657/mod_page/content/12/main-campus.jpg',
-    'https://live.staticflickr.com/2336/2144157090_cb221623eb_h.jpg',
-  ];
-
-  void updateName(String newName) {
-    setState(() {
-      _name = newName;
-    });
-  }
-
-  void updateDescription(String newDescription) {
-    setState(() {
-      _description = newDescription;
-    });
-  }
-
-  void updateNotifNumber(String newNumber) {
-    setState(() {
-      _notifNumber = newNumber;
-    });
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: const Color(0xFF071D99),
-            colorScheme: const ColorScheme.light(primary: Color(0xFF071D99)),
-            buttonTheme: const ButtonThemeData(
-              textTheme: ButtonTextTheme.primary,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
+  // Upload activity to Firebase
+  Future<void> _uploadActivityToFirebase() async {
+    if (_titleController.text.isEmpty) return;
+    
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+    
+    try {
+      await FirebaseFirestore.instance.collection('user_activities').add({
+        'userId': currentUser.uid,
+        'title': _titleController.text,
+        'description': _descriptionController.text,
+        'date': Timestamp.fromDate(_selectedDate),
+        'category': _selectedCategory,
+        'createdAt': FieldValue.serverTimestamp(),    // pwede tikalin
       });
+      
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Activity added successfully!')),
+      );
+      
+      // Refresh the activities list
+      await _loadActivitiesFromFirebase();
+        
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding activity: $e')),
+      );
+    }
+  }
+
+  // Load activities from Firebase
+  Future<void> _loadActivitiesFromFirebase() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+    
+    setState(() {
+      _isLoadingActivities = true;
+    });
+    
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('user_activities')
+          .where('userId', isEqualTo: currentUser.uid)
+          .get();
+      
+      final loadedActivities = querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        return Activity(
+          title: data['title'] ?? '',
+          description: data['description'] ?? '',
+          date: (data['date'] as Timestamp).toDate(),
+          category: data['category'] ?? 'Academic',
+          documentId: doc.id,
+        );
+      }).toList();
+      loadedActivities.sort((a, b) => a.date.compareTo(b.date));
+      
+      setState(() {
+        activities = loadedActivities;
+        _isLoadingActivities = false;
+      });
+      
+    } catch (e) {
+      setState(() {
+        _isLoadingActivities = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading activities: $e')),
+      );
+    }
+  }
+
+  //delete from both Firebase and local storage
+  Future<void> _deleteActivity(int index) async {
+    try {
+      final activity = activities[index];
+      
+      // Show confirmation dialog
+      final shouldDelete = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Delete Activity'),
+          content: Text('Are you sure you want to delete "${activity.title}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      );
+      
+      if (shouldDelete == true) {
+        // Remove from local list
+        setState(() {
+          activities.removeAt(index);
+        });
+        
+        // Delete from Firebase
+        if (activity.documentId != null) {
+          try {
+            await FirebaseFirestore.instance
+                .collection('user_activities')
+                .doc(activity.documentId!)
+                .delete();
+            
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Activity deleted successfully!')),
+            );
+            
+          } catch (e) {
+            // If Firebase deletion fails, show error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Warning: Failed to sync deletion with server: $e')),
+            );
+          }
+        }
+      }
+      
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting activity: $e')),
+      );
     }
   }
 
@@ -155,7 +221,7 @@ class _HomepageState extends State<Homepage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white, // <-- Make background pure white
+          backgroundColor: Colors.white,
           title: Text(
             'Add New Activity',
             style: TextStyle(
@@ -222,41 +288,60 @@ class _HomepageState extends State<Homepage> {
               },
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF071D99),
-              ),
-              onPressed: () {
-                if (_titleController.text.isNotEmpty) {
-                  setState(() {
-                    activities.add(
-                      Activity(
-                        title: _titleController.text,
-                        description: _descriptionController.text,
-                        date: _selectedDate,
-                        category: _selectedCategory,
-                      ),
-                    );
-                    // Sort activities by date
-                    activities.sort((a, b) => a.date.compareTo(b.date));
-                  });
-                  Navigator.pop(context);
-                  _titleController.clear();
-                  _descriptionController.clear();
-                  _selectedCategory = 'Academic';
-                  _selectedDate = DateTime.now();
-                }
-              },
-              child: const Text(
-                'Add Activity',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+           ElevatedButton(
+            onPressed: () async {
+              if (_titleController.text.isNotEmpty) {
+                await _uploadActivityToFirebase();
+                
+                Navigator.pop(context);
+                _titleController.clear();
+                _descriptionController.clear();
+                _selectedCategory = 'Academic';
+                _selectedDate = DateTime.now();
+              }
+            },
+            child: const Text('Add Activity'),
+          ),
           ],
         );
       },
     );
   }
+
+  final List<String> _carouselImages = [
+    'https://i0.wp.com/dateline-ibalon.com/wp-content/uploads/2024/01/Fr-Olin-adnu-church-wally-ocampo-ritratos-ni-wally.jpg?resize=930%2C450&ssl=1',
+    'https://ol-content-api.global.ssl.fastly.net/sites/default/files/styles/scale_and_crop_center_890x320/public/2023-01/ateneodenaga-banner-1786x642.jpg?itok=oNejbYDa', // Added Ateneo de Naga University logo
+    'https://jhs.adnu.edu.ph/pluginfile.php/17657/mod_page/content/12/main-campus.jpg',
+    'https://live.staticflickr.com/2336/2144157090_cb221623eb_h.jpg',
+  ];
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: const Color(0xFF071D99),
+            colorScheme: const ColorScheme.light(primary: Color(0xFF071D99)),
+            buttonTheme: const ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
+
 
   Widget _buildAnalyticsSummary() {
     final screenSize = MediaQuery.of(context).size;
@@ -694,123 +779,142 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget _buildUpcomingActivities() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Upcoming Activities',
-                style: TextStyle(
-                  fontSize: 23,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Jost',
-                  color: Color(0xFF071D99),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Upcoming Activities',
+              style: TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Jost',
+                color: Color(0xFF071D99),
+              ),
+            ),
+            GestureDetector(
+              onTap: _showAddActivityDialog,
+              child: Tooltip(
+                message: 'Add Activity',
+                child: CircleAvatar(
+                  backgroundColor: const Color(0xFFD7A61F),
+                  child: const Icon(Icons.add, color: Colors.white),
                 ),
               ),
-              GestureDetector(
-                onTap: _showAddActivityDialog,
-                child: Tooltip(
-                  message: 'Add Activity',
-                  child: CircleAvatar(
-                    backgroundColor: const Color(0xFFD7A61F),
-                    child: const Icon(Icons.add, color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: activities.length,
-            itemBuilder: (context, index) {
-              final activity = activities[index];
-              return Card(
-                color: Colors.white,
-                elevation: 4,
-                margin: const EdgeInsets.only(bottom: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ExpansionTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF071D99).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      _getCategoryIcon(activity.category),
-                      color: const Color(0xFF071D99),
-                    ),
-                  ),
-                  title: Text(
-                    activity.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF071D99),
-                    ),
-                  ),
-                  subtitle: Text(
-                    _formatDate(activity.date),
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.category,
-                                size: 20,
-                                color: Color(0xFF071D99),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Category: ${activity.category}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.description,
-                                size: 20,
-                                color: Color(0xFF071D99),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  activity.description,
-                                  style: TextStyle(color: Colors.grey[800]),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        
+        // Replace StreamBuilder with conditional rendering
+        _isLoadingActivities
+            ? const Center(child: CircularProgressIndicator())
+            : activities.isEmpty
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text(
+                        'No activities yet. Add your first activity!',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+                  )
+                : ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: activities.length,
+                    itemBuilder: (context, index) {
+                      final activity = activities[index];
+                      
+                      return Card(
+                        color: Colors.white,
+                        elevation: 4,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ExpansionTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF071D99).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              _getCategoryIcon(activity.category),
+                              color: const Color(0xFF071D99),
+                            ),
+                          ),
+                          title: Text(
+                            activity.title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF071D99),
+                            ),
+                          ),
+                          subtitle: Text(
+                            _formatDate(activity.date),
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _deleteActivity(index),
+                          ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.category,
+                                        size: 20,
+                                        color: Color(0xFF071D99),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Category: ${activity.category}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.description,
+                                        size: 20,
+                                        color: Color(0xFF071D99),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          activity.description,
+                                          style: TextStyle(color: Colors.grey[800]),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+      ],
+    ),
+  );
+}
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
@@ -827,153 +931,6 @@ class _HomepageState extends State<Homepage> {
 
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}/${date.year}';
-  }
-
-  void _showMainMenu(BuildContext context) {
-    Scaffold.of(
-      context,
-    ).openEndDrawer(); // Use openEndDrawer to open the drawer from the right
-  }
-
-  Drawer _buildMainMenuDrawer() {
-    return Drawer(
-      backgroundColor: Colors.white,
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            DrawerHeader(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Center(
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: const Color(0xFFD7A61F),
-                      backgroundImage: _profileImageUrl.isNotEmpty
-                          ? NetworkImage(_profileImageUrl)
-                          : null,
-                      child: _profileImageUrl.isEmpty
-                          ? const Icon(Icons.person,
-                              size: 40, color: Colors.white)
-                          : null,
-                      onBackgroundImageError: (_, __) {},////
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Text(
-                      _name,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Jost',
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      _description,
-                      style: const TextStyle(fontSize: 12, fontFamily: 'Inter'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.notifications,
-                color: Color(0xFF071D99),
-              ),
-              title: const Text('Notifications'),
-              trailing: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF071D99),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  _notifNumber,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsPage(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Color(0xFF071D99)),
-              title: const Text('Settings'),
-              onTap: () {
-                ///////////////// Handle setting, open setting page ////////////////////////
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help, color: Color(0xFF071D99)),
-              title: const Text('Help & Support'),
-              onTap: () {
-                ///////////////// Handle FAQs, open FAQs page ////////////////////////
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const FAQs()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip, color: Color(0xFF071D99)),
-              title: const Text('Privacy Policy'),
-              onTap: () {
-                ///////////////// Handle privacy policy, open privacy policy page ////////////////////////
-                Navigator.pop(context);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Color(0xFF071D99)),
-              title: const Text('Logout'),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.white,
-                      title: const Text('Logout'),
-                      content: const Text('Are you sure you want to logout?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context); // Close dialog
-                            Navigator.pop(context); // Close drawer
-                            FirebaseAuth.instance.signOut();
-                            // Remove all previous routes and go to LoginPage
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                          },
-                          child: const Text('Logout'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   List<Activity> _getEventsForDay(DateTime day) {
@@ -1009,7 +966,7 @@ class _HomepageState extends State<Homepage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Events on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
+                          'Activities on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}',
                           style: TextStyle(
                             fontSize: fontSize * 1.2,
                             fontWeight: FontWeight.bold,
@@ -1170,6 +1127,7 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     _fetchUserProfile();
+    _loadActivitiesFromFirebase();
   }
 
   Future<void> _fetchUserProfile() async {
@@ -1208,8 +1166,6 @@ class _HomepageState extends State<Homepage> {
       child: Scaffold(
         backgroundColor:
             const Color.fromARGB(255, 255, 255, 255), // Blue background
-        endDrawer:
-            _buildMainMenuDrawer(), // Use endDrawer for right-side drawer
         body: SingleChildScrollView(
           padding:
               EdgeInsets.only(top: MediaQuery.of(context).padding.top + 30),
@@ -1364,10 +1320,6 @@ class _HomepageState extends State<Homepage> {
                                 ),
                               );
                             },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.menu, color: Colors.white),
-                            onPressed: () => _showMainMenu(context),
                           ),
                         ],
                       ),
@@ -1546,6 +1498,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+//UPDATE THIS: use the homewrapper to navigate to the pages
   void _navigateToPage(String title) {
     switch (title) {
       case 'Attendance Tracker':
@@ -1648,6 +1601,7 @@ class Activity {
   final String description;
   final DateTime date;
   final String category;
+  final String? documentId;
   bool isExpanded;
 
   Activity({
@@ -1655,6 +1609,7 @@ class Activity {
     required this.description,
     required this.date,
     required this.category,
+    this.documentId,
     this.isExpanded = false,
   });
 }
