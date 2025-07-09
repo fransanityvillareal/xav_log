@@ -110,7 +110,7 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currencyFormatter =
-        NumberFormat.currency(locale: 'en_PH', symbol: 'PHP ');
+        NumberFormat.currency(locale: 'en_PH', symbol: 'P ');
 
     return GestureDetector(
       onTap: press,
