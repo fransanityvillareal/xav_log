@@ -200,21 +200,8 @@ class _ProfilePageState extends State<ProfilePage> {
             : null,
         actions: _isEditing
             ? null // Remove settings icon when in edit mode
-            : [
-                Builder(
-                  builder: (context) => IconButton(
-                    icon: const Icon(Icons.settings, color: Colors.white),
-                    onPressed: () {
-                      Scaffold.of(context)
-                          .openEndDrawer(); // Open the settings sidebar
-                    },
-                  ),
-                ),
-              ],
+            : [],
       ),
-      endDrawer: _isEditing
-          ? null
-          : _buildSettingsSidebar(), // Remove sidebar when editing
       body: SingleChildScrollView(
         child: _isEditing
             ? _buildEditForm()
@@ -669,155 +656,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildSettingsSidebar() {
-    return Drawer(
-      backgroundColor: Colors.white, // background
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xFFD7A61F), // Yellow header
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  child: const Icon(Icons.person,
-                      size: 30, color: Color(0xFF071D99)),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.account_circle,
-                color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Account Settings',
-                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
-            onTap: () {
-              // Handle Account Settings action
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Account Settings clicked')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.notifications,
-                color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Notifications',
-                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
-            onTap: () {
-              // Handle Notifications action
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications clicked')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip,
-                color: Color.fromARGB(255, 16, 16, 16)),
-            title: const Text('Privacy Policy',
-                style: TextStyle(color: Color.fromARGB(255, 16, 16, 16))),
-            onTap: () {
-              // Handle Privacy Policy action
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Privacy Policy clicked')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.black),
-            title: const Text('Log Out', style: TextStyle(color: Colors.black)),
-            onTap: () {
-              Navigator.pop(context); // Close drawer
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    title: const Text(
-                      'Logout',
-                      style: TextStyle(
-                        color: Color(0xFF071D99),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: const Text(
-                      'Are you sure you want to logout?',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          // Close dialog using root navigator
-                          Navigator.of(context, rootNavigator: true).pop();
-
-                          // Sign out and navigate
-                          await FirebaseAuth.instance.signOut();
-                          // ignore: use_build_context_synchronously
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                            (route) => false,
-                          );
-                        },
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Color(0xFF071D99),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          )
-        ],
-      ),
-    );
-  }
-
   void _navigateBackWithData() {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => HomeWrapper(initialTab: 2,),
+        builder: (context) => HomeWrapper(
+          initialTab: 2,
+        ),
       ),
       (route) => false,
     );

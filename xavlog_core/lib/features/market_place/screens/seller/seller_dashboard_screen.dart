@@ -24,6 +24,9 @@ class SellerDashboardScreen extends StatelessWidget {
               color: Colors.white,
             )),
         backgroundColor: const Color(0xFF1E3A8A),
+        iconTheme: const IconThemeData(
+            color: Color.fromARGB(
+                255, 255, 255, 255)), // Set back arrow color to black
       ),
       body: Consumer<ProductProvider>(
         builder: (context, productProvider, child) {

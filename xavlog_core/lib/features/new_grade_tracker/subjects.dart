@@ -254,6 +254,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                     )
                   else
                   ...subjects.map((subject) => Card(
+                    color: Colors.white,
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
                       title: Text(subject['subjectTitle']),

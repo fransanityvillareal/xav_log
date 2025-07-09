@@ -3,21 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:xavlog_core/services/database_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
-
 class PartitionScreen extends StatefulWidget {
   final String subjectTitle;
   final int id;
-  final int subjectId; 
+  final int subjectId;
   final String type;
   const PartitionScreen({
     super.key,
     required this.type,
-    required this.subjectTitle, 
+    required this.subjectTitle,
     required this.id,
     required this.subjectId,
-    });
-  
-  
+  });
+
   @override
   State<PartitionScreen> createState() => _PartitionScreenState();
 }
@@ -25,7 +23,7 @@ class PartitionScreen extends StatefulWidget {
 class _PartitionScreenState extends State<PartitionScreen> {
   Map<String, dynamic>? selfDetails = {};
   List<Map<String, dynamic>> components = [];
-    // Example components
+  // Example components
   //   {
   //   'type': 'partition',
   //   'id': '2',
@@ -42,53 +40,58 @@ class _PartitionScreenState extends State<PartitionScreen> {
   final TextEditingController percentageController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController classworkNameController = TextEditingController();
-  final TextEditingController classworkScoreController = TextEditingController();
-  final TextEditingController classworkMaxScoreController = TextEditingController();
+  final TextEditingController classworkScoreController =
+      TextEditingController();
+  final TextEditingController classworkMaxScoreController =
+      TextEditingController();
   bool showClassworkOverlay = false;
 
   void _showAddComponentDialog() {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        backgroundColor: Colors.white,
-        title: Text('Add Component'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton.icon(
-              icon: Icon(Icons.layers, color: Color(0xFFD7A61F)),
-              label: Text('Add Partition', style: TextStyle(color: Color(0xFFD7A61F))),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Color(0xFFD7A61F)),
-                elevation: 0,
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text('Add Component'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                icon: Icon(Icons.layers, color: Color(0xFFD7A61F)),
+                label: Text('Add Partition',
+                    style: TextStyle(color: Color(0xFFD7A61F))),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: BorderSide(color: Color(0xFFD7A61F)),
+                  elevation: 0,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _addPartition();
+                },
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _addPartition();
-              },
-            ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              icon: Icon(Icons.assignment, color: Color(0xFF283AA3)),
-              label: Text('Add Classwork', style: TextStyle(color: Color(0xFF283AA3))),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Color(0xFF283AA3)),
-                elevation: 0,
+              SizedBox(height: 16),
+              ElevatedButton.icon(
+                icon: Icon(Icons.assignment, color: Color(0xFF283AA3)),
+                label: Text('Add Classwork',
+                    style: TextStyle(color: Color(0xFF283AA3))),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: BorderSide(color: Color(0xFF283AA3)),
+                  elevation: 0,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _addClasswork();
+                },
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _addClasswork();
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 //CREATE functions
   void _addPartition() {
     // Clear controllers before showing dialog
@@ -104,9 +107,11 @@ class _PartitionScreenState extends State<PartitionScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                buildInputField("Partition Name* (e.g., Exams)", controller: partitionNameController),
+                buildInputField("Partition Name* (e.g., Exams)",
+                    controller: partitionNameController),
                 SizedBox(height: 18),
-                buildInputField("Percentage*", controller: percentageController),
+                buildInputField("Percentage*",
+                    controller: percentageController),
               ],
             ),
           ),
@@ -146,7 +151,8 @@ class _PartitionScreenState extends State<PartitionScreen> {
                     'parentSubjectId': widget.subjectId,
                     'parentId': parentId,
                     'partitionName': partitionNameController.text,
-                    'percentage': double.tryParse(percentageController.text) ?? 0.0,
+                    'percentage':
+                        double.tryParse(percentageController.text) ?? 0.0,
                     'description': descriptionController.text,
                   };
                   setState(() {
@@ -169,7 +175,6 @@ class _PartitionScreenState extends State<PartitionScreen> {
         );
       },
     );
-    
   }
 
   //Add classworks
@@ -188,11 +193,13 @@ class _PartitionScreenState extends State<PartitionScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                buildInputField("Classwork Name*", controller: classworkNameController),
+                buildInputField("Classwork Name*",
+                    controller: classworkNameController),
                 SizedBox(height: 18),
                 buildInputField("Score", controller: classworkScoreController),
                 SizedBox(height: 18),
-                buildInputField("Max Score*", controller: classworkMaxScoreController),
+                buildInputField("Max Score*",
+                    controller: classworkMaxScoreController),
               ],
             ),
           ),
@@ -230,8 +237,11 @@ class _PartitionScreenState extends State<PartitionScreen> {
                     'parentSubjectId': widget.subjectId,
                     'parentId': parentId,
                     'name': classworkNameController.text,
-                    'score': double.tryParse(classworkScoreController.text) ?? 0.0,
-                    'maxScore': double.tryParse(classworkMaxScoreController.text) ?? 0.0,
+                    'score':
+                        double.tryParse(classworkScoreController.text) ?? 0.0,
+                    'maxScore':
+                        double.tryParse(classworkMaxScoreController.text) ??
+                            0.0,
                     'percentage': 0.0,
                   };
                   setState(() {
@@ -259,7 +269,8 @@ class _PartitionScreenState extends State<PartitionScreen> {
   //Update a classwork by ID
   void _updateClassworkById(int classworkId) async {
     // Find the classwork in the components list
-    final index = components.indexWhere((c) => c['type'] == 'classwork' && c['id'] == classworkId);
+    final index = components
+        .indexWhere((c) => c['type'] == 'classwork' && c['id'] == classworkId);
     if (index == -1) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -272,22 +283,27 @@ class _PartitionScreenState extends State<PartitionScreen> {
 
     // Pre-fill controllers with current values
     classworkNameController.text = components[index]['name'] ?? '';
-    classworkScoreController.text = components[index]['score']?.toString() ?? '';
-    classworkMaxScoreController.text = components[index]['maxScore']?.toString() ?? '';
+    classworkScoreController.text =
+        components[index]['score']?.toString() ?? '';
+    classworkMaxScoreController.text =
+        components[index]['maxScore']?.toString() ?? '';
 
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
         title: Text('Edit Classwork'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              buildInputField("Classwork Name*", controller: classworkNameController),
+              buildInputField("Classwork Name*",
+                  controller: classworkNameController),
               SizedBox(height: 18),
               buildInputField("Score*", controller: classworkScoreController),
               SizedBox(height: 18),
-              buildInputField("Max Score*", controller: classworkMaxScoreController),
+              buildInputField("Max Score*",
+                  controller: classworkMaxScoreController),
             ],
           ),
         ),
@@ -297,6 +313,9 @@ class _PartitionScreenState extends State<PartitionScreen> {
             child: Text('Cancel'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white, // Set button background to white
+            ),
             onPressed: () async {
               if (classworkNameController.text.isNotEmpty &&
                   classworkScoreController.text.isNotEmpty &&
@@ -307,13 +326,16 @@ class _PartitionScreenState extends State<PartitionScreen> {
                   classworkId,
                   {
                     'name': classworkNameController.text,
-                    'score': double.tryParse(classworkScoreController.text) ?? 0.0,
-                    'maxScore': double.tryParse(classworkMaxScoreController.text) ?? 0.0,
+                    'score':
+                        double.tryParse(classworkScoreController.text) ?? 0.0,
+                    'maxScore':
+                        double.tryParse(classworkMaxScoreController.text) ??
+                            0.0,
                   },
                 );
-              Navigator.of(dialogContext).pop(); 
-              await _updateDisplayGrade();
-              await _loadComponents(); // Reload components to reflect changes
+                Navigator.of(dialogContext).pop();
+                await _updateDisplayGrade();
+                await _loadComponents(); // Reload components to reflect changes
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -323,7 +345,12 @@ class _PartitionScreenState extends State<PartitionScreen> {
                 );
               }
             },
-            child: Text('Save'),
+            child: Text(
+              'Save',
+              style: TextStyle(
+                color: Colors.black, // Set text color to black for contrast
+              ),
+            ),
           ),
         ],
       ),
@@ -331,16 +358,17 @@ class _PartitionScreenState extends State<PartitionScreen> {
   }
   //update partition by ID
 
-
 //READ functions
   Future<void> _loadComponents() async {
     List<Map<String, dynamic>> loadedComponents = [];
     if (widget.type == 'partition') {
       // Load components for a partition
-      loadedComponents = await DatabaseService.instance.getComponents(widget.id);
+      loadedComponents =
+          await DatabaseService.instance.getComponents(widget.id);
     } else if (widget.type == 'subject') {
       // Load top-level components for a subject
-      loadedComponents = await DatabaseService.instance.getTopLevelComponents(widget.subjectId);
+      loadedComponents = await DatabaseService.instance
+          .getTopLevelComponents(widget.subjectId);
     }
 
     setState(() {
@@ -365,12 +393,15 @@ class _PartitionScreenState extends State<PartitionScreen> {
       return;
     }
 
-    final TextEditingController nameController = TextEditingController(text: partition['partitionName'] ?? '');
-    final TextEditingController percentageController = TextEditingController(text: partition['percentage']?.toString() ?? '');
+    final TextEditingController nameController =
+        TextEditingController(text: partition['partitionName'] ?? '');
+    final TextEditingController percentageController =
+        TextEditingController(text: partition['percentage']?.toString() ?? '');
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: Text('Edit Partition'),
         content: SingleChildScrollView(
           child: Column(
@@ -388,6 +419,9 @@ class _PartitionScreenState extends State<PartitionScreen> {
             child: Text('Cancel'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white, // Set button background to white
+            ),
             onPressed: () async {
               if (nameController.text.isNotEmpty &&
                   percentageController.text.isNotEmpty &&
@@ -396,12 +430,14 @@ class _PartitionScreenState extends State<PartitionScreen> {
                   partitionId,
                   {
                     'partitionName': nameController.text,
-                    'percentage': double.tryParse(percentageController.text) ?? 0.0,
+                    'percentage':
+                        double.tryParse(percentageController.text) ?? 0.0,
                   },
                 );
                 setState(() {
                   selfDetails?['partitionName'] = nameController.text;
-                  selfDetails?['percentage'] = double.tryParse(percentageController.text) ?? 0.0;
+                  selfDetails?['percentage'] =
+                      double.tryParse(percentageController.text) ?? 0.0;
                 });
                 await _updateDisplayGrade();
                 Navigator.of(context).pop();
@@ -435,14 +471,19 @@ class _PartitionScreenState extends State<PartitionScreen> {
       return;
     }
 
-    final TextEditingController codeController = TextEditingController(text: subject['subjectCode'] ?? '');
-    final TextEditingController titleController = TextEditingController(text: subject['subjectTitle'] ?? '');
-    final TextEditingController unitsController = TextEditingController(text: subject['units']?.toString() ?? '');
-    final TextEditingController descriptionController = TextEditingController(text: subject['description'] ?? '');
+    final TextEditingController codeController =
+        TextEditingController(text: subject['subjectCode'] ?? '');
+    final TextEditingController titleController =
+        TextEditingController(text: subject['subjectTitle'] ?? '');
+    final TextEditingController unitsController =
+        TextEditingController(text: subject['units']?.toString() ?? '');
+    final TextEditingController descriptionController =
+        TextEditingController(text: subject['description'] ?? '');
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: Text('Edit Subject'),
         content: SingleChildScrollView(
           child: Column(
@@ -464,6 +505,9 @@ class _PartitionScreenState extends State<PartitionScreen> {
             child: Text('Cancel'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white, // Set button background to white
+            ),
             onPressed: () async {
               if (codeController.text.isNotEmpty &&
                   titleController.text.isNotEmpty &&
@@ -480,7 +524,8 @@ class _PartitionScreenState extends State<PartitionScreen> {
                 setState(() {
                   selfDetails?['subjectCode'] = codeController.text;
                   selfDetails?['subjectTitle'] = titleController.text;
-                  selfDetails?['units'] = double.tryParse(unitsController.text) ?? 0.0;
+                  selfDetails?['units'] =
+                      double.tryParse(unitsController.text) ?? 0.0;
                   selfDetails?['description'] = descriptionController.text;
                 });
                 await _updateDisplayGrade();
@@ -528,14 +573,16 @@ class _PartitionScreenState extends State<PartitionScreen> {
   //   );
   // }
 
-
 //DELETE functions
   void _deleteComponent(int id, String type) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(type == 'partition' ? 'Delete Partition' : 'Delete Classwork'),
-        content: Text('Are you sure you want to delete this ${type == 'partition' ? 'partition' : 'classwork'}?'),
+        backgroundColor: Colors.white,
+        title:
+            Text(type == 'partition' ? 'Delete Partition' : 'Delete Classwork'),
+        content: Text(
+            'Are you sure you want to delete this ${type == 'partition' ? 'partition' : 'classwork'}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -552,7 +599,8 @@ class _PartitionScreenState extends State<PartitionScreen> {
               }
               // Remove from local state
               setState(() {
-                components.removeWhere((component) => component['id'] == id && component['type'] == type);
+                components.removeWhere((component) =>
+                    component['id'] == id && component['type'] == type);
               });
               await _updateDisplayGrade();
             },
@@ -595,229 +643,255 @@ class _PartitionScreenState extends State<PartitionScreen> {
   @override
   Widget build(BuildContext context) {
     if (errorMessage != null) {
-    return GestureDetector(
-      onTap: () => Navigator.of(context).pop(),
-      child: Container(
-        color: Colors.white,
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 64),
-            SizedBox(height: 16),
-            Text(
-              errorMessage!,
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+      return GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Container(
+          color: Colors.white,
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, color: Colors.red, size: 64),
+              SizedBox(height: 16),
+              Text(
+                errorMessage!,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Tap anywhere to go back',
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
+              SizedBox(height: 12),
+              Text(
+                'Tap anywhere to go back',
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-    return Stack(
-    children: [ Scaffold(
-      backgroundColor: Colors.white, // Set main background to white
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Text(
-              widget.subjectTitle,
-              style: TextStyle(
-                fontFamily: 'Rubik',
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w600,
-                fontSize: 13.0,
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Builder(
-          builder: (context) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.type == 'partition') {
-                          _updatePartitionById(widget.id);
-                        } else if (widget.type == 'subject') {
-                          _updateSubjectById(widget.id);
-                        }
-                      },
-                      child: Container(
-                        width: 380,
-                        height: 81,
-                        color: Color(0xFFD7A61F),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 24.0),
-                              child: SizedBox(
-                                width: 180,
-                                child: AutoSizeText(
-                                  widget.type == 'partition'
-                                    ? (selfDetails?['partitionName'] ?? 'Partition Name')
-                                    : (selfDetails?['subjectTitle'] ?? 'Subject Title'),
-                                  style: TextStyle(
-                                    fontFamily: 'Jost',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 35.0,
-                                    color: Colors.white,
-                                  ),
-                                  maxLines: 2,
-                                  minFontSize: 10,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 24.0),
-                              child: Text(
-                                displayGrade.toStringAsFixed(2),
-                                style: TextStyle(
-                                  fontFamily: 'Jost',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 35.0,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Dinamically generated cards
-                  if (components.isEmpty)
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6, 
-                      child: Center(
-                        child: Text(
-                          'No Components Found',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    )
-                  else
-                   ...components.map((component) {
-                    if (component['type'] == 'partition') {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ListTile(
-                          leading: Icon(Icons.layers, color: Color(0xFFD7A61F)),
-                          title: Text(
-                            component['partitionName'] ?? component['name'] ?? 'Unknown',
-                            style: TextStyle(color: Color(0xFFD7A61F), fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            'Partition • ${component['percentage']}%',
-                            style: TextStyle(color: Color(0xFFD7A61F)),
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFFD7A61F)),
-                          onTap: () async{
-                            // Navigate to partition details or edit screen
-                            await Navigator.push(
-                              context,
-                              
-                              MaterialPageRoute(
-                                builder: (context) => PartitionScreen(
-                                  subjectTitle: widget.subjectTitle,
-                                  id: component['id'],
-                                  type: 'partition',
-                                  subjectId: widget.subjectId, // Pass the subjectId
-                                ),
-                              ),
-                            );
-                            await _loadComponents(); // Reload components after navigation
-                            await _updateDisplayGrade();
-                          },
-                          onLongPress: () {
-                            _deleteComponent(component['id'], component['type']);
-                          },
-                          
-                        ),
-                      );
-                    } else if (component['type'] == 'classwork') {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ListTile(
-                          leading: Icon(Icons.assignment, color: Color(0xFF283AA3)),
-                          title: Text(
-                            component['name'],
-                            style: TextStyle(color: Color(0xFF283AA3), fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            'Classwork • ${component['score']}/${component['maxScore']}',
-                            style: TextStyle(color: Color(0xFF283AA3)),
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFF283AA3)),
-                          onTap: () {
-                            setState(() {
-                              _updateClassworkById(component['id']);
-                            });
-                          },
-                          onLongPress: () {
-                            _deleteComponent(component['id'], component['type']);
-                          },
-                        ),
-                      );
-                    } else {
-                      // fallback for unknown type
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ListTile(
-                          title: Text(component['name'] ?? 'Unknown'),
-                        ),
-                      );
-                    }
-                  }),
-                ],
-              ),
-            );
-          },
-        )),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Action to add a new component
-            setState(() {
-              _showAddComponentDialog();
-            });
-          },
-          backgroundColor: const Color(0xFFD7A61F),
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add, size: 34.0, color: Colors.white),
         ),
-    ),
-    ], 
+      );
+    }
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white, // Set main background to white
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: Text(
+                  widget.subjectTitle,
+                  style: TextStyle(
+                    fontFamily: 'Rubik',
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          body: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Builder(
+                builder: (context) {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (widget.type == 'partition') {
+                                _updatePartitionById(widget.id);
+                              } else if (widget.type == 'subject') {
+                                _updateSubjectById(widget.id);
+                              }
+                            },
+                            child: Container(
+                              width: 380,
+                              height: 81,
+                              color: Color(0xFFD7A61F),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 24.0),
+                                    child: SizedBox(
+                                      width: 180,
+                                      child: AutoSizeText(
+                                        widget.type == 'partition'
+                                            ? (selfDetails?['partitionName'] ??
+                                                'Partition Name')
+                                            : (selfDetails?['subjectTitle'] ??
+                                                'Subject Title'),
+                                        style: TextStyle(
+                                          fontFamily: 'Jost',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 35.0,
+                                          color: Colors.white,
+                                        ),
+                                        maxLines: 2,
+                                        minFontSize: 10,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 24.0),
+                                    child: Text(
+                                      displayGrade.toStringAsFixed(2),
+                                      style: TextStyle(
+                                        fontFamily: 'Jost',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 35.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Dinamically generated cards
+                        if (components.isEmpty)
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Center(
+                              child: Text(
+                                'No Components Found',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          ...components.map((component) {
+                            if (component['type'] == 'partition') {
+                              return Card(
+                                color: Color.fromARGB(255, 255, 255,
+                                    255), // Light grey background for classwork
+
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: ListTile(
+                                  leading: Icon(Icons.layers,
+                                      color: Color(0xFFD7A61F)),
+                                  title: Text(
+                                    component['partitionName'] ??
+                                        component['name'] ??
+                                        'Unknown',
+                                    style: TextStyle(
+                                        color: Color(0xFFD7A61F),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(
+                                    'Partition • ${component['percentage']}%',
+                                    style: TextStyle(color: Color(0xFFD7A61F)),
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: Color(0xFFD7A61F)),
+                                  onTap: () async {
+                                    // Navigate to partition details or edit screen
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PartitionScreen(
+                                          subjectTitle: widget.subjectTitle,
+                                          id: component['id'],
+                                          type: 'partition',
+                                          subjectId: widget
+                                              .subjectId, // Pass the subjectId
+                                        ),
+                                      ),
+                                    );
+                                    await _loadComponents(); // Reload components after navigation
+                                    await _updateDisplayGrade();
+                                  },
+                                  onLongPress: () {
+                                    _deleteComponent(
+                                        component['id'], component['type']);
+                                  },
+                                ),
+                              );
+                            } else if (component['type'] == 'classwork') {
+                              return Card(
+                                color: Color.fromARGB(255, 255, 255,
+                                    255), // Light grey background for classwork
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: ListTile(
+                                  leading: Icon(Icons.assignment,
+                                      color: Color(0xFF283AA3)),
+                                  title: Text(
+                                    component['name'],
+                                    style: TextStyle(
+                                        color: Color(0xFF283AA3),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(
+                                    'Classwork • ${component['score']}/${component['maxScore']}',
+                                    style: TextStyle(color: Color(0xFF283AA3)),
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: Color(0xFF283AA3)),
+                                  onTap: () {
+                                    setState(() {
+                                      _updateClassworkById(component['id']);
+                                    });
+                                  },
+                                  onLongPress: () {
+                                    _deleteComponent(
+                                        component['id'], component['type']);
+                                  },
+                                ),
+                              );
+                            } else {
+                              // fallback for unknown type
+                              return Card(
+                                color: Color.fromARGB(255, 255, 255,
+                                    255), // Light grey background for classwork
+
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: ListTile(
+                                  title: Text(component['name'] ?? 'Unknown'),
+                                ),
+                              );
+                            }
+                          }),
+                      ],
+                    ),
+                  );
+                },
+              )),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // Action to add a new component
+              setState(() {
+                _showAddComponentDialog();
+              });
+            },
+            backgroundColor: const Color(0xFFD7A61F),
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, size: 34.0, color: Colors.white),
+          ),
+        ),
+      ],
     );
   }
 }

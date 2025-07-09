@@ -1,17 +1,4 @@
-/// Frequently Asked Questions (FAQs)
-/// 
-/// Purpose: Provides users with answers to common questions about the xavLog application
-/// 
-/// Flow:
-/// 1. User accesses FAQs from sign-in, login, or dashboard pages
-/// 2. User browses categorized FAQ sections
-/// 3. User can expand/collapse individual questions to view answers
-/// 
-/// Backend Implementation Needed:
-/// - Dynamic FAQ content loading from database
-/// - Analytics tracking for most viewed questions
-/// - User feedback collection for FAQ usefulness
-/// - Search functionality for finding specific questions
+
 library;
 
 import 'package:flutter/material.dart';

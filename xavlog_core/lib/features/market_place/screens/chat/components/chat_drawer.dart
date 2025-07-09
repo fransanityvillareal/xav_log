@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/view_group_page.dart';
+import 'package:xavlog_core/features/market_place/screens/chat/help_support_page.dart';
 
 class ChatDrawer extends StatelessWidget {
   const ChatDrawer({super.key});
@@ -37,7 +39,8 @@ class ChatDrawer extends StatelessWidget {
           if (data != null) {
             displayName =
                 "${data['firstName'] ?? ''} ${data['lastName'] ?? ''}".trim();
-            profileImageUrl = data['profileImageUrl'] ?? 'https://i.imgur.com/4STeKWS.png';
+            profileImageUrl =
+                data['profileImageUrl'] ?? 'https://i.imgur.com/4STeKWS.png';
             gbox = data['studentId'] ?? "";
           }
         }
@@ -148,13 +151,13 @@ class ChatDrawer extends StatelessWidget {
                     _buildListTile(
                       context,
                       icon: Icons.settings,
-                      title: "Settings",
+                      title: "Block User",
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ChatSettting(),
+                            builder: (context) => const ChatSetting(),
                           ),
                         );
                       },
@@ -162,20 +165,28 @@ class ChatDrawer extends StatelessWidget {
                     _buildListTile(
                       context,
                       icon: Icons.group,
-                      title: "Contacts",
-                      onTap: () {},
-                    ),
-                    _buildListTile(
-                      context,
-                      icon: Icons.notifications,
-                      title: "Notifications",
-                      onTap: () {},
+                      title: "View Group",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ViewGroupPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildListTile(
                       context,
                       icon: Icons.help_center,
                       title: "Help & Support",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChatHelpSupportPage(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

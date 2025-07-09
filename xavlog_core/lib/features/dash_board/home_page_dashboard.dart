@@ -20,11 +20,12 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   String _name = 'Loading...';
   String _averageQPI = 'Loading...';
-  String _topSubject = 'Loading...'; 
+  String _topSubject = 'Loading...';
   String _totalSubjects = 'Loading...';
   String _totalUnits = 'Loading...';
   String _description = '';
-  String _profileImageUrl = 'https://i.imgur.com/4STeKWS.png'; // Default image URL
+  String _profileImageUrl =
+      'https://i.imgur.com/4STeKWS.png'; // Default image URL
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -41,29 +42,16 @@ class _HomepageState extends State<Homepage> {
     'Event',
   ];
 
-  // Activities shown on the dashboard
-  // BACKEND: Should be fetched from API based on user ID and relevance
-  // DYNAMIC: Should update in real-time as new activities are added
-  // Example activities
-    // Activity(
-    //   title: 'Midterm Examination',
-    //   description: 'Comprehensive exam covering chapters 1-5',
-    //   date: DateTime.now()
-    //       .add(const Duration(days: 2)), // DYNAMIC: Calculate from current date
-    //   category: 'Academic', // Used for filtering and categorization
-    // ),
-    
-    //Add more activities as needed through add button on upcoming activities
   List<Activity> activities = [];
   bool _isLoadingActivities = false;
 
   // Upload activity to Firebase
   Future<void> _uploadActivityToFirebase() async {
     if (_titleController.text.isEmpty) return;
-    
+
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) return;
-    
+
     try {
       await FirebaseFirestore.instance.collection('user_activities').add({
         'userId': currentUser.uid,
@@ -71,17 +59,16 @@ class _HomepageState extends State<Homepage> {
         'description': _descriptionController.text,
         'date': Timestamp.fromDate(_selectedDate),
         'category': _selectedCategory,
-        'createdAt': FieldValue.serverTimestamp(),    // pwede tikalin
+        'createdAt': FieldValue.serverTimestamp(), // pwede tikalin
       });
-      
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Activity added successfully!')),
       );
-      
+
       // Refresh the activities list
       await _loadActivitiesFromFirebase();
-        
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error adding activity: $e')),
@@ -93,17 +80,17 @@ class _HomepageState extends State<Homepage> {
   Future<void> _loadActivitiesFromFirebase() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) return;
-    
+
     setState(() {
       _isLoadingActivities = true;
     });
-    
+
     try {
       final querySnapshot = await FirebaseFirestore.instance
           .collection('user_activities')
           .where('userId', isEqualTo: currentUser.uid)
           .get();
-      
+
       final loadedActivities = querySnapshot.docs.map((doc) {
         final data = doc.data();
         return Activity(
@@ -115,12 +102,11 @@ class _HomepageState extends State<Homepage> {
         );
       }).toList();
       loadedActivities.sort((a, b) => a.date.compareTo(b.date));
-      
+
       setState(() {
         activities = loadedActivities;
         _isLoadingActivities = false;
       });
-      
     } catch (e) {
       setState(() {
         _isLoadingActivities = false;
@@ -135,11 +121,12 @@ class _HomepageState extends State<Homepage> {
   Future<void> _deleteActivity(int index) async {
     try {
       final activity = activities[index];
-      
+
       // Show confirmation dialog
       final shouldDelete = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Delete Activity'),
           content: Text('Are you sure you want to delete "${activity.title}"?'),
           actions: [
@@ -154,13 +141,13 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       );
-      
+
       if (shouldDelete == true) {
         // Remove from local list
         setState(() {
           activities.removeAt(index);
         });
-        
+
         // Delete from Firebase
         if (activity.documentId != null) {
           try {
@@ -168,20 +155,20 @@ class _HomepageState extends State<Homepage> {
                 .collection('user_activities')
                 .doc(activity.documentId!)
                 .delete();
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Activity deleted successfully!')),
             );
-            
           } catch (e) {
             // If Firebase deletion fails, show error
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Warning: Failed to sync deletion with server: $e')),
+              SnackBar(
+                  content:
+                      Text('Warning: Failed to sync deletion with server: $e')),
             );
           }
         }
       }
-      
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error deleting activity: $e')),
@@ -230,7 +217,7 @@ class _HomepageState extends State<Homepage> {
                 DropdownButtonFormField<String>(
                   value: _selectedCategory,
                   decoration: const InputDecoration(labelText: 'Category'),
-                  items: _activityCategories.map((String category) {
+                  items: _activityCategories.toSet().map((String category) {
                     return DropdownMenuItem(
                       value: category,
                       child: Text(category),
@@ -241,6 +228,7 @@ class _HomepageState extends State<Homepage> {
                       _selectedCategory = newValue!;
                     });
                   },
+                  dropdownColor: Colors.white,
                 ),
                 const SizedBox(height: 16),
                 ListTile(
@@ -265,20 +253,30 @@ class _HomepageState extends State<Homepage> {
               },
               child: const Text('Cancel'),
             ),
-           ElevatedButton(
-            onPressed: () async {
-              if (_titleController.text.isNotEmpty) {
-                await _uploadActivityToFirebase();
-                
-                Navigator.pop(context);
-                _titleController.clear();
-                _descriptionController.clear();
-                _selectedCategory = 'Academic';
-                _selectedDate = DateTime.now();
-              }
-            },
-            child: const Text('Add Activity'),
-          ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // Set button background to white
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+              onPressed: () async {
+                if (_titleController.text.isNotEmpty) {
+                  await _uploadActivityToFirebase();
+
+                  Navigator.pop(context);
+                  _titleController.clear();
+                  _descriptionController.clear();
+                  _selectedCategory = 'Academic';
+                  _selectedDate = DateTime.now();
+                }
+              },
+              child: const Text('Add Activity'),
+            ),
           ],
         );
       },
@@ -335,7 +333,8 @@ class _HomepageState extends State<Homepage> {
   //gets the top subjects
   Future<void> _loadTopSubject() async {
     try {
-      final topSubjectCode = await DatabaseService.instance.getTopPerformingSubjectCode();
+      final topSubjectCode =
+          await DatabaseService.instance.getTopPerformingSubjectCode();
       setState(() {
         _topSubject = topSubjectCode ?? 'No data';
       });
@@ -351,12 +350,13 @@ class _HomepageState extends State<Homepage> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final nextWeek = today.add(const Duration(days: 7));
-    
+
     return activities.where((activity) {
-      final activityDate = DateTime(activity.date.year, activity.date.month, activity.date.day);
+      final activityDate =
+          DateTime(activity.date.year, activity.date.month, activity.date.day);
       return (activity.category == 'Project' || activity.category == 'Task') &&
-            activityDate.compareTo(today) >= 0 && // Today or after
-            activityDate.compareTo(nextWeek) < 0;  // Before next week
+          activityDate.compareTo(today) >= 0 && // Today or after
+          activityDate.compareTo(nextWeek) < 0; // Before next week
     }).length;
   }
 
@@ -365,12 +365,13 @@ class _HomepageState extends State<Homepage> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final nextWeek = today.add(const Duration(days: 7));
-    
+
     return activities.where((activity) {
-      final activityDate = DateTime(activity.date.year, activity.date.month, activity.date.day);
-      return activity.category == 'Event' && 
-            activityDate.compareTo(today) >= 0 && // Today or after
-            activityDate.compareTo(nextWeek) < 0;  // Before next week
+      final activityDate =
+          DateTime(activity.date.year, activity.date.month, activity.date.day);
+      return activity.category == 'Event' &&
+          activityDate.compareTo(today) >= 0 && // Today or after
+          activityDate.compareTo(nextWeek) < 0; // Before next week
     }).length;
   }
 
@@ -499,198 +500,219 @@ class _HomepageState extends State<Homepage> {
   }
 
   void _showAnalyticsSheet() {
-  final screenSize = MediaQuery.of(context).size;
-  final width = screenSize.width;
-  final fontSize = width * 0.035;
+    final screenSize = MediaQuery.of(context).size;
+    final width = screenSize.width;
+    final fontSize = width * 0.035;
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => Container(
-      height: screenSize.height * 0.9,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Detailed Analytics',
-                  style: TextStyle(
-                    fontFamily: 'Jost',
-                    fontSize: fontSize * 1.4,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF071D99),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                // Academic Performance Section
-                _buildDetailedSection(
-                  'Academic Performance',
-                  fontSize,
-                  [
-                    _buildDetailCard(
-                      'Average QPI',
-                      _averageQPI,
-                      Icons.assignment,
-                      Colors.blue,
-                      'Current semester QPI based on all subjects',
-                    ),
-                    _buildDetailCard(
-                      'Top Subject',
-                      _topSubject,
-                      Icons.trending_up,
-                      Colors.green,
-                      'Subject with highest grade performance',
-                    ),
-                    _buildStatRow('Total Subjects',_totalSubjects , Icons.school),
-                    _buildStatRow('Total Units', _totalUnits, Icons.book),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Subject Performance Chart
-                Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  color: Colors.white,
-                  child: Padding(
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+              height: screenSize.height * 0.9,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Subject Performance Overview',
+                          'Detailed Analytics',
                           style: TextStyle(
                             fontFamily: 'Jost',
-                            fontSize: fontSize * 1.2,
+                            fontSize: fontSize * 1.4,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF071D99),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        FutureBuilder<Widget>(
-                          future: buildSubjectPerformanceChart(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const SizedBox(
-                                height: 200,
-                                child: Center(child: CircularProgressIndicator()),
-                              );
-                            } else {
-                              return snapshot.data ?? buildErrorChart();
-                            }
-                          },
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  const Divider(height: 1),
 
-                const SizedBox(height: 20),
-
-                // Activity Management Section
-                _buildDetailedSection(
-                  'Activity Management',
-                  fontSize,
-                  [
-                    _buildDetailCard(
-                      'Upcoming Tasks & Projects',
-                      _getUpcomingActivitiesCount().toString(),
-                      Icons.assignment_turned_in,
-                      Colors.orange,
-                      'Tasks and projects due in the next 7 days',
-                    ),
-                    _buildDetailCard(
-                      'Upcoming Events',
-                      _getUpcomingEventsCount().toString(),
-                      Icons.event,
-                      Colors.purple,
-                      'Events scheduled for the next 7 days',
-                    ),
-                    _buildStatRow('Total Activities', activities.length.toString(), Icons.list),
-                    _buildStatRow('This Week', _getThisWeekActivitiesCount().toString(), Icons.date_range),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Activity Breakdown Chart
-                Card(
-                  color: const Color(0xFFF5F5F5),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(16.0),
                       children: [
-                        Text(
-                          'Activity Breakdown',
-                          style: TextStyle(
-                            fontFamily: 'Jost',
-                            fontSize: fontSize * 1.2,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF071D99),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildActivityPieChart('Tasks', _getTaskCount(), const Color(0xFF071D99)),
-                            _buildActivityPieChart('Projects', _getProjectCount(), const Color(0xFFD7A61F)),
-                            _buildActivityPieChart('Events', _getEventCount(), Colors.green),
+                        // Academic Performance Section
+                        _buildDetailedSection(
+                          'Academic Performance',
+                          fontSize,
+                          [
+                            _buildDetailCard(
+                              'Average QPI',
+                              _averageQPI,
+                              Icons.assignment,
+                              Colors.blue,
+                              'Current semester QPI based on all subjects',
+                            ),
+                            _buildDetailCard(
+                              'Top Subject',
+                              _topSubject,
+                              Icons.trending_up,
+                              Colors.green,
+                              'Subject with highest grade performance',
+                            ),
+                            _buildStatRow(
+                                'Total Subjects', _totalSubjects, Icons.school),
+                            _buildStatRow(
+                                'Total Units', _totalUnits, Icons.book),
                           ],
                         ),
+
+                        const SizedBox(height: 20),
+
+                        // Subject Performance Chart
+                        // Card(
+                        //   color: const Color.fromARGB(255, 255, 255, 255),
+                        //   elevation: 2,
+                        //   margin: const EdgeInsets.only(bottom: 16),
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(16.0),
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Text(
+                        //           'Subject Performance Overview',
+                        //           style: TextStyle(
+                        //             fontFamily: 'Jost',
+                        //             fontSize: fontSize * 1.2,
+                        //             fontWeight: FontWeight.bold,
+                        //             color: const Color(0xFF071D99),
+                        //           ),
+                        //         ),
+                        //         const SizedBox(height: 16),
+                        //         // FutureBuilder<Widget>(
+                        //         //   future: buildSubjectPerformanceChart(),
+                        //         //   builder: (context, snapshot) {
+                        //         //     if (snapshot.connectionState ==
+                        //         //         ConnectionState.waiting) {
+                        //         //       return const SizedBox(
+                        //         //         height: 200,
+                        //         //         child: Center(
+                        //         //             child: CircularProgressIndicator()),
+                        //         //       );
+                        //         //     } else {
+                        //         //       return snapshot.data ?? buildErrorChart();
+                        //         //     }
+                        //         //   },
+                        //         // ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+
+                        const SizedBox(height: 20),
+
+                        // Activity Management Section
+                        _buildDetailedSection(
+                          'Activity Management',
+                          fontSize,
+                          [
+                            _buildDetailCard(
+                              'Upcoming Tasks & Projects',
+                              _getUpcomingActivitiesCount().toString(),
+                              Icons.assignment_turned_in,
+                              Colors.orange,
+                              'Tasks and projects due in the next 7 days',
+                            ),
+                            _buildDetailCard(
+                              'Upcoming Events',
+                              _getUpcomingEventsCount().toString(),
+                              Icons.event,
+                              Colors.purple,
+                              'Events scheduled for the next 7 days',
+                            ),
+                            _buildStatRow('Total Activities',
+                                activities.length.toString(), Icons.list),
+                            _buildStatRow(
+                                'This Week',
+                                _getThisWeekActivitiesCount().toString(),
+                                Icons.date_range),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Activity Breakdown Chart
+                        Card(
+                          color: const Color(0xFFF5F5F5),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Activity Breakdown',
+                                  style: TextStyle(
+                                    fontFamily: 'Jost',
+                                    fontSize: fontSize * 1.2,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF071D99),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildActivityPieChart(
+                                        'Tasks',
+                                        _getTaskCount(),
+                                        const Color(0xFF071D99)),
+                                    _buildActivityPieChart(
+                                        'Projects',
+                                        _getProjectCount(),
+                                        const Color(0xFFD7A61F)),
+                                    _buildActivityPieChart('Events',
+                                        _getEventCount(), Colors.green),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Productivity Insights
+                        _buildDetailedSection(
+                          'Productivity Insights',
+                          fontSize,
+                          [
+                            _buildProductivityCard('Most Active Day',
+                                _getMostActiveDay(), Icons.calendar_today),
+                            _buildProductivityCard(
+                                'Average Activities/Week',
+                                _getAverageActivitiesPerWeek().toString(),
+                                Icons.trending_up),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
-                ),
-                
-                const SizedBox(height: 20),
-
-                // Productivity Insights
-                _buildDetailedSection(
-                  'Productivity Insights',
-                  fontSize,
-                  [
-                    _buildProductivityCard('Most Active Day', _getMostActiveDay(), Icons.calendar_today),
-                    _buildProductivityCard('Average Activities/Week', _getAverageActivitiesPerWeek().toString(), Icons.trending_up),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+                ],
+              ),
+            ));
+  }
 
   // Helper methods for the enhanced analytics
-  Widget _buildDetailedSection(String title, double fontSize, List<Widget> children) {
+  Widget _buildDetailedSection(
+      String title, double fontSize, List<Widget> children) {
     return Card(
+      color: Colors.white,
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -715,171 +737,188 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-
-
-Widget _buildDetailCard(String title, String value, IconData icon, Color color, String description) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: color.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all(color: color.withOpacity(0.3)),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildStatRow(String label, String value, IconData icon) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Row(
-      children: [
-        Icon(icon, size: 20, color: const Color(0xFF071D99)),
-        const SizedBox(width: 12),
-        Expanded(child: Text(label, style: const TextStyle(fontFamily: 'Jost'))),
-        Text(
-          value,
-          style: const TextStyle(
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF071D99),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildProductivityCard(String title, String value, IconData icon) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 8),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.blue.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, color: Colors.blue),
-        const SizedBox(width: 12),
-        Expanded(child: Text(title, style: const TextStyle(fontFamily: 'Jost'))),
-        Text(value, style: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.bold)),
-      ],
-    ),
-  );
-}
-
-Widget _buildActivityPieChart(String label, int count, Color color) {
-  final total = activities.length;
-  final percentage = total > 0 ? count / total : 0.0;
-  
-  return Column(
-    children: [
-      Stack(
-        alignment: Alignment.center,
+  Widget _buildDetailCard(String title, String value, IconData icon,
+      Color color, String description) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
         children: [
-          SizedBox(
-            width: 60,
-            height: 60,
-            child: CircularProgressIndicator(
-              value: percentage,
-              strokeWidth: 8,
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(color),
+          Icon(icon, color: color, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          fontFamily: 'Jost', fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text(
-            count.toString(),
-            style: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.bold),
           ),
         ],
       ),
-      const SizedBox(height: 8),
-      Text(label, style: const TextStyle(fontFamily: 'Jost', fontSize: 12)),
-    ],
-  );
-}
-
-int _getThisWeekActivitiesCount() {
-  final now = DateTime.now();
-  final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-  final endOfWeek = startOfWeek.add(const Duration(days: 6));
-  
-  return activities.where((activity) {
-    return activity.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
-           activity.date.isBefore(endOfWeek.add(const Duration(days: 1)));
-  }).length;
-}
-
-String _getMostActiveDay() {
-  if (activities.isEmpty) return 'No data';
-  
-  final dayCount = <String, int>{};
-  final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  
-  for (var activity in activities) {
-    final dayName = days[activity.date.weekday - 1];
-    dayCount[dayName] = (dayCount[dayName] ?? 0) + 1;
+    );
   }
-  
-  if (dayCount.isEmpty) return 'No data';
-  
-  final mostActiveDay = dayCount.entries.reduce((a, b) => a.value > b.value ? a : b);
-  return mostActiveDay.key;
-}
 
-double _getAverageActivitiesPerWeek() {
-  if (activities.isEmpty) return 0;
-  
-  final weeks = activities.length > 0 ? 
-    (activities.last.date.difference(activities.first.date).inDays / 7).ceil() : 1;
-  return activities.length / weeks;
-}
+  Widget _buildStatRow(String label, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: const Color(0xFF071D99)),
+          const SizedBox(width: 12),
+          Expanded(
+              child: Text(label, style: const TextStyle(fontFamily: 'Jost'))),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF071D99),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-int _getTaskCount() => activities.where((a) => a.category == 'Task').length;
-int _getProjectCount() => activities.where((a) => a.category == 'Project').length;
-int _getEventCount() => activities.where((a) => a.category == 'Event').length;
+  Widget _buildProductivityCard(String title, String value, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blue),
+          const SizedBox(width: 12),
+          Expanded(
+              child: Text(title, style: const TextStyle(fontFamily: 'Jost'))),
+          Text(value,
+              style: const TextStyle(
+                  fontFamily: 'Jost', fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildActivityPieChart(String label, int count, Color color) {
+    final total = activities.length;
+    final percentage = total > 0 ? count / total : 0.0;
+
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(
+                value: percentage,
+                strokeWidth: 8,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(color),
+              ),
+            ),
+            Text(
+              count.toString(),
+              style: const TextStyle(
+                  fontFamily: 'Jost', fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(label, style: const TextStyle(fontFamily: 'Jost', fontSize: 12)),
+      ],
+    );
+  }
+
+  int _getThisWeekActivitiesCount() {
+    final now = DateTime.now();
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    final endOfWeek = startOfWeek.add(const Duration(days: 6));
+
+    return activities.where((activity) {
+      return activity.date
+              .isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+          activity.date.isBefore(endOfWeek.add(const Duration(days: 1)));
+    }).length;
+  }
+
+  String _getMostActiveDay() {
+    if (activities.isEmpty) return 'No data';
+
+    final dayCount = <String, int>{};
+    final days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+
+    for (var activity in activities) {
+      final dayName = days[activity.date.weekday - 1];
+      dayCount[dayName] = (dayCount[dayName] ?? 0) + 1;
+    }
+
+    if (dayCount.isEmpty) return 'No data';
+
+    final mostActiveDay =
+        dayCount.entries.reduce((a, b) => a.value > b.value ? a : b);
+    return mostActiveDay.key;
+  }
+
+  double _getAverageActivitiesPerWeek() {
+    if (activities.isEmpty) return 0;
+
+    final weeks = activities.length > 0
+        ? (activities.last.date.difference(activities.first.date).inDays / 7)
+            .ceil()
+        : 1;
+    return activities.length / weeks;
+  }
+
+  int _getTaskCount() => activities.where((a) => a.category == 'Task').length;
+  int _getProjectCount() =>
+      activities.where((a) => a.category == 'Project').length;
+  int _getEventCount() => activities.where((a) => a.category == 'Event').length;
 
   Widget _buildStatCard(
     String title,
@@ -920,142 +959,144 @@ int _getEventCount() => activities.where((a) => a.category == 'Event').length;
   }
 
   Widget _buildUpcomingActivities() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Upcoming Activities',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Jost',
-                color: Color(0xFF071D99),
-              ),
-            ),
-            GestureDetector(
-              onTap: _showAddActivityDialog,
-              child: Tooltip(
-                message: 'Add Activity',
-                child: CircleAvatar(
-                  backgroundColor: const Color(0xFFD7A61F),
-                  child: const Icon(Icons.add, color: Colors.white),
+    return Padding(
+      padding: const EdgeInsets.all(8.0), // Corrected the parameter
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Upcoming Activities',
+                style: TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Jost',
+                  color: Color(0xFF071D99),
                 ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        
-        // Replace StreamBuilder with conditional rendering
-        _isLoadingActivities
-            ? const Center(child: CircularProgressIndicator())
-            : activities.isEmpty
-                ? const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: Text(
-                        'No activities yet. Add your first activity!',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: activities.length,
-                    itemBuilder: (context, index) {
-                      final activity = activities[index];
-                      
-                      return Card(
-                        color: Colors.white,
-                        elevation: 4,
-                        margin: const EdgeInsets.only(bottom: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+              GestureDetector(
+                onTap: _showAddActivityDialog,
+                child: Tooltip(
+                  message: 'Add Activity',
+                  child: CircleAvatar(
+                    backgroundColor: const Color(0xFFD7A61F),
+                    child: const Icon(Icons.add, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Replace StreamBuilder with conditional rendering
+          _isLoadingActivities
+              ? const Center(child: CircularProgressIndicator())
+              : activities.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Text(
+                          'No activities yet. Add your first activity!',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
                         ),
-                        child: ExpansionTile(
-                          leading: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF071D99).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              getCategoryIcon(activity.category),
-                              color: const Color(0xFF071D99),
-                            ),
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: activities.length,
+                      itemBuilder: (context, index) {
+                        final activity = activities[index];
+
+                        return Card(
+                          color: Colors.white,
+                          elevation: 4,
+                          margin: const EdgeInsets.only(bottom: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          title: Text(
-                            activity.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF071D99),
-                            ),
-                          ),
-                          subtitle: Text(
-                            formatDate(activity.date),
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _deleteActivity(index),
-                          ),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.category,
-                                        size: 20,
-                                        color: Color(0xFF071D99),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Category: ${activity.category}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.description,
-                                        size: 20,
-                                        color: Color(0xFF071D99),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          activity.description,
-                                          style: TextStyle(color: Colors.grey[800]),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                          child: ExpansionTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF071D99).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                getCategoryIcon(activity.category),
+                                color: const Color(0xFF071D99),
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-      ],
-    ),
-  );
-}
+                            title: Text(
+                              activity.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF071D99),
+                              ),
+                            ),
+                            subtitle: Text(
+                              formatDate(activity.date),
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteActivity(index),
+                            ),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.category,
+                                          size: 20,
+                                          color: Color(0xFF071D99),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Category: ${activity.category}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.description,
+                                          size: 20,
+                                          color: Color(0xFF071D99),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            activity.description,
+                                            style: TextStyle(
+                                                color: Colors.grey[800]),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+        ],
+      ),
+    );
+  }
+
   List<Activity> _getEventsForDay(DateTime day) {
     return activities
         .where(
@@ -1066,6 +1107,7 @@ int _getEventCount() => activities.where((a) => a.category == 'Event').length;
         )
         .toList();
   }
+
   void _showEventsBottomSheet(DateTime selectedDay) {
     final screenSize = MediaQuery.of(context).size;
     final fontSize = screenSize.width * 0.03;
@@ -1253,7 +1295,7 @@ int _getEventCount() => activities.where((a) => a.category == 'Event').length;
     _loadAverageQPI();
     _loadTopSubject();
     _loadTotalSubjects();
-    _loadTotalUnits(); 
+    _loadTotalUnits();
   }
 
   Future<void> _fetchUserProfile() async {
@@ -1400,7 +1442,6 @@ int _getEventCount() => activities.where((a) => a.category == 'Event').length;
                         ],
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -1437,7 +1478,6 @@ int _getEventCount() => activities.where((a) => a.category == 'Event').length;
   }
 
 // Bottom Navigation Bar
-
 
   @override
   void dispose() {

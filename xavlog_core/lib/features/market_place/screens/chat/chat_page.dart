@@ -37,10 +37,12 @@ class _ChatPageState extends State<ChatPage> {
     const Color(0xFF1A365D), // Deep Navy (softer than original dark blue)
     const Color(0xFF2C5282), // Ateneo Blue (softer variant)
     const Color(0xFFBFA547), // Mint Teal (replaces gold)
-    const Color.fromARGB(255, 68, 137, 158), // Azure Teal (replaces blue variant)
+    const Color.fromARGB(
+        255, 68, 137, 158), // Azure Teal (replaces blue variant)
     const Color.fromARGB(255, 75, 153, 116), // Forest Teal (replaces green)
     const Color.fromARGB(255, 20, 12, 11), // Coral (red alternative)
-    const Color.fromARGB(255, 139, 66, 129), // Vibrant Purple (replaces original purple)
+    const Color.fromARGB(
+        255, 139, 66, 129), // Vibrant Purple (replaces original purple)
   ];
 
   void sendMessage() async {
@@ -157,20 +159,35 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> _fetchReceiverName() async {
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(widget.receiverID)
-          .get();
-      final userData = userDoc.data();
-      if (userData != null && mounted) {
-        setState(() {
-          _receiverName = userData['firstName'] ?? widget.receiverEmail;
-        });
+      if (widget.isGroup) {
+        // Fetch group name from Groups collection
+        final groupDoc = await FirebaseFirestore.instance
+            .collection('Groups')
+            .doc(widget.receiverID)
+            .get();
+        final groupData = groupDoc.data();
+        if (groupData != null && mounted) {
+          setState(() {
+            _receiverName = groupData['name'] ?? 'Group';
+          });
+        }
+      } else {
+        // Fetch user name from Users collection
+        final userDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(widget.receiverID)
+            .get();
+        final userData = userDoc.data();
+        if (userData != null && mounted) {
+          setState(() {
+            _receiverName = userData['firstName'] ?? widget.receiverEmail;
+          });
+        }
       }
     } catch (e) {
       setState(() {
         _receiverName =
-            widget.receiverEmail; // Fallback to email if name fetch fails
+            widget.isGroup ? 'Group' : widget.receiverEmail; // Fallback
       });
     }
   }
@@ -289,7 +306,9 @@ class _ChatPageState extends State<ChatPage> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade800,
+                      color: _backgroundColor.computeLuminance() < 0.4
+                          ? Colors.white
+                          : Colors.black87, // Adjust color based on theme
                     ),
                   ),
                 )
