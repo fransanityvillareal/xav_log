@@ -51,7 +51,7 @@ class CartScreen extends StatelessWidget {
                                   )
                                 : const Icon(Icons.image_not_supported, size: 50),
                             title: Text(product.title),
-                            subtitle: Text('PHP ${product.price}'),
+                            subtitle: Text('P ${product.price}'),
                             trailing: IconButton(
                               icon: const Icon(Icons.remove_circle, color: Colors.red),
                               onPressed: () {
