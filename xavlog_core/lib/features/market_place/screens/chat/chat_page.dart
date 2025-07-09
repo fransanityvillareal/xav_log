@@ -36,11 +36,11 @@ class _ChatPageState extends State<ChatPage> {
   final List<Color> _themeColors = [
     const Color(0xFF1A365D), // Deep Navy (softer than original dark blue)
     const Color(0xFF2C5282), // Ateneo Blue (softer variant)
-    const Color(0xFF80FFDB), // Mint Teal (replaces gold)
-    const Color(0xFF4CC9F0), // Azure Teal (replaces blue variant)
-    const Color(0xFF52B788), // Forest Teal (replaces green)
-    const Color(0xFFF07167), // Coral (red alternative)
-    const Color(0xFFB5179E), // Vibrant Purple (replaces original purple)
+    const Color(0xFFBFA547), // Mint Teal (replaces gold)
+    const Color.fromARGB(255, 68, 137, 158), // Azure Teal (replaces blue variant)
+    const Color.fromARGB(255, 75, 153, 116), // Forest Teal (replaces green)
+    const Color.fromARGB(255, 20, 12, 11), // Coral (red alternative)
+    const Color.fromARGB(255, 139, 66, 129), // Vibrant Purple (replaces original purple)
   ];
 
   void sendMessage() async {
@@ -148,12 +148,40 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchReceiverName();
+  }
+
+  String _receiverName = 'Loading...';
+
+  Future<void> _fetchReceiverName() async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.receiverID)
+          .get();
+      final userData = userDoc.data();
+      if (userData != null && mounted) {
+        setState(() {
+          _receiverName = userData['firstName'] ?? widget.receiverEmail;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _receiverName =
+            widget.receiverEmail; // Fallback to email if name fetch fails
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _backgroundColor,
       appBar: AppBar(
         title: Text(
-          widget.receiverEmail,
+          _receiverName,
           style: const TextStyle(
             color: Color.fromARGB(255, 255, 255, 255), // Gold header text
             fontWeight: FontWeight.bold,
@@ -163,7 +191,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
         iconTheme:
             const IconThemeData(color: Color.fromARGB(255, 255, 255, 255)),
-        backgroundColor: const Color(0xFF003A70), // Ateneo Blue
+        backgroundColor: const Color(0xFF283AA3), // Ateneo Blue
         actions: [
           IconButton(
             icon: const Icon(Icons.color_lens_rounded),
@@ -273,8 +301,8 @@ class _ChatPageState extends State<ChatPage> {
     String timeString = '';
     if (data['timestamp'] != null) {
       try {
-        timeString = DateFormat('hh:mm a')
-            .format((data['timestamp'] as Timestamp).toDate());
+        final dateTime = (data['timestamp'] as Timestamp).toDate();
+        timeString = DateFormat('EEE, hh:mm a').format(dateTime); // Include day
       } catch (_) {
         timeString = '';
       }

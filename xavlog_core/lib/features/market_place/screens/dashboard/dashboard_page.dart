@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:xavlog_core/features/market_place/screens/seller/seller_dashboard_screen.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -60,7 +59,9 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
 
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
+      if (!mounted ||
+          _pageController.hasClients && _pageController.page != _currentPage)
+        return; // Stop auto-scroll if user interacts
       setState(() {
         _currentPage = (_currentPage + 1) % messages.length;
         _pageController.animateToPage(
@@ -79,14 +80,24 @@ class _AutoScrollHeaderState extends State<AutoScrollHeader> {
       height: 160,
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => screens[_currentPage]),
-          );
+          if (_currentPage < screens.length) {
+            // Ensure valid index
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => screens[_currentPage]),
+            );
+          }
         },
+        onPanDown: (_) => _pageController
+            .jumpToPage(_currentPage), // Stop auto-scroll on user interaction
         child: PageView.builder(
           controller: _pageController,
           itemCount: messages.length,
+          onPageChanged: (index) {
+            setState(() {
+              _currentPage = index;
+            });
+          },
           itemBuilder: (context, index) {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -166,98 +177,101 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.white,
-    body: SafeArea(
-      child: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Stack(
-          alignment: AlignmentDirectional(1, -1),
-          children: [
-            SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Column(
-                children: [
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AutoScrollHeader(),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Stack(
+            alignment: AlignmentDirectional(1, -1),
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoScrollHeader(),
 
-                          SizedBox(height: 12),
+                            SizedBox(height: 12),
 
-                          _buildSectionTitle('Categories'),
-                          
-                          _buildCategoryBar(),
+                            _buildSellItemsSection(), // Move the Sell Items section here
 
-                          SizedBox(height: 24), // Space between sections
+                            _buildSectionTitle('Categories'),
 
-                          _buildSectionTitle('Ateneo de Naga University'),
-                          SizedBox(height: 8), // Space between title and content
-                          _buildFeaturedContent(
-                            'assets/images/place.jpg',
-                            null,
-                            Text(
-                              'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'Jost',
+                            _buildCategoryBar(),
+
+                            SizedBox(height: 24), // Space between sections
+
+                            _buildSectionTitle('Ateneo de Naga University'),
+                            SizedBox(
+                                height: 8), // Space between title and content
+                            _buildFeaturedContent(
+                              'assets/images/place.jpg',
+                              null,
+                              Text(
+                                'Pick up your products securely and conveniently at Ateneo de Naga University. Enjoy a flexible, face-to-face transaction experience right on campus.',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: 'Jost',
+                                ),
                               ),
+                              index: 0,
                             ),
-                            index: 0,
-                          ),
 
-                          SizedBox(height: 24),
+                            SizedBox(height: 24),
 
-                          _buildSectionTitle('Flexible Transactions'),
-                          SizedBox(height: 8),
-                          _buildFeaturedContent(
-                            'assets/images/transactions.jpg',
-                            null,
-                            Text(
-                              'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'Jost',
+                            _buildSectionTitle('Flexible Transactions'),
+                            SizedBox(height: 8),
+                            _buildFeaturedContent(
+                              'assets/images/transactions.jpg',
+                              null,
+                              Text(
+                                'Pay your way! cash or online, whatever works best for you. With Xavalog, transactions are always secure and flexible.',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: 'Jost',
+                                ),
                               ),
+                              index: 1,
                             ),
-                            index: 1,
-                          ),
 
-                          SizedBox(height: 24),
+                            SizedBox(height: 24),
 
-                          _buildSectionTitle('Ateneans Buy and Sell'),
-                          SizedBox(height: 8),
-                          _buildFeaturedContent(
-                            'assets/images/buying.jpg',
-                            null,
-                            Text(
-                              'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'Jost',
+                            _buildSectionTitle('Ateneans Buy and Sell'),
+                            SizedBox(height: 8),
+                            _buildFeaturedContent(
+                              'assets/images/buying.jpg',
+                              null,
+                              Text(
+                                'Buy and sell anything new or pre-loved with fellow Ateneans. Easy deals, flexible payments, and a trusted Ateneo community.',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: 'Jost',
+                                ),
                               ),
+                              index: 3,
                             ),
-                            index: 3,
-                          ),
 
-                          SizedBox(height: 24),
-                        ],
+                            SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildSectionTitle(String title) {
     return Align(
@@ -277,220 +291,292 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Widget _buildCategoryBar() {
-  return SizedBox(
-    height: 150, // ⬅️ Increased height to give room for shadow visibility
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: BouncingScrollPhysics(),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center, // optional
+    return SizedBox(
+      height: 150, // ⬅️ Increased height to give room for shadow visibility
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: BouncingScrollPhysics(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center, // optional
+            children: [
+              _buildCategoryItem('Stationery', 'assets/images/book.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 0),
+                  ),
+                );
+              }),
+              _buildCategoryItem('Equipment', 'assets/images/sport.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 1),
+                  ),
+                );
+              }),
+              _buildCategoryItem('Clothing', 'assets/images/shirts.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 2),
+                  ),
+                );
+              }),
+              _buildCategoryItem('Technology', 'assets/images/tech.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 3),
+                  ),
+                );
+              }),
+              _buildCategoryItem('Accessories', 'assets/images/accessories.png',
+                  () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 4),
+                  ),
+                );
+              }),
+              _buildCategoryItem('Others', 'assets/images/more.png', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(initialCategoryIndex: 5),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryItem(String text, String assetPath, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        margin: EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical:
+                4), // 👈 vertical margin gives room for shadow - AI ito noh - gian
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(38, 0, 0, 0),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildCategoryItem('Stationery', 'assets/images/book.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(initialCategoryIndex: 0),
-                ),
-              );
-            }),
-            _buildCategoryItem('Equipment', 'assets/images/sport.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(initialCategoryIndex: 1),
-                ),
-              );
-            }),
-            _buildCategoryItem('Clothing', 'assets/images/shirts.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(initialCategoryIndex: 2),
-                ),
-              );
-            }),
-            _buildCategoryItem('Technology', 'assets/images/tech.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(initialCategoryIndex: 3),
-                ),
-              );
-            }),
-            _buildCategoryItem('Accessories', 'assets/images/accessories.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(initialCategoryIndex: 4),
-                ),
-              );
-            }),
-            _buildCategoryItem('Others', 'assets/images/more.png', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(initialCategoryIndex: 5),
-                ),
-              );
-            }),
+            Image.asset(
+              assetPath,
+              width: 50,
+              height: 50,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 8),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
-    ),
-  );
-}
-
-
-Widget _buildCategoryItem(String text, String assetPath, VoidCallback onTap) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      width: 100,
-      height: 100,
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4), // 👈 vertical margin gives room for shadow - AI ito noh - gian
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(38, 0, 0, 0),
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            assetPath,
-            width: 50,
-            height: 50,
-            fit: BoxFit.contain,
-          ),
-          SizedBox(height: 8),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-  Widget _buildFeaturedContent(
-  String assetPath,
-  String? title,
-  Text description, {
-  required int index,
-}) {
-  final Uri streetViewUri = Uri.parse(
-    'https://www.google.com/maps/@13.630323,123.1851484,3a,90y,12.57h,89.88t/data=!3m7!1e1!3m5!1sCIHM0ogKEICAgICpzOfmkwE!2e10!6shttps:%2F%2Flh3.googleusercontent.com%2Fgpms-cs-s%2FAB8u6HYlEiHQW-0I04qkGSwIs--hqp0S9Z7mZ28O7hNCvSo3zhNipEmmyOFLk-E7CHE6OfsEFZViLtqLNz2qN8Bmqmi_31SZntJa_haa14jtc_YVSFzD8psMuvU91DSxXTgT-BIO_rZOfQ%3Dw900-h600-k-no-pi0.11886842302389766-ya12.567076750166581-ro0-fo100!7i6080!8i3040?entry=ttu&g_ep=EgoyMDI1MDUwNy4wIKXMDSoASAFQAw%3D%3D',
-  );
-
-  void handleTap(BuildContext context) async {
-    if (index == 0) {
-      try {
-        final launched = await launchUrl(
-          streetViewUri,
-          mode: LaunchMode.externalApplication,
-        );
-        if (!launched) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Could not open Street View.")),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
-      }
-    } else {
-      showDialog(
-        context: context,
-        builder: (_) => Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(10),
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: InteractiveViewer(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  assetPath,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+    );
   }
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Column(
-      children: [
-        GestureDetector(
-          onTap: () => handleTap(context),
-          child: Stack(
-            alignment: const AlignmentDirectional(1, -1),
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  assetPath,
-                  width: double.infinity,
-                  height: 155,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(68),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (title != null && title.isNotEmpty)
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+  Widget _buildFeaturedContent(
+    String assetPath,
+    String? title,
+    Text description, {
+    required int index,
+  }) {
+    final Uri streetViewUri = Uri.parse(
+      'https://www.google.com/maps/@13.630323,123.1851484,3a,90y,12.57h,89.88t/data=!3m7!1e1!3m5!1sCIHM0ogKEICAgICpzOfmkwE!2e10!6shttps:%2F%2Flh3.googleusercontent.com%2Fgpms-cs-s%2FAB8u6HYlEiHQW-0I04qkGSwIs--hqp0S9Z7mZ28O7hNCvSo3zhNipEmmyOFLk-E7CHE6OfsEFZViLtqLNz2qN8Bmqmi_31SZntJa_haa14jtc_YVSFzD8psMuvU91DSxXTgT-BIO_rZOfQ%3Dw900-h600-k-no-pi0.11886842302389766-ya12.567076750166581-ro0-fo100!7i6080!8i3040?entry=ttu&g_ep=EgoyMDI1MDUwNy4wIKXMDSoASAFQAw%3D%3D',
+    );
+
+    void handleTap(BuildContext context) async {
+      if (index == 0) {
+        try {
+          final launched = await launchUrl(
+            streetViewUri,
+            mode: LaunchMode.externalApplication,
+          );
+          if (!launched) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Could not open Street View.")),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error: $e")),
+          );
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(10),
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: InteractiveViewer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    assetPath,
+                    fit: BoxFit.contain,
                   ),
                 ),
-              if (title != null && title.isNotEmpty)
-                const SizedBox(height: 8),
-              Row(
-                children: [
-                  Flexible(child: description),
-                ],
               ),
-            ],
+            ),
           ),
+        );
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () => handleTap(context),
+            child: Stack(
+              alignment: const AlignmentDirectional(1, -1),
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    assetPath,
+                    width: double.infinity,
+                    height: 155,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(68),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (title != null && title.isNotEmpty)
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                if (title != null && title.isNotEmpty)
+                  const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Flexible(child: description),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellItemsSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
-}
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Sell Your Items',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1E3A8A), // Ateneo Blue
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'List your items for sale and connect with buyers in the Ateneo community.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E3A8A), // Ateneo Blue
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SellerDashboardScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Start Selling',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
 }

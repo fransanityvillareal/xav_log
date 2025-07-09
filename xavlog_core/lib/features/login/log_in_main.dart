@@ -235,54 +235,14 @@ class _LoginPageState extends State<LoginPage>  // Renamed state class
                                   },
                                 ),
                                 const SizedBox(height: 16),
-
-                                // Remember me checkbox
-                                Row(
-                                  children: [
-                                    Theme(
-                                      data: Theme.of(context).copyWith(
-                                        unselectedWidgetColor: Colors.grey,
-                                      ),
-                                      child: Checkbox(
-                                        value: _rememberMe,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _rememberMe = value ?? false;
-                                          });
-                                        },
-                                        activeColor:
-                                            const Color(0xFFBFA547),
-                                        checkColor: Colors.white,
-                                        side:
-                                            MaterialStateBorderSide.resolveWith(
-                                                (states) {
-                                          if (states.contains(
-                                              MaterialState.selected)) {
-                                            return const BorderSide(
-                                                color: Color(0xFF003A70),
-                                                width: 2);
-                                          }
-                                          return const BorderSide(
-                                              color: Colors.grey, width: 1.5);
-                                        }),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                      ),
-                                    ),
-                                    const Text('Remember me'),
-                                    const Spacer(),
-                                    TextButton(
+                                Center(
+                                  child:TextButton(
                                       onPressed: () {
                                         // Forgot password functionality
                                       },
                                       child: const Text('Forgot Password?'),
                                     ),
-                                  ],
                                 ),
-                                const SizedBox(height: 24),
-
                                 // Login button
                                 SizedBox(
                                   width: double.infinity,

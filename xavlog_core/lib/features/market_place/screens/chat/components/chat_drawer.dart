@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 
-
 class ChatDrawer extends StatelessWidget {
   const ChatDrawer({super.key});
 
@@ -27,7 +26,8 @@ class ChatDrawer extends StatelessWidget {
           : null,
       builder: (context, snapshot) {
         String displayName = user?.displayName ?? username;
-        String profileImageUrl = "https://via.placeholder.com/150";
+        String profileImageUrl = user?.photoURL ??
+            'https://i.imgur.com/4STeKWS.png'; // Default image URL
         String gbox = "";
 
         if (snapshot.hasData &&
@@ -37,7 +37,7 @@ class ChatDrawer extends StatelessWidget {
           if (data != null) {
             displayName =
                 "${data['firstName'] ?? ''} ${data['lastName'] ?? ''}".trim();
-            profileImageUrl = data['profileImageUrl'] ?? profileImageUrl;
+            profileImageUrl = data['profileImageUrl'] ?? 'https://i.imgur.com/4STeKWS.png';
             gbox = data['studentId'] ?? "";
           }
         }
@@ -55,8 +55,8 @@ class ChatDrawer extends StatelessWidget {
             children: [
               // Header Section
               Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 40, horizontal: 16), // Increased vertical padding
                 decoration: const BoxDecoration(
                   color: Color(0xFF003A70), // Match ateneoBlue from login
                   borderRadius: BorderRadius.only(
@@ -85,7 +85,7 @@ class ChatDrawer extends StatelessWidget {
                         backgroundImage: NetworkImage(profileImageUrl),
                         backgroundColor: Colors.grey[200],
                         child:
-                            profileImageUrl == "https://via.placeholder.com/150"
+                            profileImageUrl == "https://i.imgur.com/4STeKWS.png"
                                 ? const Icon(Icons.person,
                                     size: 40, color: Colors.white)
                                 : null,
