@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:xavlog_core/features/login/authentication_service.dart';
 import '../../providers/product_provider.dart';
 import 'seller_product_create_screen.dart';
 
@@ -14,7 +15,11 @@ class SellerDashboardScreen extends StatelessWidget {
       ),
       body: Consumer<ProductProvider>(
         builder: (context, productProvider, child) {
-          final sellerProducts = productProvider.products;
+          final currentUserEmail =
+              AuthenticationService().getCurrentUser?.email;
+          final sellerProducts = productProvider.products
+              .where((product) => product.sellerEmail == currentUserEmail)
+              .toList();
           return Column(
             children: [
               Padding(
