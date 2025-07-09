@@ -332,7 +332,7 @@ class _HomepageState extends State<Homepage> {
                 const Text('You found the Easter hunt! 🎉'),
                 const SizedBox(height: 16),
                 Image.asset(
-                  'assets/gifs/easter.gif', // Path to your Easter egg image
+                  'assets/gifs/easter.gif',
                   height: 150,
                   fit: BoxFit.cover,
                 ),
