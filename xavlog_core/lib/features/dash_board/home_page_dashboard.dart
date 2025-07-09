@@ -294,7 +294,7 @@ class _HomepageState extends State<Homepage> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2000), // Allow past dates starting from the year 2000
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
         return Theme(
@@ -313,6 +313,44 @@ class _HomepageState extends State<Homepage> {
       setState(() {
         _selectedDate = picked;
       });
+
+      // Check if the selected date is March 30, 2025
+      if (picked.year == 2025 && picked.month == 3 && picked.day == 30) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.celebration, color: Colors.orange, size: 30),
+                const SizedBox(width: 8),
+                const Text('Easter Egg Found!'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('You found the Easter hunt! 🎉'),
+                const SizedBox(height: 16),
+                Image.asset(
+                  'assets/gifs/easter.gif', // Path to your Easter egg image
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        );
+      }
     }
   }
 
