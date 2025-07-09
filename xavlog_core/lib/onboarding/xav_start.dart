@@ -52,8 +52,7 @@ class OnboardingPagePresenter extends StatefulWidget {
   final VoidCallback? onFinish;
 
   const OnboardingPagePresenter(
-      {Key? key, required this.pages, this.onSkip, this.onFinish})
-      : super(key: key);
+      {super.key, required this.pages, this.onSkip, this.onFinish});
 
   @override
   State<OnboardingPagePresenter> createState() => _OnboardingPageState();

@@ -202,10 +202,9 @@ class _ConcentricPageViewState extends State<ConcentricPageView> {
 
 class _Button extends StatefulWidget {
   const _Button({
-    Key? key,
     required this.pageController,
     required this.widget,
-  }) : super(key: key);
+  });
 
   final PageController pageController;
   final ConcentricPageView widget;
