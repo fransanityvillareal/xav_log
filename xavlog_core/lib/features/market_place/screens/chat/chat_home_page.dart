@@ -14,7 +14,8 @@ class ChatHomePage extends StatefulWidget {
   State<ChatHomePage> createState() => ChatHomePageState();
 }
 
-class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
+class ChatHomePageState extends State<ChatHomePage> {
+  // Renamed to make public
   final ChatService _chatService = ChatService();
   final AuthenticationService _authenticationService = AuthenticationService();
   late TextEditingController _searchController;
@@ -57,115 +58,122 @@ class ChatHomePageState extends State<ChatHomePage> { // Renamed to make public
     });
   }
 
-void _createGroup() {
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (context) {
-      final TextEditingController groupNameController = TextEditingController();
-      final TextEditingController groupDescController = TextEditingController();
-      
-      return AlertDialog(
-        title: const Text('Create New Group'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: groupNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Group Name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: groupDescController,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final groupName = groupNameController.text.trim();
-                    final groupDesc = groupDescController.text.trim();
-                    
-                    if (groupName.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Group name is required.')),
-                      );
-                      return;
-                    }
-                    
-                    final currentUser = _authenticationService.getCurrentUser;
-                    if (currentUser == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('You must be logged in to create a group.')),
-                      );
-                      return;
-                    }
+  void _createGroup() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        final TextEditingController groupNameController =
+            TextEditingController();
+        final TextEditingController groupDescController =
+            TextEditingController();
 
-                    try {
-                      // Create the group document in Firestore
-                      await FirebaseFirestore.instance.collection('Groups').add({
-                        'name': groupName,
-                        'description': groupDesc.isNotEmpty ? groupDesc : null,
-                        'createdBy': currentUser.uid,
-                        'createdAt': FieldValue.serverTimestamp(),
-                        'members': [currentUser.uid],
-                        'type': 'group',
-                        //add admin
-                        //add profile
-                      });
-
-                      // Close dialog
-                      Navigator.pop(context);
-                      
-                      // Show success message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Group "$groupName" created successfully!'),
-                          backgroundColor: const Color(0xFF52B788),
-                        ),
-                      );
-                      
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Error creating group: $e'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF003A70),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+        return AlertDialog(
+          title: const Text('Create New Group'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: groupNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Group Name',
+                    border: OutlineInputBorder(),
                   ),
-                  child: const Text('Create Group'),
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
+                const SizedBox(height: 12),
+                TextField(
+                  controller: groupDescController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final groupName = groupNameController.text.trim();
+                      final groupDesc = groupDescController.text.trim();
 
+                      if (groupName.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Group name is required.')),
+                        );
+                        return;
+                      }
+
+                      final currentUser = _authenticationService.getCurrentUser;
+                      if (currentUser == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'You must be logged in to create a group.')),
+                        );
+                        return;
+                      }
+
+                      try {
+                        // Create the group document in Firestore
+                        await FirebaseFirestore.instance
+                            .collection('Groups')
+                            .add({
+                          'name': groupName,
+                          'description':
+                              groupDesc.isNotEmpty ? groupDesc : null,
+                          'createdBy': currentUser.uid,
+                          'createdAt': FieldValue.serverTimestamp(),
+                          'members': [currentUser.uid],
+                          'type': 'group',
+                          //add admin
+                          //add profile
+                        });
+
+                        // Close dialog
+                        Navigator.pop(context);
+
+                        // Show success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Group "$groupName" created successfully!'),
+                            backgroundColor: const Color(0xFF52B788),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error creating group: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF003A70),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('Create Group'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF003A70),
+        backgroundColor: const Color(0xFF283AA3),
         iconTheme: const IconThemeData(color: Colors.white),
         title: _showSearch
             ? TextField(
@@ -188,7 +196,7 @@ void _createGroup() {
                 },
               )
             : const Text(
-                'Xavlog Chat',
+                'xavLOG Chat',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
@@ -223,7 +231,7 @@ void _createGroup() {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF003A70),
+                  color: Color(0xFF283AA3),
                 ),
               ),
               const SizedBox(height: 12),
@@ -238,12 +246,12 @@ void _createGroup() {
   Widget _buildUserList(BuildContext context) {
     return DefaultTabController(
       length: 2,
-        child: Column(
+      child: Column(
         children: [
           TabBar(
-            labelColor: const Color(0xFF003A70),
+            labelColor: const Color(0xFF283AA3),
             unselectedLabelColor: Colors.grey,
-            indicatorColor: const Color(0xFF003A70),
+            indicatorColor: const Color(0xFFBFA547),
             tabs: const [
               Tab(text: 'Contacts'),
               Tab(text: 'Groups'),
@@ -270,295 +278,313 @@ void _createGroup() {
 
 // Build contacts
   Widget _buildContactsList(BuildContext context) {
-  return StreamBuilder<List<Map<String, dynamic>>>(
-    stream: _chatService.getUserStream(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (snapshot.hasError) {
-        return const Center(child: Text('Something went wrong.'));
-      }
-      
-      final currentUserEmail = _authenticationService.getCurrentUser?.email;
-      final currentUserId = _authenticationService.getCurrentUser?.uid;
-      
-      if (currentUserId == null) {
-        return const Center(child: Text('Not logged in.'));
-      }
-      
-      var users = snapshot.data!;
-      
-      // Filter users: exclude current user
-      users = users.where((user) {
-        final isNotCurrentUser = user['email'] != currentUserEmail;
-        final matchesSearch = _searchQuery.isEmpty ||
-            user['email'].toLowerCase().contains(_searchQuery) ||
-            (user['displayName']?.toLowerCase().contains(_searchQuery) ?? false) ||
-            (user['firstName']?.toLowerCase().contains(_searchQuery) ?? false) ||
-            (user['lastName']?.toLowerCase().contains(_searchQuery) ?? false);
-        return isNotCurrentUser && matchesSearch;
-      }).toList();
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: _chatService.getUserStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong.'));
+        }
 
-      if (users.isEmpty) {
-        return Center(
-          child: Text(
-            _searchQuery.isEmpty
-                ? 'No users found'
-                : 'No users match your search',
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.grey),
-          ),
-        );
-      }
+        final currentUserEmail = _authenticationService.getCurrentUser?.email;
+        final currentUserId = _authenticationService.getCurrentUser?.uid;
 
-      // Get users with chat history
-      return FutureBuilder<List<Map<String, dynamic>>>(
-        future: _getFilteredUsersByChatHistory(users, currentUserId, _searchQuery.isNotEmpty),
-        builder: (context, sortedSnapshot) {
-          if (sortedSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          
-          final filteredUsers = sortedSnapshot.data ?? [];
+        if (currentUserId == null) {
+          return const Center(child: Text('Not logged in.'));
+        }
 
-          if (filteredUsers.isEmpty) {
-            return Center(
-              child: Text(
-                _searchQuery.isEmpty
-                    ? 'No recent conversations\nSearch to find new contacts'
-                    : 'No users match your search',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
-              ),
-            );
-          }
+        var users = snapshot.data!;
 
-          return ListView.separated(
-            itemCount: filteredUsers.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final user = filteredUsers[index];
-              final photoUrl = user['photoURL'];
-              final email = user['email'];
-              final displayName = user['displayName'] ?? user['firstName'] ?? '';
-              final initials = _getInitials(email, displayName);
-              final uid = user['uid'];
-              final hasHistory = user['hasHistory'] ?? false;
-              
-              return FutureBuilder<String>(
-                future: _getProfileImageUrl(uid, photoUrl),
-                builder: (context, snapshot) {
-                  final profileImageUrl = snapshot.data ?? '';
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            receiverEmail: user['email'],
-                            receiverID: user['uid'],
+        // Filter users: exclude current user
+        users = users.where((user) {
+          final isNotCurrentUser = user['email'] != currentUserEmail;
+          final matchesSearch = _searchQuery.isEmpty ||
+              user['email'].toLowerCase().contains(_searchQuery) ||
+              (user['displayName']?.toLowerCase().contains(_searchQuery) ??
+                  false) ||
+              (user['firstName']?.toLowerCase().contains(_searchQuery) ??
+                  false) ||
+              (user['lastName']?.toLowerCase().contains(_searchQuery) ?? false);
+          return isNotCurrentUser && matchesSearch;
+        }).toList();
+
+        if (users.isEmpty) {
+          return Center(
+            child: Text(
+              _searchQuery.isEmpty
+                  ? 'No users found'
+                  : 'No users match your search',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          );
+        }
+
+        // Get users with chat history
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _getFilteredUsersByChatHistory(
+              users, currentUserId, _searchQuery.isNotEmpty),
+          builder: (context, sortedSnapshot) {
+            if (sortedSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final filteredUsers = sortedSnapshot.data ?? [];
+
+            if (filteredUsers.isEmpty) {
+              return Center(
+                child: Text(
+                  _searchQuery.isEmpty
+                      ? 'No recent conversations\nSearch to find new contacts'
+                      : 'No users match your search',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              );
+            }
+
+            return ListView.separated(
+              itemCount: filteredUsers.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final user = filteredUsers[index];
+                final photoUrl = user['photoURL'];
+                final email = user['email'];
+                final displayName =
+                    user['displayName'] ?? user['firstName'] ?? '';
+                final initials = _getInitials(email, displayName);
+                final uid = user['uid'];
+                final hasHistory = user['hasHistory'] ?? false;
+
+                return FutureBuilder<String>(
+                  future: _getProfileImageUrl(uid, photoUrl),
+                  builder: (context, snapshot) {
+                    final profileImageUrl = snapshot.data ?? '';
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                              receiverEmail: user['email'],
+                              receiverID: user['uid'],
+                            ),
                           ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: hasHistory
+                              ? Border.all(
+                                  color:
+                                      const Color(0xFF003A70).withOpacity(0.3),
+                                  width: 1)
+                              : Border.all(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  width: 1),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: hasHistory 
-                          ? Border.all(color: const Color(0xFF003A70).withOpacity(0.3), width: 1)
-                          : Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundImage: (profileImageUrl.isNotEmpty)
-                                    ? NetworkImage(profileImageUrl)
-                                    : null,
-                                backgroundColor: const Color(0xFFCAD6E2),
-                                child: (profileImageUrl.isEmpty)
-                                    ? Text(
-                                        initials,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                              // Show indicator for users with chat history
-                              if (hasHistory)
-                                Positioned(
-                                  right: 0,
-                                  bottom: 0,
-                                  child: Container(
-                                    width: 12,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF52B788),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white, width: 2),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
+                          children: [
+                            Stack(
                               children: [
-                                Text(
-                                  displayName.isNotEmpty ? displayName : email,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: hasHistory ? const Color(0xFF1C1C1C) : Colors.grey[600],
-                                    fontWeight: hasHistory ? FontWeight.w500 : FontWeight.w400,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                                CircleAvatar(
+                                  radius: 24,
+                                  backgroundImage: (profileImageUrl.isNotEmpty)
+                                      ? NetworkImage(profileImageUrl)
+                                      : null,
+                                  backgroundColor: const Color(0xFFCAD6E2),
+                                  child: (profileImageUrl.isEmpty)
+                                      ? Text(
+                                          initials,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : null,
                                 ),
-                                if (displayName.isNotEmpty && displayName != email)
-                                  Text(
-                                    email,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                // Show "New contact" for users without history when searching
-                                if (!hasHistory && _searchQuery.isNotEmpty)
-                                  Text(
-                                    'New contact',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.blue[600],
-                                      fontStyle: FontStyle.italic,
+                                // Show indicator for users with chat history
+                                if (hasHistory)
+                                  Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF52B788),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: Colors.white, width: 2),
+                                      ),
                                     ),
                                   ),
                               ],
                             ),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (hasHistory)
-                                const Icon(
-                                  Icons.chat_bubble_outline,
-                                  size: 16,
-                                  color: Color(0xFF52B788),
-                                )
-                              else if (_searchQuery.isNotEmpty)
-                                const Icon(
-                                  Icons.person_add_alt_1,
-                                  size: 16,
-                                  color: Colors.blue,
-                                ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-                            ],
-                          ),
-                        ],
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    displayName.isNotEmpty
+                                        ? displayName
+                                        : email,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: hasHistory
+                                          ? const Color(0xFF1C1C1C)
+                                          : Colors.grey[600],
+                                      fontWeight: hasHistory
+                                          ? FontWeight.w500
+                                          : FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (displayName.isNotEmpty &&
+                                      displayName != email)
+                                    Text(
+                                      email,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  // Show "New contact" for users without history when searching
+                                  if (!hasHistory && _searchQuery.isNotEmpty)
+                                    Text(
+                                      'New contact',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.blue[600],
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (hasHistory)
+                                  const Icon(
+                                    Icons.chat_bubble_outline,
+                                    size: 16,
+                                    color: Color(0xFF52B788),
+                                  )
+                                else if (_searchQuery.isNotEmpty)
+                                  const Icon(
+                                    Icons.person_add_alt_1,
+                                    size: 16,
+                                    color: Color(0xFF283AA3),
+                                  ),
+                                const SizedBox(width: 8),
+                                const Icon(Icons.arrow_forward_ios,
+                                    size: 16, color: Colors.grey),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
-      );
-    },
-  );
-}
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 
 //get users with chat history
-          //HEAVILY INEFFICIENT, but works for now
-Future<List<Map<String, dynamic>>> _getFilteredUsersByChatHistory(
-  List<Map<String, dynamic>> allUsers, 
-  String currentUserId,
-  bool showAllUsers // true when searching, false when not searching
-) async {
-  List<Map<String, dynamic>> usersWithHistory = [];
-  List<Map<String, dynamic>> usersWithoutHistory = [];
-  
-  for (final user in allUsers) {
-    final otherUserId = user['uid'];
-    
-    // Create chat room ID
-    List<String> ids = [currentUserId, otherUserId];
-    ids.sort();
-    String chatRoomId = ids.join('_');
-    
-    bool hasHistory = false;
-    
-    try {
-      // Check if chat room exists and has messages
-      final chatDoc = await FirebaseFirestore.instance
-          .collection('chat_rooms')
-          .doc(chatRoomId)
-          .collection('messages')
-          .limit(1)
-          .get();
-      
-      hasHistory = chatDoc.docs.isNotEmpty;
-    } catch (e) {
-      hasHistory = false;
+  //HEAVILY INEFFICIENT, but works for now
+  Future<List<Map<String, dynamic>>> _getFilteredUsersByChatHistory(
+      List<Map<String, dynamic>> allUsers,
+      String currentUserId,
+      bool showAllUsers // true when searching, false when not searching
+      ) async {
+    List<Map<String, dynamic>> usersWithHistory = [];
+    List<Map<String, dynamic>> usersWithoutHistory = [];
+
+    for (final user in allUsers) {
+      final otherUserId = user['uid'];
+
+      // Create chat room ID
+      List<String> ids = [currentUserId, otherUserId];
+      ids.sort();
+      String chatRoomId = ids.join('_');
+
+      bool hasHistory = false;
+
+      try {
+        // Check if chat room exists and has messages
+        final chatDoc = await FirebaseFirestore.instance
+            .collection('chat_rooms')
+            .doc(chatRoomId)
+            .collection('messages')
+            .limit(1)
+            .get();
+
+        hasHistory = chatDoc.docs.isNotEmpty;
+      } catch (e) {
+        hasHistory = false;
+      }
+
+      final userWithFlag = Map<String, dynamic>.from(user);
+      userWithFlag['hasHistory'] = hasHistory;
+
+      if (hasHistory) {
+        usersWithHistory.add(userWithFlag);
+      } else if (showAllUsers) {
+        usersWithoutHistory.add(userWithFlag);
+      }
     }
-    
-    final userWithFlag = Map<String, dynamic>.from(user);
-    userWithFlag['hasHistory'] = hasHistory;
-    
-    if (hasHistory) {
-      usersWithHistory.add(userWithFlag);
-    } else if (showAllUsers) {
-      usersWithoutHistory.add(userWithFlag);
-    }
+
+    // Alpahetical sort
+    usersWithHistory.sort((a, b) {
+      final nameA = a['displayName'] ?? a['firstName'] ?? a['email'] ?? '';
+      final nameB = b['displayName'] ?? b['firstName'] ?? b['email'] ?? '';
+      return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+    });
+
+    usersWithoutHistory.sort((a, b) {
+      final nameA = a['displayName'] ?? a['firstName'] ?? a['email'] ?? '';
+      final nameB = b['displayName'] ?? b['firstName'] ?? b['email'] ?? '';
+      return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+    });
+
+    // Return users with history first, then users without history (only when searching)
+    return [...usersWithHistory, ...usersWithoutHistory];
   }
-  
-  // Alpahetical sort
-  usersWithHistory.sort((a, b) {
-    final nameA = a['displayName'] ?? a['firstName'] ?? a['email'] ?? '';
-    final nameB = b['displayName'] ?? b['firstName'] ?? b['email'] ?? '';
-    return nameA.toLowerCase().compareTo(nameB.toLowerCase());
-  });
-  
-  usersWithoutHistory.sort((a, b) {
-    final nameA = a['displayName'] ?? a['firstName'] ?? a['email'] ?? '';
-    final nameB = b['displayName'] ?? b['firstName'] ?? b['email'] ?? '';
-    return nameA.toLowerCase().compareTo(nameB.toLowerCase());
-  });
-  
-  // Return users with history first, then users without history (only when searching)
-  return [...usersWithHistory, ...usersWithoutHistory];
-}
 
 //helper method for better initials
-String _getInitials(String email, String displayName) {
-  if (displayName.isNotEmpty) {
-    final names = displayName.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    } else {
-      return names[0][0].toUpperCase();
+  String _getInitials(String email, String displayName) {
+    if (displayName.isNotEmpty) {
+      final names = displayName.split(' ');
+      if (names.length >= 2) {
+        return (names[0][0] + names[1][0]).toUpperCase();
+      } else {
+        return names[0][0].toUpperCase();
+      }
     }
+    return email.isNotEmpty ? email[0].toUpperCase() : "?";
   }
-  return email.isNotEmpty ? email[0].toUpperCase() : "?";
-}
-
 
   Widget _buildGroupsList(BuildContext context) {
     final currentUser = _authenticationService.getCurrentUser;
@@ -591,7 +617,7 @@ String _getInitials(String email, String displayName) {
                 (data['members'] as List).contains(currentUser.uid);
             return ListTile(
               leading: const CircleAvatar(
-                backgroundColor: Color(0xFF003A70),
+                backgroundColor: Color(0xFF283AA3),
                 child: Icon(Icons.group, color: Colors.white),
               ),
               title: Text(data['name'] ?? 'Unnamed Group'),
@@ -624,13 +650,13 @@ String _getInitials(String email, String displayName) {
                         title: Row(
                           children: const [
                             Icon(Icons.person_add_alt_1,
-                                color: Color(0xFF003A70)),
+                                color: Color(0xFF283AA3)),
                             SizedBox(width: 8),
                             Text(
                               'Add Member',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF003A70),
+                                color: Color(0xFF283AA3),
                                 fontSize: 20,
                               ),
                             ),
@@ -653,7 +679,7 @@ String _getInitials(String email, String displayName) {
                                   child: Row(
                                     children: [
                                       const Icon(Icons.account_circle,
-                                          color: Color(0xFF003A70), size: 20),
+                                          color: Color(0xFF283AA3), size: 20),
                                       const SizedBox(width: 8),
                                       Text(
                                         user['email'] ??
@@ -671,7 +697,7 @@ String _getInitials(String email, String displayName) {
                               decoration: InputDecoration(
                                 labelText: 'Select user',
                                 labelStyle:
-                                    const TextStyle(color: Color(0xFF003A70)),
+                                    const TextStyle(color: Color(0xFF283AA3)),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -684,7 +710,7 @@ String _getInitials(String email, String displayName) {
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 14),
                               ),
-                              style: const TextStyle(color: Color(0xFF003A70)),
+                              style: const TextStyle(color: Color(0xFF283AA3)),
                               dropdownColor: Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               icon: const Icon(Icons.arrow_drop_down,
@@ -698,7 +724,7 @@ String _getInitials(String email, String displayName) {
                             child: const Text(
                               'Cancel',
                               style: TextStyle(
-                                color: Color(0xFF003A70),
+                                color: Color(0xFF283AA3),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -720,7 +746,7 @@ String _getInitials(String email, String displayName) {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF003A70),
+                              backgroundColor: const Color(0xFF283AA3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
