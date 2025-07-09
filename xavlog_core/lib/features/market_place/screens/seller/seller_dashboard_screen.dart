@@ -4,7 +4,7 @@ import '../../providers/product_provider.dart';
 import 'seller_product_create_screen.dart';
 
 class SellerDashboardScreen extends StatelessWidget {
-  const SellerDashboardScreen({Key? key}) : super(key: key);
+  const SellerDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
