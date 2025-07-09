@@ -148,10 +148,10 @@ class Body extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      "PHP ${NumberFormat.currency(
+                                      NumberFormat.currency(
                                                   locale: 'en_PH',
-                                                  symbol: 'PHP ')
-                                              .format(product.price)}",
+                                                  symbol: 'P ')
+                                              .format(product.price),
                                       style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold,
