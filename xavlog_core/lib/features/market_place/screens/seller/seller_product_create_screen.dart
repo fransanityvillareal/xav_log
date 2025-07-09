@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/product.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SellerProductCreateScreen extends StatefulWidget {
   const SellerProductCreateScreen({super.key});
@@ -22,17 +24,50 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
   String _image = '';
   String _condition = '';
   String _category = '';
+  XFile? _pickedImage;
 
   // Submit the form and add the product
   void _submit() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
 
-      // Ensure an image URL is available
+    // Ensure an image is selected
+    if (_pickedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please select an image first!'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Uploading product..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      await _uploadImageToSupabase();
+      // Check if upload was successful
       if (_image.isEmpty) {
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Please upload an image before submitting!'),
+            content: const Text('Failed to upload image. Please try again.'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 2),
           ),
@@ -44,191 +79,153 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
       final user = FirebaseAuth.instance.currentUser;
       final sellerEmail = user?.email ?? 'Unknown';
 
-      // Creating a new product object
+      // Creating a new product object with the Supabase image URL
       final newProduct = Product(
-        id: DateTime.now().millisecondsSinceEpoch, // Simple unique id
-        image: _image,
+        id: DateTime.now().millisecondsSinceEpoch,
+        image: _image, // Now this contains the Supabase URL
         title: _title,
         price: _price,
         description: _description,
         condition: _condition.isNotEmpty ? _condition : 'Used',
-        color: Colors.grey, // Default color
+        color: Colors.grey,
         category: _category.isNotEmpty ? _category : 'Others',
-        sellerEmail: sellerEmail, // Use the authenticated user's email
-        sellerProfileImageUrl: '', // Placeholder, can be updated later
+        sellerEmail: sellerEmail,
+        sellerProfileImageUrl: '',
       );
 
-      try {
-        // Save product to Firestore
-        await FirebaseFirestore.instance
-            .collection('products')
-            .add(newProduct.toFirestore());
+      // Save product to Firestore
+      await FirebaseFirestore.instance
+          .collection('products')
+          .add(newProduct.toFirestore());
 
-        // Removed manual addition to ProductProvider to avoid duplication
+      // Close loading dialog
+      Navigator.pop(context);
 
-        // Show Snackbar for successful product addition
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Product Added Successfully!'),
-            backgroundColor: Colors.green, // Success color
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        // Pop the screen to go back to the previous one
-        Navigator.pop(context);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to add product: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } else {
-      // If form is invalid, show an error message in Snackbar
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please fill in all fields correctly!'),
-          backgroundColor: Colors.red, // Error color
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-  }
-
-  void _pickImage() async {
-    // Open file picker for image selection
-    final result = await FilePicker.platform.pickFiles(type: FileType.image);
-    if (result == null || result.files.single.path == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('No image selected!'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
-    final filePath = result.files.single.path!;
-    final file = File(filePath);
-
-    // Validate if the file exists
-    if (!file.existsSync()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Selected image file does not exist!'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
-    final fileExt = file.path.split('.').last;
-    final fileName =
-        'product_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
-
-    try {
-      // Upload image to Supabase bucket
-      await Supabase.instance.client.storage.from('xavlog-profile').upload(
-            fileName,
-            file,
-            fileOptions: const FileOptions(upsert: true),
-          );
-
-      // Get public URL of the uploaded image
-      final publicUrl = Supabase.instance.client.storage
-          .from('xavlog-profile')
-          .getPublicUrl(fileName);
-
-      // Update UI with the new image URL
-      setState(() {
-        _image = '$publicUrl?ts=${DateTime.now().millisecondsSinceEpoch}';
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Image uploaded successfully!'),
+          content: const Text('Product Added Successfully!'),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 2),
         ),
       );
+
+      // Go back to previous screen
+      Navigator.pop(context);
+
     } catch (e) {
+      // Close loading dialog
+      Navigator.pop(context);
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Image upload failed: $e'),
+          content: Text('Failed to add product: $e'),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 2),
         ),
       );
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Please fill in all fields correctly!'),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
+}
+  //upload to supabase
+  //upload to supabase
+Future<void> _uploadImageToSupabase() async {
+  if (_pickedImage == null) return;
 
-  void _chatNow(String sellerEmail) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('You need to be logged in to chat!'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
+  try {
+    final fileExt = _pickedImage!.path.split('.').last.toLowerCase();
+    final fileName = 'product_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+    
+    // Determine the correct MIME type based on file extension
+    String contentType;
+    switch (fileExt) {
+      case 'jpg':
+      case 'jpeg':
+        contentType = 'image/jpeg';
+        break;
+      case 'png':
+        contentType = 'image/png';
+        break;
+      case 'gif':
+        contentType = 'image/gif';
+        break;
+      case 'webp':
+        contentType = 'image/webp';
+        break;
+      case 'bmp':
+        contentType = 'image/bmp';
+        break;
+      default:
+        contentType = 'image/jpeg'; // Default to JPEG
     }
 
-    final currentUserEmail = currentUser.email;
-
-    try {
-      // Check if a chat room already exists
-      final chatRoomQuery = await FirebaseFirestore.instance
-          .collection('chat_rooms')
-          .where('participants', arrayContains: currentUserEmail)
-          .get();
-
-      DocumentSnapshot? existingChatRoom;
-      for (var doc in chatRoomQuery.docs) {
-        final participants = List<String>.from(doc['participants']);
-        if (participants.contains(sellerEmail)) {
-          existingChatRoom = doc;
-          break;
-        }
-      }
-
-      if (existingChatRoom != null) {
-        // Navigate to the existing chat room
-        Navigator.pushNamed(context, '/chat', arguments: existingChatRoom.id);
-      } else {
-        // Create a new chat room
-        final newChatRoom =
-            await FirebaseFirestore.instance.collection('chat_rooms').add({
-          'participants': [currentUserEmail, sellerEmail],
-          'lastMessage': '',
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-
-        // Navigate to the new chat room
-        Navigator.pushNamed(context, '/chat', arguments: newChatRoom.id);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to start chat: $e'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 2),
-        ),
-      );
+    // Upload to Supabase Storage with correct content type
+    if (kIsWeb) {
+      // Web upload using bytes
+      final bytes = await _pickedImage!.readAsBytes();
+      await Supabase.instance.client.storage
+          .from('xavlog-profile')
+          .uploadBinary(
+            fileName,
+            bytes,
+            fileOptions: FileOptions(
+              upsert: true,
+              contentType: contentType, // Specify the correct MIME type
+            ),
+          );
+    } else {
+      // Mobile upload using file
+      final file = File(_pickedImage!.path);
+      await Supabase.instance.client.storage
+          .from('xavlog-profile')
+          .upload(
+            fileName,
+            file,
+            fileOptions: FileOptions(
+              upsert: true,
+              contentType: contentType, // Specify the correct MIME type
+            ),
+          );
     }
+
+    // Get public URL and set it to _image
+    final publicUrl = Supabase.instance.client.storage
+        .from('xavlog-profile')
+        .getPublicUrl(fileName);
+
+    // Verify the URL is not empty
+    if (publicUrl.isNotEmpty) {
+      setState(() {
+        _image = publicUrl;
+      });
+      print('Image uploaded successfully: $_image');
+      print('Content Type: $contentType');
+    } else {
+      throw Exception('Failed to get public URL');
+    }
+
+  } catch (e) {
+    print('Upload error: $e');
+    setState(() {
+      _image = '';
+    });
+    throw Exception('Upload failed: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue, // Blue color for AppBar
+        backgroundColor: Color(0xFF283AA3), // Blue color for AppBar
         title: const Text('Add Product', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         elevation: 5.0,
@@ -239,6 +236,43 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              //Image
+              GestureDetector(
+                onTap: () async {
+                  final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+                  if (image != null) {
+                    setState(() {
+                      _pickedImage = image;
+                      //save to supabase
+                    });
+                  }
+                },
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  // child: const Icon(Icons.camera_alt, size: 50, color: Colors.grey),
+                  child: _pickedImage == null
+                    ? const Icon(Icons.camera_alt, size: 50, color: Colors.grey)
+                    : kIsWeb
+                        ? Image.network(_pickedImage!.path, fit: BoxFit.cover)
+                        : Image.file(File(_pickedImage!.path), fit: BoxFit.cover),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _pickedImage = null;
+                    });
+                  },
+                  child: const Text('Reset'),
+                ),
+              ),
               // Product Title
               _buildTextFormField(
                 label: 'Product Title',
@@ -288,7 +322,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                   value: _category.isNotEmpty ? _category : null,
                   decoration: InputDecoration(
                     labelText: 'Category *',
-                    prefixIcon: const Icon(Icons.category, color: Colors.blue),
+                    prefixIcon: const Icon(Icons.category, color: Color(0xFF283AA3)),
                     labelStyle: const TextStyle(color: Colors.black54),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -296,7 +330,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(color: Color(0xFF283AA3)),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -327,27 +361,11 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                   onSaved: (value) => _category = value ?? '',
                 ),
               ),
-
-              // Image Picker Button
-              ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.image),
-                label: const Text('Pick Image'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-
-           
-
               // Add Product Button
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber, // Amber color for the button
+                  backgroundColor: Color(0xFFBFA547), // Amber color for the button
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -382,7 +400,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
         style: const TextStyle(fontSize: 16),
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: Colors.blue), // Blue color for icons
+          prefixIcon: Icon(icon, color: Color(0xFF283AA3)), // Blue color for icons
           labelStyle: const TextStyle(color: Colors.black54),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -391,7 +409,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(
-                color: Colors.blue), // Blue border when focused
+                color: Color(0xFF283AA3)), // Blue border when focused
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
