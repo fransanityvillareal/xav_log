@@ -134,8 +134,24 @@ class _RegistrationPageState extends State<RegistrationPage>
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF132BB2),
-      body: SafeArea(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
+      body: Container(
+      // Add gradient background
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Colors.black,           // Start with black at top
+            Color(0xFF1a1a2e),      // Dark blue-black
+            Color(0xFF16213e),      // Medium dark blue
+            Color(0xFF132BB2),      // Blue
+          ],
+          stops: [0.0, 0.4, 0.6, 1.0], // Control gradient distribution
+        ),
+      ),
+      child: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -444,6 +460,7 @@ class _RegistrationPageState extends State<RegistrationPage>
             ),
           ),
         ),
+      ),
       ),
     );
   }
