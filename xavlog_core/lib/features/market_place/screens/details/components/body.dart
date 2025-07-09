@@ -26,7 +26,7 @@ class Body extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Image.network(
                     product.image,
-                    height: 160,
+                    height: 300,
                     fit: BoxFit.contain,
                   ),
                 ),

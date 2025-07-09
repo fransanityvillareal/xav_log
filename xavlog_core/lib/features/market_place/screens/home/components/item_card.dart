@@ -37,7 +37,7 @@ class ItemCard extends StatelessWidget {
             ),
           ),
           Text(
-            "PHP ${product.price}",
+            "P ${product.price}",
             style: const TextStyle(fontWeight: FontWeight.bold),
           )
         ],
