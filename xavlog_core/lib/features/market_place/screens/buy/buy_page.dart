@@ -129,8 +129,8 @@ class BuyPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "PHP ${NumberFormat.currency(locale: 'en_PH', symbol: 'PHP ')
-                          .format(product.price)}",
+                  NumberFormat.currency(locale: 'en_PH', symbol: 'P ')
+                          .format(product.price),
                   style: const TextStyle(
                     fontFamily: 'Jost',
                     fontSize: 15,
