@@ -48,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    profileImageUrl = 'https://via.placeholder.com/150'; // Default image URL
+    profileImageUrl = 'https://i.imgur.com/4STeKWS.png';
     _fetchUserData();
   }
 
@@ -75,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
         department = data?['department'] ?? '';
         program = data?['program'] ?? '';
         profileImageUrl =
-            data?['profileImageUrl'] ?? 'https://via.placeholder.com/150';
+            data?['profileImageUrl'] ?? 'https://i.imgur.com/4STeKWS.png';
 
         // Add a timestamp to avoid caching issues
         profileImageUrl =
