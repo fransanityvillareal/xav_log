@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/screens/buy/payment/payment_proof.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
@@ -10,7 +11,7 @@ class BuyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = product.color.withOpacity(0.8);
+    product.color.withOpacity(0.8);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -70,8 +71,8 @@ class BuyPage extends StatelessWidget {
                   'assets/images/maya_qr.jpg', 400, 400),
               _paymentMethodTile(context, Icons.mobile_friendly, "GCash",
                   'assets/images/gcash_qr.jpg', 300, 150),
-              _paymentMethodTile(context, Icons.credit_card, "Credit/Debit Card",
-                  'assets/images/bdo_qr.jpg', 500, 250),
+              _paymentMethodTile(context, Icons.credit_card,
+                  "Credit/Debit Card", 'assets/images/bdo_qr.jpg', 500, 250),
               _paymentMethodTile(context, Icons.handshake, "Cash",
                   'assets/images/face_to_face_qr.jpg', 350, 200),
             ],
@@ -107,7 +108,8 @@ class BuyPage extends StatelessWidget {
               width: 60,
               height: 60,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported),
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.image_not_supported),
             ),
           ),
           const SizedBox(width: 12),
@@ -127,7 +129,8 @@ class BuyPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "PHP ${product.price}",
+                  "PHP ${NumberFormat.currency(locale: 'en_PH', symbol: 'PHP ')
+                          .format(product.price)}",
                   style: const TextStyle(
                     fontFamily: 'Jost',
                     fontSize: 15,
@@ -211,7 +214,8 @@ class BuyPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(24),

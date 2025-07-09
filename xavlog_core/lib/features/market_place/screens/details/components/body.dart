@@ -12,9 +12,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
+    
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
       body: SafeArea(
@@ -150,11 +148,10 @@ class Body extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      "PHP " +
-                                          NumberFormat.currency(
+                                      "PHP ${NumberFormat.currency(
                                                   locale: 'en_PH',
                                                   symbol: 'PHP ')
-                                              .format(product.price),
+                                              .format(product.price)}",
                                       style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold,

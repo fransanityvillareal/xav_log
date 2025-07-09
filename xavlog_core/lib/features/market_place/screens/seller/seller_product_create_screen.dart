@@ -167,63 +167,6 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
     }
   }
 
-  void _chatNow(String sellerEmail) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('You need to be logged in to chat!'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
-    final currentUserEmail = currentUser.email;
-
-    try {
-      // Check if a chat room already exists
-      final chatRoomQuery = await FirebaseFirestore.instance
-          .collection('chat_rooms')
-          .where('participants', arrayContains: currentUserEmail)
-          .get();
-
-      DocumentSnapshot? existingChatRoom;
-      for (var doc in chatRoomQuery.docs) {
-        final participants = List<String>.from(doc['participants']);
-        if (participants.contains(sellerEmail)) {
-          existingChatRoom = doc;
-          break;
-        }
-      }
-
-      if (existingChatRoom != null) {
-        // Navigate to the existing chat room
-        Navigator.pushNamed(context, '/chat', arguments: existingChatRoom.id);
-      } else {
-        // Create a new chat room
-        final newChatRoom =
-            await FirebaseFirestore.instance.collection('chat_rooms').add({
-          'participants': [currentUserEmail, sellerEmail],
-          'lastMessage': '',
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-
-        // Navigate to the new chat room
-        Navigator.pushNamed(context, '/chat', arguments: newChatRoom.id);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to start chat: $e'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -340,8 +283,6 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                   ),
                 ),
               ),
-
-           
 
               // Add Product Button
               const SizedBox(height: 20),
