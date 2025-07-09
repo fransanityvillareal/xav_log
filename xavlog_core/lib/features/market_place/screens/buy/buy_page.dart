@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/screens/buy/payment/payment_proof.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
@@ -10,48 +11,72 @@ class BuyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = product.color.withOpacity(0.8);
+    product.color.withOpacity(0.8);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text('Buy ${product.title}',
-            style: const TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: primaryColor,
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Card
-            _productCard(context),
-
-            const SizedBox(height: 30),
-
-            // Payment Methods Title
-            const Text(
-              "Select Payment Method",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Custom AppBar with centered title
+              SizedBox(
+                height: 56,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const Center(
+                      child: Text(
+                        'Item Checkout',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 75, 75, 75),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-            // Payment Options
-            _paymentMethodTile(context, Icons.account_balance_wallet, "Maya",
-                'assets/images/maya_qr.jpg', 400, 400),
-            _paymentMethodTile(context, Icons.mobile_friendly, "GCash",
-                'assets/images/gcash_qr.jpg', 300, 150),
-            _paymentMethodTile(context, Icons.credit_card, "Credit/Debit Card",
-                'assets/images/bdo_qr.jpg', 500, 250),
-            _paymentMethodTile(context, Icons.handshake, "Pay Face-to-Face",
-                'assets/images/face_to_face_qr.jpg', 350, 200),
-          ],
+              // Product Card
+              _productCard(context),
+
+              const SizedBox(height: 45),
+
+              // Payment Methods Title
+              const Text(
+                "Payment Method",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Payment Options
+              _paymentMethodTile(context, Icons.account_balance_wallet, "Maya",
+                  'assets/images/maya_qr.jpg', 400, 400),
+              _paymentMethodTile(context, Icons.mobile_friendly, "GCash",
+                  'assets/images/gcash_qr.jpg', 300, 150),
+              _paymentMethodTile(context, Icons.credit_card,
+                  "Credit/Debit Card", 'assets/images/bdo_qr.jpg', 500, 250),
+              _paymentMethodTile(context, Icons.handshake, "Cash",
+                  'assets/images/face_to_face_qr.jpg', 350, 200),
+            ],
+          ),
         ),
       ),
     );
@@ -59,10 +84,11 @@ class BuyPage extends StatelessWidget {
 
   Widget _productCard(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      width: double.infinity,
+      height: 70,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -71,32 +97,48 @@ class BuyPage extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            product.title,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              product.image,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.image_not_supported),
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            "PHP ${product.price}",
-            style: TextStyle(
-              fontFamily: 'Rubik',
-              fontSize: 24,
-              color: Colors.green.shade700,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Condition: ${product.condition}",
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    product.title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  NumberFormat.currency(locale: 'en_PH', symbol: 'P ')
+                          .format(product.price),
+                  style: const TextStyle(
+                    fontFamily: 'Jost',
+                    fontSize: 15,
+                    color: Color(0xFF071D99),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -114,7 +156,7 @@ class BuyPage extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        if (method == 'Pay Face-to-Face') {
+        if (method == 'Cash') {
           _showFaceToFaceDialog(context);
         } else {
           Navigator.push(
@@ -136,7 +178,7 @@ class BuyPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -147,7 +189,8 @@ class BuyPage extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 28, color: Colors.blueGrey),
+            const Icon(Icons.circle, size: 0), // placeholder
+            Icon(icon, size: 28, color: Color(0xFFD7A61F)), // gold color
             const SizedBox(width: 20),
             Expanded(
               child: Text(
@@ -173,13 +216,12 @@ class BuyPage extends StatelessWidget {
         return Dialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: Colors.white, // dialog background
+          backgroundColor: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Face-to-Face Payment Icon
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -193,37 +235,28 @@ class BuyPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // Title of the Dialog
                 const Text(
-                  'Pay Face-to-Face',
+                  'Cash',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 12),
-
-                // Description of the Payment Process
                 const Text(
                   'To get started, please chat with the seller and meet in person to complete the payment process.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
-
-                // Action buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Cancel Button
                     TextButton(
                       child: const Text('Cancel'),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     const SizedBox(width: 12),
-
-                    // Okay Button
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:xavlog_core/constants.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/providers/product_provider.dart';
 import 'package:xavlog_core/features/market_place/screens/details/details_screen.dart';
@@ -45,22 +45,18 @@ class BodyState extends State<Body> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SizedBox(height: 12),
               Text(
-                'Campus\nMarketplace',
+                'Campus Marketplace',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 0, 0, 0),
                     fontSize: 25),
               ),
-            ]
-          )
-          
-        ),
+            ])),
         const SizedBox(height: 10),
         Category(
           categories: categories,
@@ -113,54 +109,57 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return GestureDetector(
-    onTap: press,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(kDefaultPadding),
-          height: 165,
-          width: 165,
-          decoration: BoxDecoration(
-            color: product.color,
-            borderRadius: BorderRadius.circular(16),
+    final currencyFormatter =
+        NumberFormat.currency(locale: 'en_PH', symbol: 'P ');
+
+    return GestureDetector(
+      onTap: press,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(kDefaultPadding),
+            height: 165,
+            width: 165,
+            decoration: BoxDecoration(
+              color: product.color,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: product.image.isNotEmpty
+                ? Image.network(
+                    product.image,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.image, size: 50),
           ),
-          child: product.image.isNotEmpty
-              ? Image.network(
-                  product.image,
-                  fit: BoxFit.cover,
-                )
-              : const Icon(Icons.image, size: 50),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),
-          child: Text(
-            product.title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 19,
-              fontWeight: FontWeight.w600,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 4),
+            child: Text(
+              product.title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 19,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8), 
-          child: Text(
-            'P ${product.price}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Color.fromARGB(255, 17, 5, 152),
-              fontSize: 17,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              currencyFormatter.format(product.price),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color.fromARGB(255, 17, 5, 152),
+                fontSize: 17,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
 
 class Category extends StatefulWidget {
@@ -230,35 +229,35 @@ class _CategoryState extends State<Category> {
   }
 
   Widget buildCategory(int index) {
-  final bool isSelected = widget.selectedIndex == index;
+    final bool isSelected = widget.selectedIndex == index;
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-    child: GestureDetector(
-      onTap: () => widget.onCategorySelected(index),
-      child: Column(
-        children: [
-          Text(
-            widget.categories[index],
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: isSelected
-                  ? Color.fromARGB(255, 14, 0, 174) 
-                  : const Color.fromARGB(255, 74, 74, 74), 
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+      child: GestureDetector(
+        onTap: () => widget.onCategorySelected(index),
+        child: Column(
+          children: [
+            Text(
+              widget.categories[index],
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: isSelected
+                    ? Color.fromARGB(255, 14, 0, 174)
+                    : const Color.fromARGB(255, 74, 74, 74),
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: kDefaultPadding / 4),
-            height: 2,
-            width: 30,
-            color: isSelected
-                ? Color.fromARGB(255, 0, 0, 0) 
-                : Colors.transparent,
-          ),
-        ],
+            Container(
+              margin: const EdgeInsets.only(top: kDefaultPadding / 4),
+              height: 2,
+              width: 30,
+              color: isSelected
+                  ? Color.fromARGB(255, 0, 0, 0)
+                  : Colors.transparent,
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

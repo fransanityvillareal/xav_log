@@ -338,7 +338,7 @@ Future<void> _uploadImageToSupabase() async {
                     ),
                   ),
                   items: [
-                    'Stationery',
+                    'Stationnery',
                     'Equipment',
                     'Clothing',
                     'Technology',

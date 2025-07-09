@@ -21,7 +21,6 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   String _name = 'Loading...';
   String _description = '';
-  String _notifNumber = '3';
   String _profileImageUrl = 'https://picsum.photos/200?random=1';
 
   final _titleController = TextEditingController();

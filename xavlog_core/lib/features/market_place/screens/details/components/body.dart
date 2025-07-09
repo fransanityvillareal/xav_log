@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:xavlog_core/constants.dart';
 import 'package:xavlog_core/features/market_place/models/product.dart';
 import 'package:xavlog_core/features/market_place/screens/cart/cart_provider.dart';
@@ -11,9 +12,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
+    
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
       body: SafeArea(
@@ -35,7 +34,8 @@ class Body extends StatelessWidget {
                 // White info container
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -69,7 +69,8 @@ class Body extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 7.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         product.title,
@@ -147,7 +148,10 @@ class Body extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      "PHP ${product.price}",
+                                      NumberFormat.currency(
+                                                  locale: 'en_PH',
+                                                  symbol: 'P ')
+                                              .format(product.price),
                                       style: const TextStyle(
                                         fontSize: 25,
                                         fontWeight: FontWeight.bold,
@@ -200,7 +204,8 @@ class Body extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
-                          Icon(Icons.chat_bubble_outline, color: Colors.white, size: 18),
+                          Icon(Icons.chat_bubble_outline,
+                              color: Colors.white, size: 18),
                           SizedBox(height: 2),
                           Text(
                             "Chat Now",
@@ -223,12 +228,14 @@ class Body extends StatelessWidget {
                     height: 55,
                     child: ElevatedButton(
                       onPressed: () {
-                        Provider.of<CartProvider>(context, listen: false).addToCart(product);
+                        Provider.of<CartProvider>(context, listen: false)
+                            .addToCart(product);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Row(
                               children: [
-                                const Icon(Icons.check_circle_outline, color: Color(0xFFD7A61F)),
+                                const Icon(Icons.check_circle_outline,
+                                    color: Color(0xFFD7A61F)),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
@@ -265,7 +272,8 @@ class Body extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
-                          Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 18),
+                          Icon(Icons.shopping_cart_outlined,
+                              color: Colors.white, size: 18),
                           SizedBox(height: 2),
                           Text(
                             "Add to Cart",

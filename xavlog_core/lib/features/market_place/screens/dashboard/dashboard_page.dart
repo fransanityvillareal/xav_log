@@ -173,8 +173,6 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  String selected = 'Delivery';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,6 +201,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                             _buildSectionTitle('Categories'),
 
                             _buildCategoryBar(),
+                            _buildSellItemsSection(), // Move the Sell Items section here
 
                             SizedBox(height: 24), // Space between sections
 
@@ -361,10 +360,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       child: Container(
         width: 100,
         height: 100,
-        margin: EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical:
-                4), // 👈 vertical margin gives room for shadow - AI ito noh - gian
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -499,6 +495,81 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSellItemsSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Sell Your Items',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1E3A8A), // Ateneo Blue
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'List your items for sale and connect with buyers in the Ateneo community.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E3A8A), // Ateneo Blue
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SellerDashboardScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'Start Selling',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
