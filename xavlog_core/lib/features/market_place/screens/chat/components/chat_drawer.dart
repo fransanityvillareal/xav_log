@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_settting.dart';
 import 'package:xavlog_core/features/market_place/screens/chat/chat_home_page.dart';
 
-
 class ChatDrawer extends StatelessWidget {
   const ChatDrawer({super.key});
 
@@ -55,8 +54,8 @@ class ChatDrawer extends StatelessWidget {
             children: [
               // Header Section
               Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 40, horizontal: 16), // Increased vertical padding
                 decoration: const BoxDecoration(
                   color: Color(0xFF003A70), // Match ateneoBlue from login
                   borderRadius: BorderRadius.only(

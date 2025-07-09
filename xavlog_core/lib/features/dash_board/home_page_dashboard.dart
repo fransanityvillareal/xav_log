@@ -369,17 +369,17 @@ class _HomepageState extends State<Homepage> {
             Text(
               'Monthly Analytics',
               style: TextStyle(
-                fontSize: fontSize * 1.5,
+                fontSize: 23,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Jost',
-                color: const Color(0xFF071D99),
+                color: Color(0xFF071D99),
               ),
             ),
             const SizedBox(height: 16),
             Card(
               elevation: 4,
               color: Colors.white,
-              shadowColor: const Color(0xFF071D99),
+              shadowColor: Color(0xFF071D99),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -389,8 +389,8 @@ class _HomepageState extends State<Homepage> {
                   children: [
                     GridView.count(
                       shrinkWrap: true,
-                      crossAxisCount: width < 600 ? 1 : 2, // Adjust grid for small devices
-                      childAspectRatio: width < 600 ? 2 : 1.5,
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.5,
                       children: [
                         /////////////// change numbers according to computations of analytics //////////////
                         _buildStatCard(
@@ -779,10 +779,6 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget _buildUpcomingActivities() {
-  final screenSize = MediaQuery.of(context).size;
-  final width = screenSize.width;
-  final fontSize = width * 0.03;
-
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0),
     child: Column(
@@ -794,10 +790,10 @@ class _HomepageState extends State<Homepage> {
             Text(
               'Upcoming Activities',
               style: TextStyle(
-                fontSize: fontSize * 1.5,
+                fontSize: 23,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Jost',
-                color: const Color(0xFF071D99),
+                color: Color(0xFF071D99),
               ),
             ),
             GestureDetector(
@@ -813,6 +809,8 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
         const SizedBox(height: 16),
+        
+        // Replace StreamBuilder with conditional rendering
         _isLoadingActivities
             ? const Center(child: CircularProgressIndicator())
             : activities.isEmpty
@@ -831,6 +829,7 @@ class _HomepageState extends State<Homepage> {
                     itemCount: activities.length,
                     itemBuilder: (context, index) {
                       final activity = activities[index];
+                      
                       return Card(
                         color: Colors.white,
                         elevation: 4,
@@ -868,12 +867,43 @@ class _HomepageState extends State<Homepage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                activity.description,
-                                style: TextStyle(
-                                  fontSize: fontSize,
-                                  color: Colors.grey[800],
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.category,
+                                        size: 20,
+                                        color: Color(0xFF071D99),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Category: ${activity.category}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.description,
+                                        size: 20,
+                                        color: Color(0xFF071D99),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          activity.description,
+                                          style: TextStyle(color: Colors.grey[800]),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ],

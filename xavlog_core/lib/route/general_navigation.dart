@@ -19,8 +19,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   late int _page;
 
   // Minimalist palette inspired by Ateneo colors
-  static const Color softBlue = Color.fromARGB(255, 38, 51, 139);
-  static const Color softGold = Color.fromARGB(255, 248, 214, 92);
+  static const Color softBlue = Color(0xFF26338B);
+  static const Color softGold = Color(0xFFF8D65C);
 
   @override
   void initState() {
