@@ -445,5 +445,58 @@ Future<double> calculateAverageQPI() async {
   return totalQpiUnits / totalUnits;
 }
 
+// Get subject names and final grades
+Future<List<Map<String, dynamic>>> getSubjectNamesAndGrades() async {
+  final db = await database;
+  final result = await db.query(
+    _subjectsTableName,
+    columns: [_subjectsSubjectTitle, _subjectsFinalGrade],
+  );
+  
+  return result.map((row) => {
+    'subjectTitle': row[_subjectsSubjectTitle] as String,
+    'finalGrade': row[_subjectsFinalGrade] as double? ?? 0.0, // Default to 0.0 if null
+  }).toList();
+}
 
+// Get subject code with the highest final grade
+Future<String?> getTopPerformingSubjectCode() async {
+  final db = await database;
+  final result = await db.query(
+    _subjectsTableName,
+    columns: [_subjectsSubjectCode, _subjectsFinalGrade],
+    where: '$_subjectsFinalGrade IS NOT NULL', // Only subjects with grades
+    orderBy: '$_subjectsFinalGrade DESC', // Order by grade descending
+    limit: 1, // Get only the top subject
+  );
+  
+  if (result.isNotEmpty) {
+    return result.first[_subjectsSubjectCode] as String?;
+  }
+  
+  return 'none';
+}
+
+// Get total number of subjects as string
+Future<String> getTotalSubjectsCount() async {
+  final db = await database;
+  final result = await db.query(_subjectsTableName);
+  return result.length.toString();
+}
+
+// Get total units as string
+Future<String> getTotalUnits() async {
+  final db = await database;
+  final result = await db.query(
+    _subjectsTableName,
+    columns: [_subjectsUnits],
+  );
+  
+  double totalUnits = 0.0;
+  for (var subject in result) {
+    totalUnits += (subject[_subjectsUnits] ?? 0.0) as double;
+  }
+  
+  return totalUnits.toString();
+}
 }

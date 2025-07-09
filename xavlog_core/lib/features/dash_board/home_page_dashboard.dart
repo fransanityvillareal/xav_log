@@ -2,14 +2,13 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:xavlog_core/features/market_place/screens/welcome/intro_buy.dart';
-import 'package:xavlog_core/widget/bottom_nav_wrapper.dart';
 import 'profile.dart';
-import '../event_finder/notifications_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:xavlog_core/services/database_services.dart';
+import 'package:xavlog_core/services/dashboard_services.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key}); //(Key? key) : super(Key? keu)
@@ -20,12 +19,16 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   String _name = 'Loading...';
+  String _averageQPI = 'Loading...';
+  String _topSubject = 'Loading...'; 
+  String _totalSubjects = 'Loading...';
+  String _totalUnits = 'Loading...';
   String _description = '';
-  String _profileImageUrl = 'https://picsum.photos/200?random=1';
+  String _profileImageUrl = 'https://i.imgur.com/4STeKWS.png'; // Default image URL
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _selectedCategory = 'Academic'; // Default category
+  String _selectedCategory = 'Task'; // Default category
   DateTime _selectedDate = DateTime.now();
 
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -33,34 +36,9 @@ class _HomepageState extends State<Homepage> {
   DateTime? _selectedDay;
 
   final List<String> _activityCategories = [
-    'Academic',
+    'Task',
     'Project',
-    'Organization',
-  ];
-
-  // Navigation items for the main dashboard
-  // BACKEND: These items should be dynamically loaded based on user permissions and profile type
-  final List<DashboardItem> navigationItems = [
-    DashboardItem(
-      title: 'Attendance Tracker',
-      icon: Icons.track_changes,
-      type:
-          'page', // DYNAMIC: Could be 'page', 'link', or 'external' based on navigation behavior
-    ),
-    DashboardItem(title: 'Calendar', icon: Icons.calendar_today, type: 'page'),
-    DashboardItem(title: 'Event Finder', icon: Icons.event, type: 'page'),
-    DashboardItem(title: 'Marketplace', icon: Icons.store, type: 'page'),
-    DashboardItem(title: 'Grades Tracker', icon: Icons.grade, type: 'page'),
-    DashboardItem(
-      title: 'Social Collaboration',
-      icon: Icons.group,
-      type: 'page',
-    ),
-    DashboardItem(
-      title: 'Schedule Manager',
-      icon: Icons.schedule,
-      type: 'page',
-    ),
+    'Event',
   ];
 
   // Activities shown on the dashboard
@@ -340,7 +318,87 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+  // Calculate final grade for all subjects
+  Future<void> _loadAverageQPI() async {
+    try {
+      final qpi = await DatabaseService.instance.calculateAverageQPI();
+      setState(() {
+        _averageQPI = qpi.toStringAsFixed(2);
+      });
+    } catch (e) {
+      setState(() {
+        _averageQPI = 'Error';
+      });
+    }
+  }
 
+  //gets the top subjects
+  Future<void> _loadTopSubject() async {
+    try {
+      final topSubjectCode = await DatabaseService.instance.getTopPerformingSubjectCode();
+      setState(() {
+        _topSubject = topSubjectCode ?? 'No data';
+      });
+    } catch (e) {
+      setState(() {
+        _topSubject = 'Error';
+      });
+    }
+  }
+
+  // Count upcoming tasks specifically
+  int _getUpcomingActivitiesCount() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final nextWeek = today.add(const Duration(days: 7));
+    
+    return activities.where((activity) {
+      final activityDate = DateTime(activity.date.year, activity.date.month, activity.date.day);
+      return (activity.category == 'Project' || activity.category == 'Task') &&
+            activityDate.compareTo(today) >= 0 && // Today or after
+            activityDate.compareTo(nextWeek) < 0;  // Before next week
+    }).length;
+  }
+
+  // Count upcoming events specifically
+  int _getUpcomingEventsCount() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final nextWeek = today.add(const Duration(days: 7));
+    
+    return activities.where((activity) {
+      final activityDate = DateTime(activity.date.year, activity.date.month, activity.date.day);
+      return activity.category == 'Event' && 
+            activityDate.compareTo(today) >= 0 && // Today or after
+            activityDate.compareTo(nextWeek) < 0;  // Before next week
+    }).length;
+  }
+
+  Future<void> _loadTotalSubjects() async {
+    try {
+      final count = await DatabaseService.instance.getTotalSubjectsCount();
+      setState(() {
+        _totalSubjects = count;
+      });
+    } catch (e) {
+      setState(() {
+        _totalSubjects = 'Error';
+      });
+    }
+  }
+
+  Future<void> _loadTotalUnits() async {
+    try {
+      final units = await DatabaseService.instance.getTotalUnits();
+      setState(() {
+        _totalUnits = units;
+      });
+    } catch (e) {
+      setState(() {
+        _totalUnits = 'Error';
+      });
+    }
+  }
 
   Widget _buildAnalyticsSummary() {
     final screenSize = MediaQuery.of(context).size;
@@ -366,7 +424,7 @@ class _HomepageState extends State<Homepage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Monthly Analytics',
+              'Dashboard',
               style: TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.bold,
@@ -393,27 +451,27 @@ class _HomepageState extends State<Homepage> {
                       children: [
                         /////////////// change numbers according to computations of analytics //////////////
                         _buildStatCard(
-                          'Total Classes',
-                          '28',
-                          Icons.class_,
+                          'Average QPI',
+                          _averageQPI,
+                          Icons.assignment,
                           fontSize * 1.5,
                         ),
                         _buildStatCard(
-                          'Total Attendance',
-                          '85%',
-                          Icons.calendar_view_day,
-                          fontSize * 1.5,
-                        ),
-                        _buildStatCard(
-                          'Classes Attended',
-                          '24/28',
-                          Icons.class_,
-                          fontSize * 1.5,
-                        ),
-                        _buildStatCard(
-                          'Performance',
-                          'Good',
+                          'Excelling',
+                          _topSubject,
                           Icons.trending_up,
+                          fontSize * 1.5,
+                        ),
+                        _buildStatCard(
+                          'Upcoming Activities',
+                          _getUpcomingActivitiesCount().toString(),
+                          Icons.class_,
+                          fontSize * 1.5,
+                        ),
+                        _buildStatCard(
+                          'Upcoming Events',
+                          _getUpcomingEventsCount().toString(),
+                          Icons.event,
                           fontSize * 1.5,
                         ),
                       ],
@@ -441,303 +499,387 @@ class _HomepageState extends State<Homepage> {
   }
 
   void _showAnalyticsSheet() {
-    final screenSize = MediaQuery.of(context).size;
-    final width = screenSize.width;
-    final fontSize = width * 0.035;
+  final screenSize = MediaQuery.of(context).size;
+  final width = screenSize.width;
+  final fontSize = width * 0.035;
 
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => Container(
-              height: screenSize.height * 0.8,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: Column(
-                children: [
-                  Padding(
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => Container(
+      height: screenSize.height * 0.9,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Detailed Analytics',
+                  style: TextStyle(
+                    fontFamily: 'Jost',
+                    fontSize: fontSize * 1.4,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF071D99),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                // Academic Performance Section
+                _buildDetailedSection(
+                  'Academic Performance',
+                  fontSize,
+                  [
+                    _buildDetailCard(
+                      'Average QPI',
+                      _averageQPI,
+                      Icons.assignment,
+                      Colors.blue,
+                      'Current semester QPI based on all subjects',
+                    ),
+                    _buildDetailCard(
+                      'Top Subject',
+                      _topSubject,
+                      Icons.trending_up,
+                      Colors.green,
+                      'Subject with highest grade performance',
+                    ),
+                    _buildStatRow('Total Subjects',_totalSubjects , Icons.school),
+                    _buildStatRow('Total Units', _totalUnits, Icons.book),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // Subject Performance Chart
+                Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  color: Colors.white,
+                  child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Student Analytics',
+                          'Subject Performance Overview',
                           style: TextStyle(
                             fontFamily: 'Jost',
-                            fontSize: fontSize * 1.4,
+                            fontSize: fontSize * 1.2,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF071D99),
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
+                        const SizedBox(height: 16),
+                        FutureBuilder<Widget>(
+                          future: buildSubjectPerformanceChart(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const SizedBox(
+                                height: 200,
+                                child: Center(child: CircularProgressIndicator()),
+                              );
+                            } else {
+                              return snapshot.data ?? buildErrorChart();
+                            }
+                          },
                         ),
                       ],
                     ),
                   ),
-                  const Divider(height: 1),
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.all(16.0),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Activity Management Section
+                _buildDetailedSection(
+                  'Activity Management',
+                  fontSize,
+                  [
+                    _buildDetailCard(
+                      'Upcoming Tasks & Projects',
+                      _getUpcomingActivitiesCount().toString(),
+                      Icons.assignment_turned_in,
+                      Colors.orange,
+                      'Tasks and projects due in the next 7 days',
+                    ),
+                    _buildDetailCard(
+                      'Upcoming Events',
+                      _getUpcomingEventsCount().toString(),
+                      Icons.event,
+                      Colors.purple,
+                      'Events scheduled for the next 7 days',
+                    ),
+                    _buildStatRow('Total Activities', activities.length.toString(), Icons.list),
+                    _buildStatRow('This Week', _getThisWeekActivitiesCount().toString(), Icons.date_range),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // Activity Breakdown Chart
+                Card(
+                  color: const Color(0xFFF5F5F5),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Attendance analytics card
-                        Card(
-                          color: const Color(0xFFF5F5F5),
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Attendance Overview',
-                                  style: TextStyle(
-                                    fontFamily: 'Jost',
-                                    fontSize: fontSize * 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF071D99),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    _buildPieChartItem(
-                                      'Present',
-                                      0.85,
-                                      const Color(0xFF071D99),
-                                    ),
-                                    _buildPieChartItem(
-                                      'Absent',
-                                      0.08,
-                                      Colors.red,
-                                    ),
-                                    _buildPieChartItem(
-                                      'Late',
-                                      0.07,
-                                      const Color(0xFFD7A61F),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                const Text('Attendance Distribution'),
-                              ],
-                            ),
+                        Text(
+                          'Activity Breakdown',
+                          style: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: fontSize * 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF071D99),
                           ),
                         ),
-
-                        // Performance Analytics
-                        Card(
-                          elevation: 2,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Subject Performance',
-                                  style: TextStyle(
-                                    fontFamily: 'Jost',
-                                    fontSize: fontSize * 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF071D99),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                SizedBox(height: 200, child: _buildBarChart()),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Progress Analytics
-                        Card(
-                          color: const Color(0xFFF5F5F5),
-                          elevation: 2,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Semester Progress',
-                                  style: TextStyle(
-                                    fontFamily: 'Jost',
-                                    fontSize: fontSize * 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF071D99),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'Completed',
-                                            style: TextStyle(
-                                              fontFamily: 'Jost',
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            '60%',
-                                            style: TextStyle(
-                                              fontFamily: 'Jost',
-                                              fontSize: fontSize * 1.3,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 50,
-                                      width: 1,
-                                      color: Colors.grey[300],
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'Remaining',
-                                            style: TextStyle(
-                                              fontFamily: 'Jost',
-                                              color: Colors.orange,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            '40%',
-                                            style: TextStyle(
-                                              fontFamily: 'Jost',
-                                              fontSize: fontSize * 1.3,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Export Button
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF071D99),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Analytics report exported'),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.download, color: Colors.white),
-                          label: Text(
-                            'Export Report',
-                            style: TextStyle(
-                              fontFamily: 'Jost',
-                              color: Colors.white,
-                            ),
-                          ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildActivityPieChart('Tasks', _getTaskCount(), const Color(0xFF071D99)),
+                            _buildActivityPieChart('Projects', _getProjectCount(), const Color(0xFFD7A61F)),
+                            _buildActivityPieChart('Events', _getEventCount(), Colors.green),
+                          ],
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 20),
+
+                // Productivity Insights
+                _buildDetailedSection(
+                  'Productivity Insights',
+                  fontSize,
+                  [
+                    _buildProductivityCard('Most Active Day', _getMostActiveDay(), Icons.calendar_today),
+                    _buildProductivityCard('Average Activities/Week', _getAverageActivitiesPerWeek().toString(), Icons.trending_up),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+  // Helper methods for the enhanced analytics
+  Widget _buildDetailedSection(String title, double fontSize, List<Widget> children) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Jost',
+                fontSize: fontSize * 1.2,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF071D99),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+Widget _buildDetailCard(String title, String value, IconData icon, Color color, String description) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: color.withOpacity(0.3)),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                      fontSize: 16,
                     ),
                   ),
                 ],
               ),
-            ));
-  }
-
-  Widget _buildPieChartItem(String label, double value, Color color) {
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: 60,
-              height: 60,
-              child: CircularProgressIndicator(
-                value: value,
-                strokeWidth: 8,
-                backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation<Color>(color),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
               ),
-            ),
-            Text(
-              '${(value * 100).toInt()}%',
-              style: const TextStyle(
-                fontFamily: 'Jost',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontFamily: 'Jost')),
-      ],
-    );
-  }
-
-  Widget _buildBarChart() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        _buildBar('Programming', 0.88, const Color(0xFF071D99)),
-        _buildBar('Mathematics', 0.75, const Color(0xFFD7A61F)),
-        _buildBar('Database', 0.92, const Color(0xFF071D99)),
-        _buildBar('Networks', 0.80, const Color(0xFFD7A61F)),
-      ],
-    );
-  }
-
-  Widget _buildBar(String label, double value, Color color) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Container(
-          width: 40,
-          height: 150 * value,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
+      ],
+    ),
+  );
+}
+
+Widget _buildStatRow(String label, String value, IconData icon) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Icon(icon, size: 20, color: const Color(0xFF071D99)),
+        const SizedBox(width: 12),
+        Expanded(child: Text(label, style: const TextStyle(fontFamily: 'Jost'))),
         Text(
-          label,
-          style: const TextStyle(fontFamily: 'Jost', fontSize: 12),
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-        ),
-        Text(
-          '${(value * 100).toInt()}%',
+          value,
           style: const TextStyle(
             fontFamily: 'Jost',
             fontWeight: FontWeight.bold,
-            fontSize: 12,
+            color: Color(0xFF071D99),
           ),
         ),
       ],
-    );
+    ),
+  );
+}
+
+Widget _buildProductivityCard(String title, String value, IconData icon) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.blue.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, color: Colors.blue),
+        const SizedBox(width: 12),
+        Expanded(child: Text(title, style: const TextStyle(fontFamily: 'Jost'))),
+        Text(value, style: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.bold)),
+      ],
+    ),
+  );
+}
+
+Widget _buildActivityPieChart(String label, int count, Color color) {
+  final total = activities.length;
+  final percentage = total > 0 ? count / total : 0.0;
+  
+  return Column(
+    children: [
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              value: percentage,
+              strokeWidth: 8,
+              backgroundColor: Colors.grey[200],
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+          Text(
+            count.toString(),
+            style: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Text(label, style: const TextStyle(fontFamily: 'Jost', fontSize: 12)),
+    ],
+  );
+}
+
+int _getThisWeekActivitiesCount() {
+  final now = DateTime.now();
+  final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+  final endOfWeek = startOfWeek.add(const Duration(days: 6));
+  
+  return activities.where((activity) {
+    return activity.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+           activity.date.isBefore(endOfWeek.add(const Duration(days: 1)));
+  }).length;
+}
+
+String _getMostActiveDay() {
+  if (activities.isEmpty) return 'No data';
+  
+  final dayCount = <String, int>{};
+  final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  for (var activity in activities) {
+    final dayName = days[activity.date.weekday - 1];
+    dayCount[dayName] = (dayCount[dayName] ?? 0) + 1;
   }
+  
+  if (dayCount.isEmpty) return 'No data';
+  
+  final mostActiveDay = dayCount.entries.reduce((a, b) => a.value > b.value ? a : b);
+  return mostActiveDay.key;
+}
+
+double _getAverageActivitiesPerWeek() {
+  if (activities.isEmpty) return 0;
+  
+  final weeks = activities.length > 0 ? 
+    (activities.last.date.difference(activities.first.date).inDays / 7).ceil() : 1;
+  return activities.length / weeks;
+}
+
+int _getTaskCount() => activities.where((a) => a.category == 'Task').length;
+int _getProjectCount() => activities.where((a) => a.category == 'Project').length;
+int _getEventCount() => activities.where((a) => a.category == 'Event').length;
+
 
   Widget _buildStatCard(
     String title,
@@ -844,7 +986,7 @@ class _HomepageState extends State<Homepage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
-                              _getCategoryIcon(activity.category),
+                              getCategoryIcon(activity.category),
                               color: const Color(0xFF071D99),
                             ),
                           ),
@@ -856,7 +998,7 @@ class _HomepageState extends State<Homepage> {
                             ),
                           ),
                           subtitle: Text(
-                            _formatDate(activity.date),
+                            formatDate(activity.date),
                             style: TextStyle(color: Colors.grey[600]),
                           ),
                           trailing: IconButton(
@@ -914,24 +1056,6 @@ class _HomepageState extends State<Homepage> {
     ),
   );
 }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'Academic':
-        return Icons.school;
-      case 'Project':
-        return Icons.assignment;
-      case 'Organization':
-        return Icons.groups;
-      default:
-        return Icons.event;
-    }
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.month}/${date.day}/${date.year}';
-  }
-
   List<Activity> _getEventsForDay(DateTime day) {
     return activities
         .where(
@@ -942,7 +1066,6 @@ class _HomepageState extends State<Homepage> {
         )
         .toList();
   }
-
   void _showEventsBottomSheet(DateTime selectedDay) {
     final screenSize = MediaQuery.of(context).size;
     final fontSize = screenSize.width * 0.03;
@@ -1011,7 +1134,7 @@ class _HomepageState extends State<Homepage> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Icon(
-                                      _getCategoryIcon(event.category),
+                                      getCategoryIcon(event.category),
                                       color: const Color(0xFF071D99),
                                     ),
                                   ),
@@ -1127,6 +1250,10 @@ class _HomepageState extends State<Homepage> {
     super.initState();
     _fetchUserProfile();
     _loadActivitiesFromFirebase();
+    _loadAverageQPI();
+    _loadTopSubject();
+    _loadTotalSubjects();
+    _loadTotalUnits(); 
   }
 
   Future<void> _fetchUserProfile() async {
@@ -1232,7 +1359,7 @@ class _HomepageState extends State<Homepage> {
                             onBackgroundImageError: (_, __) {
                               setState(() {
                                 _profileImageUrl =
-                                    'https://picsum.photos/200?random=1';
+                                    'https://i.imgur.com/4STeKWS.png';
                               });
                             },
                             child: _profileImageUrl.isEmpty
@@ -1273,56 +1400,7 @@ class _HomepageState extends State<Homepage> {
                         ],
                       ),
                     ),
-                    Builder(
-                      builder: (context) => Row(
-                        children: [
-                          IconButton(
-                            icon: Stack(
-                              children: [
-                                const Icon(
-                                  Icons.notifications,
-                                  color: Colors.white,
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.red, // 👈 Add background color
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minHeight: 14,
-                                      minWidth: 14,
-                                    ),
-                                    child: const Text(
-                                      '3', // 👈 Replace with dynamic value if needed
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const NotificationsPage(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -1341,12 +1419,6 @@ class _HomepageState extends State<Homepage> {
               _buildAnalyticsSummary(),
 
               const SizedBox(height: 20),
-
-              // Navigation Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: _buildNavigationSection(),
-              ),
 
               const SizedBox(height: 20),
 
@@ -1431,127 +1503,6 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     );
-  }
-
-  Widget _buildNavigationSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quick Access',
-          style: TextStyle(
-            backgroundColor: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Jost',
-            color: Color(0xFF071D99),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: navigationItems.length,
-            itemBuilder: (context, index) =>
-                _buildNavigationCard(navigationItems[index]),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNavigationCard(DashboardItem item) {
-    return Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 16),
-      child: Card(
-        color: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: InkWell(
-          onTap: () => _navigateToPage(item.title),
-          borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(item.icon, size: 40, color: const Color(0xFFD7A61F)),
-                const SizedBox(height: 12),
-                Text(
-                  item.title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Inter',
-                    color: Color(0xFF003865), // Optional: XavLog blue
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-//UPDATE THIS: use the homewrapper to navigate to the pages
-  void _navigateToPage(String title) {
-    switch (title) {
-      case 'Attendance Tracker':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const Homepage()),
-        );
-        break;
-
-      case 'Calendar':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const CalendarPage()),
-        );
-        break;
-
-      case 'Event Finder':
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => const HomeWrapper(initialTab: 2)),
-        );
-        break;
-
-      case 'Marketplace':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const BuyerIntroduction()),
-        );
-        break;
-
-      case 'Grades Tracker':
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => const HomeWrapper(
-                    initialTab: 1,
-                  )),
-        );
-        break;
-
-      case 'Social Collaboration':
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => const HomeWrapper(initialTab: 3)),
-        );
-        break;
-
-      case 'Schedule Manager':
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ScheduleManagerPage()),
-        );
-        break;
-
-      default:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Page not found!')),
-        );
-    }
   }
 }
 
