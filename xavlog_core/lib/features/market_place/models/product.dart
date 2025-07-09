@@ -42,6 +42,8 @@ class Product {
     );
   }
 
+  get rating => null;
+
   // Convert a Product instance to a Firestore document
   Map<String, dynamic> toFirestore() {
     return {

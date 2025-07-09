@@ -23,4 +23,30 @@ class ProductProvider extends ChangeNotifier {
   void addProduct(Product product) {
     _firestore.collection('products').add(product.toFirestore());
   }
+
+  Future<void> deleteProductByImageUrl(String imageUrl) async {
+    try {
+      // Query the database to find the product with the matching image URL
+      final querySnapshot = await _firestore
+          .collection('products')
+          .where('image', isEqualTo: imageUrl)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Get the document ID of the matching product
+        final docId = querySnapshot.docs.first.id;
+
+        // Delete the product document from the database
+        await _firestore.collection('products').doc(docId).delete();
+
+        // Update the local product list
+        _products.removeWhere((product) => product.image == imageUrl);
+        notifyListeners();
+      } else {
+        throw Exception('No product found with the provided image URL.');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete product: $e');
+    }
+  }
 }

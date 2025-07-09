@@ -304,7 +304,7 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
                     ),
                   ),
                   items: [
-                    'Stationery',
+                    'Stationnery',
                     'Equipment',
                     'Clothing',
                     'Technology',

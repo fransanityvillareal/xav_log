@@ -173,8 +173,6 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  String selected = 'Delivery';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -200,11 +198,10 @@ class _HomeWidgetState extends State<HomeWidget> {
 
                             SizedBox(height: 12),
 
-                            _buildSellItemsSection(), // Move the Sell Items section here
-
                             _buildSectionTitle('Categories'),
 
                             _buildCategoryBar(),
+                            _buildSellItemsSection(), // Move the Sell Items section here
 
                             SizedBox(height: 24), // Space between sections
 
@@ -363,10 +360,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       child: Container(
         width: 100,
         height: 100,
-        margin: EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical:
-                4), // 👈 vertical margin gives room for shadow - AI ito noh - gian
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
