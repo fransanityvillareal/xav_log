@@ -27,7 +27,8 @@ class ChatDrawer extends StatelessWidget {
           : null,
       builder: (context, snapshot) {
         String displayName = user?.displayName ?? username;
-        String profileImageUrl = "https://via.placeholder.com/150";
+        String profileImageUrl = user?.photoURL ??
+            'https://i.imgur.com/4STeKWS.png'; // Default image URL
         String gbox = "";
 
         if (snapshot.hasData &&
@@ -37,7 +38,7 @@ class ChatDrawer extends StatelessWidget {
           if (data != null) {
             displayName =
                 "${data['firstName'] ?? ''} ${data['lastName'] ?? ''}".trim();
-            profileImageUrl = data['profileImageUrl'] ?? profileImageUrl;
+            profileImageUrl = data['profileImageUrl'] ?? 'https://i.imgur.com/4STeKWS.png';
             gbox = data['studentId'] ?? "";
           }
         }
@@ -85,7 +86,7 @@ class ChatDrawer extends StatelessWidget {
                         backgroundImage: NetworkImage(profileImageUrl),
                         backgroundColor: Colors.grey[200],
                         child:
-                            profileImageUrl == "https://via.placeholder.com/150"
+                            profileImageUrl == "https://i.imgur.com/4STeKWS.png"
                                 ? const Icon(Icons.person,
                                     size: 40, color: Colors.white)
                                 : null,

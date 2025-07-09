@@ -19,9 +19,9 @@ class AuthenticationService {
       String email, String password, BuildContext context) async {
     try {
       // Validate email domain
-      if (!email.endsWith('@gbox.adnu.edu.ph')) {
+      if  (!(email.endsWith('@gbox.adnu.edu.ph') || email.endsWith('@xavlog.adnu.edu.ph'))) {
         showDomainErrorPopup(context);
-        return null;
+        return Future.error('Invalid email domain');
       }
 
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -74,7 +74,7 @@ class AuthenticationService {
       String email, String password, BuildContext context) async {
     try {
       // Validate email domain
-      if (!email.endsWith('@gbox.adnu.edu.ph')) {
+      if  (!email.endsWith('@gbox.adnu.edu.ph')) {
         showDomainErrorPopup(context);
         return Future.error('Invalid email domain');
       }
