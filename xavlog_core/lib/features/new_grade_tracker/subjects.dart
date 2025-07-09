@@ -310,7 +310,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
         )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _AddSubjectDialog(); // Remove setState wrapper
+          _AddSubjectDialog();
         },
         backgroundColor: const Color(0xFF283AA3),
         shape: const CircleBorder(),

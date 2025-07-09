@@ -238,7 +238,7 @@ void _createGroup() {
   Widget _buildUserList(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Column(
+        child: Column(
         children: [
           TabBar(
             labelColor: const Color(0xFF003A70),
@@ -252,10 +252,14 @@ void _createGroup() {
           Expanded(
             child: TabBarView(
               children: [
-                // Contacts Tab
-                _buildContactsList(context),
-                // Groups Tab
-                _buildGroupsList(context),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: _buildContactsList(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: _buildGroupsList(context),
+                ),
               ],
             ),
           ),

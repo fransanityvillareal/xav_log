@@ -714,13 +714,13 @@ class _PartitionScreenState extends State<PartitionScreen> {
                   ),
                   // Dinamically generated cards
                   if (components.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 48.0),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6, 
                       child: Center(
                         child: Text(
-                          'No components',
+                          'No Components Found',
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             color: Colors.grey,
                             fontWeight: FontWeight.w500,
                           ),
@@ -745,20 +745,10 @@ class _PartitionScreenState extends State<PartitionScreen> {
                           trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFFD7A61F)),
                           onTap: () async{
                             // Navigate to partition details or edit screen
-                          
-                            print('Navigating to partition with id: ${component['id']}');
-                            print('Navigating to partition with subjectId: ${widget.subjectId}');
-                            print('Navigating to partition with subjectTitle: ${widget.subjectTitle}');
-                            print('Navigating to partition with type: ${component['type']}');
-                            print('Navigating to partition with parentId: ${component['parentId']}');
-
                             await Navigator.push(
                               context,
                               
                               MaterialPageRoute(
-
-                                //ALL OF THIS IS A PLACEHOLDER, ADJUST AS NEEDED
-
                                 builder: (context) => PartitionScreen(
                                   subjectTitle: widget.subjectTitle,
                                   id: component['id'],
@@ -815,10 +805,7 @@ class _PartitionScreenState extends State<PartitionScreen> {
             );
           },
         )),
-      floatingActionButton: SizedBox(
-        width: 68,
-        height: 68,
-        child: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
           onPressed: () {
             // Action to add a new component
             setState(() {
@@ -826,9 +813,9 @@ class _PartitionScreenState extends State<PartitionScreen> {
             });
           },
           backgroundColor: const Color(0xFFD7A61F),
+          shape: const CircleBorder(),
           child: const Icon(Icons.add, size: 34.0, color: Colors.white),
         ),
-      ),
     ),
     ], 
     );
