@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:xavlog_core/services/chat_services.dart';
 import 'package:xavlog_core/services/authentication_service.dart';
+import 'package:xavlog_core/services/recent_chats_service.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
@@ -47,9 +48,11 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
+      final user = _authenticationService.getCurrentUser;
+      final messageText = _messageController.text; // Store the message text
+      
       if (widget.isGroup) {
-        // Get sender email and firstName from Users collection (fallback to auth email, then UID)
-        final user = _authenticationService.getCurrentUser;
+        // Get sender email and firstName from Users collection
         String senderName = user?.uid ?? '';
         String senderFirstName = '';
         if (user != null) {
@@ -72,16 +75,27 @@ class _ChatPageState extends State<ChatPage> {
             .doc(widget.receiverID)
             .collection('messages')
             .add({
-          'message': _messageController.text,
+          'message': messageText,
           'senderID': user!.uid,
           'senderName': senderName,
           'senderFirstName': senderFirstName,
           'timestamp': FieldValue.serverTimestamp(),
         });
       } else {
-        await _chatService.sendMessage(
-            widget.receiverID, _messageController.text);
+        // Send regular message
+        await _chatService.sendMessage(widget.receiverID, messageText);
+
+        // Update recent chats - CORRECT PLACEMENT
+        if (user != null) {
+          await RecentChatsService.updateRecentChats(
+            senderId: user.uid,           // ✅ Use user.uid
+            receiverId: widget.receiverID,
+            lastMessage: messageText,     // ✅ Use stored message text
+            timestamp: Timestamp.now(),
+          );
+        }
       }
+      
       _messageController.clear();
       _scrollToBottom();
     }
