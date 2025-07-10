@@ -188,6 +188,7 @@ class _PartitionScreenState extends State<PartitionScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text('Add Classwork'),
           content: SingleChildScrollView(
             child: Column(

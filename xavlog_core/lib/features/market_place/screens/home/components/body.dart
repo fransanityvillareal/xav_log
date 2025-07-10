@@ -70,25 +70,42 @@ class BodyState extends State<Body> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-            child: GridView.builder(
-              itemCount: filteredProducts.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: kDefaultPadding,
-                mainAxisSpacing: kDefaultPadding,
-              ),
-              itemBuilder: (context, index) => ItemCard(
-                key: ValueKey(filteredProducts[index].id),
-                product: filteredProducts[index],
-                press: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => DetailsScreen(
-                      product: filteredProducts[index],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final crossAxisCount = constraints.maxWidth < 600
+                    ? 2
+                    : 3; // Adjust columns based on width
+                final childAspectRatio = constraints.maxWidth < 600
+                    ? 0.65
+                    : 0.75; // Adjust aspect ratio
+                final crossAxisSpacing = constraints.maxWidth < 600
+                    ? kDefaultPadding
+                    : kDefaultPadding / 2; // Reduce spacing for larger screens
+                final mainAxisSpacing = constraints.maxWidth < 600
+                    ? kDefaultPadding
+                    : kDefaultPadding / 2; // Reduce spacing for larger screens
+
+                return GridView.builder(
+                  itemCount: filteredProducts.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: childAspectRatio,
+                    crossAxisSpacing: crossAxisSpacing,
+                    mainAxisSpacing: mainAxisSpacing,
+                  ),
+                  itemBuilder: (context, index) => ItemCard(
+                    key: ValueKey(filteredProducts[index].id),
+                    product: filteredProducts[index],
+                    press: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => DetailsScreen(
+                          product: filteredProducts[index],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ),

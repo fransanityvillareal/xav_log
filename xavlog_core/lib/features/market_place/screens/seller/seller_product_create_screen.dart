@@ -224,7 +224,9 @@ class _SellerProductCreateScreenState extends State<SellerProductCreateScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFF283AA3), // Set AppBar background to white
         title: const Text('Add Product',
-            style: TextStyle(color: Colors.black)), // Set title color to black
+            style: TextStyle(
+                color: Color.fromARGB(
+                    255, 253, 253, 253))), // Set title color to black
         centerTitle: true,
         elevation: 5.0,
         iconTheme: const IconThemeData(
