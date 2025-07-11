@@ -6,6 +6,7 @@ import 'package:xavlog_core/services/chat_services.dart';
 import 'package:xavlog_core/services/authentication_service.dart';
 import 'package:xavlog_core/services/recent_chats_service.dart';
 
+
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
@@ -163,6 +164,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -206,24 +208,99 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+    void _showEncryptionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Encryption Settings'),
+        content: FutureBuilder<bool>(
+          future: _chatService.isChatEncrypted(widget.receiverID),
+          builder: (context, snapshot) {
+            final isEncrypted = snapshot.data ?? false;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isEncrypted 
+                    ? '🔒 This chat is encrypted'
+                    : '🔓 This chat is not encrypted',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 16),
+                if (!isEncrypted)
+                  ElevatedButton(
+                    onPressed: () async {
+                      final success = await _chatService.enableEncryption(widget.receiverID);
+                      if (success && mounted) {
+                        Navigator.of(context).pop();
+                        setState(() {}); // Refresh to show encryption status
+                      }
+                    },
+                    child: const Text('Enable Encryption'),
+                  ),
+              ],
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _backgroundColor,
       appBar: AppBar(
-        title: Text(
-          _receiverName,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255), // Gold header text
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            letterSpacing: 0.2,
-          ),
+        title: Row(
+          children: [
+            Text(
+              _receiverName,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 255, 255, 255),
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: 0.2,
+              ),
+            ),
+            // 🔒 Add encryption indicator
+            if (!widget.isGroup) ...[
+              const SizedBox(width: 8),
+              FutureBuilder<bool>(
+                future: _chatService.isChatEncrypted(widget.receiverID),
+                builder: (context, snapshot) {
+                  final isEncrypted = snapshot.data ?? false;
+                  return isEncrypted
+                      ? const Icon(
+                          Icons.lock,
+                          color: Colors.green,
+                          size: 16,
+                        )
+                      : const Icon(
+                          Icons.lock_open,
+                          color: Colors.orange,
+                          size: 16,
+                        );
+                },
+              ),
+            ],
+          ],
         ),
-        iconTheme:
-            const IconThemeData(color: Color.fromARGB(255, 255, 255, 255)),
-        backgroundColor: const Color(0xFF283AA3), // Ateneo Blue
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 255, 255, 255)),
+        backgroundColor: const Color(0xFF283AA3),
         actions: [
+          // 🔒 Add encryption toggle button for 1-on-1 chats
+          if (!widget.isGroup)
+            IconButton(
+              icon: const Icon(Icons.security),
+              tooltip: 'Encryption Settings',
+              onPressed: _showEncryptionDialog,
+            ),
           IconButton(
             icon: const Icon(Icons.color_lens_rounded),
             tooltip: 'Change Chat Theme',
@@ -241,19 +318,18 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildMessageList() {
-    String senderID = _authenticationService.getCurrentUser!.uid;
-    Stream<QuerySnapshot> messageStream;
-    if (widget.isGroup) {
-      messageStream = FirebaseFirestore.instance
-          .collection('Groups')
-          .doc(widget.receiverID)
-          .collection('messages')
-          .orderBy('timestamp')
-          .snapshots();
-    } else {
-      messageStream = _chatService.getMessages(widget.receiverID, senderID);
-    }
-    return StreamBuilder(
+  String senderID = _authenticationService.getCurrentUser!.uid;
+  
+  if (widget.isGroup) {
+    // Group messages - no encryption, use QuerySnapshot
+    Stream<QuerySnapshot> messageStream = FirebaseFirestore.instance
+        .collection('Groups')
+        .doc(widget.receiverID)
+        .collection('messages')
+        .orderBy('timestamp')
+        .snapshots();
+        
+    return StreamBuilder<QuerySnapshot>(
       stream: messageStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) return const Text("Error loading messages.");
@@ -272,6 +348,103 @@ class _ChatPageState extends State<ChatPage> {
         );
       },
     );
+  } else {
+    // 1-on-1 messages - with encryption, use List<Map<String, dynamic>>
+    Stream<List<Map<String, dynamic>>> messageStream = _chatService.getMessages(widget.receiverID, senderID);
+    
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: messageStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) return const Text("Error loading messages.");
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        // Auto-scroll to bottom after messages build
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
+        return ListView(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(10),
+          children: snapshot.data!.map((messageData) => _buildEncryptedMessageItem(messageData)).toList(),
+        );
+      },
+    );
+  }
+}
+
+  // handle encrypted message items
+  Widget _buildEncryptedMessageItem(Map<String, dynamic> data) {
+    bool isCurrentUser = data['senderID'] == _authenticationService.getCurrentUser!.uid;
+
+    final alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+    final bubbleColor = isCurrentUser ? const Color(0xFF003A70) : const Color(0xFFFFD700);
+    final textColor = isCurrentUser ? Colors.white : Colors.black87;
+    final textAlign = isCurrentUser ? TextAlign.right : TextAlign.left;
+
+    String timeString = '';
+    if (data['timestamp'] != null) {
+      try {
+        final dateTime = (data['timestamp'] as Timestamp).toDate();
+        timeString = DateFormat('EEE, hh:mm a').format(dateTime);
+      } catch (_) {
+        timeString = '';
+      }
+    }
+
+    Color timestampColor;
+    double bgLuminance = _backgroundColor.computeLuminance();
+    if (bgLuminance < 0.4) {
+      timestampColor = Colors.white.withOpacity(0.85);
+    } else {
+      timestampColor = Colors.grey.shade700;
+    }
+
+    return Align(
+      alignment: alignment,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: Column(
+          crossAxisAlignment:
+              isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Container(
+              constraints: const BoxConstraints(maxWidth: 260),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: bubbleColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: isCurrentUser
+                      ? const Radius.circular(16)
+                      : const Radius.circular(4),
+                  bottomRight: isCurrentUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(16),
+                ),
+              ),
+              child: Text(
+                data["message"],
+                style: TextStyle(color: textColor, fontSize: 15),
+                textAlign: textAlign,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                timeString,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: timestampColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate().fade(duration: 300.ms).slideY(begin: 0.2);
   }
 
   Widget _buildMessageItem(DocumentSnapshot doc) {

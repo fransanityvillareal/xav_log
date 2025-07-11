@@ -37,6 +37,10 @@ class ChatHomePageState extends State<ChatHomePage> {
   bool _isLoadingMoreGroups = false;
   bool _hasMoreUsers = true;
   bool _hasMoreGroups = true;
+
+  // Filtered users future
+  Future<List<Map<String, dynamic>>>? _filteredUsersFuture;
+  String _lastSearchQuery = '';
   
   //batch processing variables
   static const int _profileImageBatchSize = 10;
@@ -47,6 +51,11 @@ class ChatHomePageState extends State<ChatHomePage> {
     _searchDebounce = Timer(const Duration(milliseconds: 300), () {
       setState(() {
         _searchQuery = value.toLowerCase();
+        // Clear the cached future when search changes
+        if (_lastSearchQuery != _searchQuery) {
+          _filteredUsersFuture = null;
+          _lastSearchQuery = _searchQuery;
+        }
       });
     });
   }
@@ -207,47 +216,7 @@ class ChatHomePageState extends State<ChatHomePage> {
   }
 
   // Load more users (pagination)
-  Future<void> _loadMoreUsers() async {
-    if (_isLoadingMoreUsers || !_hasMoreUsers) return;
-    
-    setState(() {
-      _isLoadingMoreUsers = true;
-    });
-    
-    try {
-      Query query = FirebaseFirestore.instance
-          .collection('Users')
-          .limit(_usersPerPage);
-      
-      if (_lastUserDoc != null) {
-        query = query.startAfterDocument(_lastUserDoc!);
-      }
-      
-      final snapshot = await query.get();
-      
-      if (snapshot.docs.isNotEmpty) {
-        _lastUserDoc = snapshot.docs.last;
-        final newUsers = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-        
-        setState(() {
-          _allUsers.addAll(newUsers);
-        });
-        
-        // Batch load profile images for new users
-        _batchLoadProfileImages(newUsers);
-        
-        _hasMoreUsers = snapshot.docs.length == _usersPerPage;
-      } else {
-        _hasMoreUsers = false;
-      }
-    } catch (e) {
-      print('Error loading more users: $e');
-    } finally {
-      setState(() {
-        _isLoadingMoreUsers = false;
-      });
-    }
-  }
+
 
   // Batch load profile images
   void _batchLoadProfileImages(List<Map<String, dynamic>> users) {
@@ -478,9 +447,18 @@ class ChatHomePageState extends State<ChatHomePage> {
       );
     }
 
+    // Use cached future or create new one
+    if (_filteredUsersFuture == null || _lastSearchQuery != _searchQuery) {
+      _filteredUsersFuture = _getFilteredUsersByChatHistory(
+        filteredUsers, 
+        currentUserId, 
+        _searchQuery.isNotEmpty
+      );
+      _lastSearchQuery = _searchQuery;
+    }
+
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _getFilteredUsersByChatHistory(
-          filteredUsers, currentUserId, _searchQuery.isNotEmpty),
+      future: _filteredUsersFuture,
       builder: (context, sortedSnapshot) {
         if (sortedSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -668,6 +646,51 @@ class ChatHomePageState extends State<ChatHomePage> {
         );
       },
     );
+  }
+
+  // Add method to invalidate cache when users are loaded
+  Future<void> _loadMoreUsers() async {
+    if (_isLoadingMoreUsers || !_hasMoreUsers) return;
+    
+    setState(() {
+      _isLoadingMoreUsers = true;
+    });
+    
+    try {
+      Query query = FirebaseFirestore.instance
+          .collection('Users')
+          .limit(_usersPerPage);
+      
+      if (_lastUserDoc != null) {
+        query = query.startAfterDocument(_lastUserDoc!);
+      }
+      
+      final snapshot = await query.get();
+      
+      if (snapshot.docs.isNotEmpty) {
+        _lastUserDoc = snapshot.docs.last;
+        final newUsers = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+        
+        setState(() {
+          _allUsers.addAll(newUsers);
+          // Invalidate cache when new users are loaded
+          _filteredUsersFuture = null;
+        });
+        
+        // Batch load profile images for new users
+        _batchLoadProfileImages(newUsers);
+        
+        _hasMoreUsers = snapshot.docs.length == _usersPerPage;
+      } else {
+        _hasMoreUsers = false;
+      }
+    } catch (e) {
+      print('Error loading more users: $e');
+    } finally {
+      setState(() {
+        _isLoadingMoreUsers = false;
+      });
+    }
   }
 
 //get users with chat history

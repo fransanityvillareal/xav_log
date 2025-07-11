@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RecentChatsService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static const int _maxRecentChats = 50; // Limit number of recent chats
 
   // Get recent chats for a user
   static Future<List<Map<String, dynamic>>> getRecentChats(String currentUserId) async {
@@ -149,11 +150,59 @@ class RecentChatsService {
           });
         }
         
+        // Sort by timestamp (most recent first) and limit to max count
+        chatPartners.sort((a, b) {
+          final timeA = a['lastMessageTime'] as Timestamp?;
+          final timeB = b['lastMessageTime'] as Timestamp?;
+          if (timeA == null && timeB == null) return 0;
+          if (timeA == null) return 1;
+          if (timeB == null) return -1;
+          return timeB.compareTo(timeA);
+        });
+        
+        // Remove oldest entries if exceeding limit
+        if (chatPartners.length > _maxRecentChats) {
+          chatPartners.removeRange(_maxRecentChats, chatPartners.length);
+        }
+        
         transaction.update(docRef, {
           'chatPartners': chatPartners,
           'lastUpdated': timestamp,
         });
       }
     });
+  }
+
+  // Clear old chat data (optional utility method)
+  static Future<void> clearOldChats(String userId, {int daysOld = 30}) async {
+    try {
+      final cutoffTime = Timestamp.fromDate(
+        DateTime.now().subtract(Duration(days: daysOld))
+      );
+      
+      final docRef = _firestore.collection('recent_chats').doc(userId);
+      
+      await _firestore.runTransaction((transaction) async {
+        final doc = await transaction.get(docRef);
+        
+        if (doc.exists) {
+          final data = doc.data() as Map<String, dynamic>;
+          final chatPartners = List<Map<String, dynamic>>.from(data['chatPartners'] ?? []);
+          
+          // Filter out old chats
+          final filteredChats = chatPartners.where((chat) {
+            final lastTime = chat['lastMessageTime'] as Timestamp?;
+            return lastTime != null && lastTime.compareTo(cutoffTime) > 0;
+          }).toList();
+          
+          transaction.update(docRef, {
+            'chatPartners': filteredChats,
+            'lastUpdated': Timestamp.now(),
+          });
+        }
+      });
+    } catch (e) {
+      print('Error clearing old chats: $e');
+    }
   }
 }
